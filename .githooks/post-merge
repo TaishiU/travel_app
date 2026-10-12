@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# 色の定義
+GREEN='\033[0;32m'
+RESET='\033[0m'
+
+# 変更されたファイルの中に pubspec.yaml または pubspec.lock が含まれているか確認
+# 含まれていれば flutter pub get を実行
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -Eq "pubspec\.yaml|pubspec\.lock"; then
+  printf "${GREEN} 📦 pubspec.yaml / pubspec.lock の変更を検知しました。flutter pub get を実行します...${RESET}\n"
+  flutter pub get
+  printf "${GREEN} ✅ flutter pub get 実行完了${RESET}\n"
+fi

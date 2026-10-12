@@ -1,0 +1,90 @@
+name: Update OpenAPI from travel_api
+
+on:
+  repository_dispatch:
+    types: [repository_travel_api_updated]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-openapi:
+    runs-on: ubuntu-latest
+    outputs:
+      pr-url: ${{ steps.create-pr.outputs.pull-request-url }}
+
+    steps:
+      - name: Checkout travel_app
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Checkout travel_api
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ github.event.client_payload.repository }}
+          ref: ${{ github.event.client_payload.sha }}
+          token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+          path: travel_api
+
+      - name: Copy openapi.yaml
+        run: |
+          cp travel_api/openapi.yaml docs/api/openapi.yaml
+          rm -rf travel_api
+
+      - name: Set JST timestamp
+        id: jst
+        run: |
+          echo "datetime=$(TZ=Asia/Tokyo date '+%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+          echo "branch=$(TZ=Asia/Tokyo date '+%Y/%m/%d_%H.%M')" >> $GITHUB_OUTPUT
+
+      - name: Append sync history
+        run: |
+          echo "| ${{ steps.jst.outputs.datetime }} JST | ${{ github.event.client_payload.sha }} | ${{ github.event.client_payload.message }} |" \
+            >> docs/api/sync_history.md
+
+      - name: Create pull request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+          add-paths: |
+            docs/api/openapi.yaml
+            docs/api/sync_history.md
+          branch: update_openapi_${{ steps.jst.outputs.branch }}
+          base: main
+          delete-branch: true
+          title: "【更新】openapi.yaml"
+          labels: openapi.yaml_sync
+          body: |
+            ## 概要
+
+            travel_apiリポジトリのopenapi.yaml更新を検知しました。
+
+            ## 送信元
+
+            - Repository: ${{ github.event.client_payload.repository }}
+            - Branch: ${{ github.event.client_payload.branch }}
+            - Commit: ${{ github.event.client_payload.sha }}
+            - Message: ${{ github.event.client_payload.message }}
+
+            ## 確認事項
+
+            - [ ] OpenAPIの差分を確認した
+            - [ ] 破壊的変更がないことを確認した
+            - [ ] 必要なService層の修正を確認した
+          commit-message: "chore: update openapi.yaml"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [ update-openapi ]
+    if: always()
+    steps:
+      - name: Slack通知
+        uses: slackapi/slack-github-action@v3.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "【要確認！】openapi.yaml変更検知\n自動PRを作成済み\n${{ needs.update-openapi.outputs.pr-url }}"

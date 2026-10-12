@@ -1,0 +1,56 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+plugins:
+  import_rules: ^0.0.7
+
+import_rules:
+  rules:
+    - target: lib/ui/*/view/**
+      disallow:
+        - lib/data/api/**
+        - lib/data/repositories/**
+      reason: UI層（View）は、Repository層とService層に依存してはいけません。依存して良いのはUI層（ViewModel）のみです。
+    - target: lib/ui/*/view_model/**
+      disallow:
+        - lib/ui/*/view/**
+        - lib/data/api/**
+      reason: UI層（ViewModel）は、UI層（View）とService層に依存してはいけません。依存して良いのはRepository層のみです。
+    - target: lib/data/repositories/**
+      disallow:
+        - lib/ui/*/view/**
+        - lib/ui/*/view_model/**
+      reason: Repository層は、UI層（View）とUI層（ViewModel）に依存してはいけません。依存して良いのはService層のみです。
+    - target: lib/data/api/**
+      disallow:
+        - lib/ui/*/view/**
+        - lib/ui/*/view_model/**
+        - lib/data/repositories/**
+      reason: Repository層は、UI層（View）とUI層（ViewModel）とRepository層に依存してはいけません。
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    included_file_warning: ignore
+    invalid_use_of_visible_for_testing_member: error
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gen.dart"
+    - "**/*.gr.dart"
+    - "**/*.mocks.dart"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - linux/**
+
+linter:
+  rules:
+    flutter_style_todos: false
+    one_member_abstracts: false
+    public_member_api_docs: true
+    lines_longer_than_80_chars: true
+

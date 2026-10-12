@@ -1,0 +1,37 @@
+name: travel_app
+description: A new Flutter project.
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: ^3.11.0
+  flutter: '>=3.41.2'
+dependencies:
+  cupertino_icons: ^1.0.8
+  drift: ^2.34.3
+  drift_flutter: ^0.3.1
+  flutter:
+    sdk: flutter
+  flutter_riverpod:
+  flutter_secure_storage:
+  freezed_annotation:
+  go_router:
+  hooks_riverpod:
+  http:
+  json_annotation:
+  path_provider: ^2.1.6
+  shared_preferences:
+  talker_flutter: ^5.1.20
+  talker_riverpod_logger: ^5.1.20
+  very_good_analysis:
+dev_dependencies:
+  build_runner:
+  drift_dev: ^2.34.0
+  fake_async:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  freezed:
+  json_serializable:
+  mockito:
+flutter:
+  uses-material-design: true

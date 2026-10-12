@@ -1,0 +1,25 @@
+name: widgetbook_workspace
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  travel_app:
+    path: ../
+  flutter:
+    sdk: flutter
+  widgetbook: ^3.22.0
+  widgetbook_annotation: ^3.11.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  widgetbook_generator: ^3.22.0
+  build_runner: ^2.13.1
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  // 全体として「自動マージは基本的に禁止」にして、packageRules でだけ有効
+  "automerge": false,
+  // デフォルトの上限（PR 数 / 時間あたりの制限）を外して、更新が溜まりにくくする
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  // ^1.0.8 を ^1.0.9 ではなく ^1.0.9 にそのまま変えるだけ（バージョンは上げるが、レンジ指定の習慣はそのまま）
+  "rangeStrategy": "bump",
+  "enabledManagers": [
+    "pub"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "packageRules": [
+    // Flutter SDK は自動更新禁止
+    {
+      "packageNames": [
+        "flutter"
+      ],
+      "enabled": false
+    },
+    // flutter_ で始まるパッケージはマイナーまで、自動マージ
+    {
+      "packagePatterns": [
+        "^flutter_"
+      ],
+      "minor": true,
+      "major": false,
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    // Dart SDK はマイナーまで、メジャーは自動マージ禁止
+    {
+      "packageNames": [
+        "dart"
+      ],
+      "minor": true,
+      "major": false,
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    // その他の Dart / Flutter パッケージ全体（パッチ・マイナーは自動マージ）
+    {
+      "manager": "pub",
+      "updateTypes": [
+        "patch",
+        "minor"
+      ],
+      "automerge": true,
+      "automergeType": "pr",
+      "prTitle": "Update {{depName}} to {{newVersion}} (patch/minor)"
+    },
+    // その他の Dart / Flutter パッケージ全体（メジャー更新は自動マージ禁止）
+    {
+      "manager": "pub",
+      "updateTypes": [
+        "major"
+      ],
+      "automerge": false,
+      "prTitle": "🚨 MAJOR update for {{depName}} from {{currentValue}} → {{newVersion}}"
+    },
+    // Firebase 関連のライブラリをグループ化して、1 PR にまとめる（例）
+    {
+      "depNames": [
+        "firebase_core",
+        "firebase_auth",
+        "firebase_analytics",
+        "cloud_firestore",
+        "firebase_storage",
+        "firebase_messaging"
+      ],
+      "groupName": "Firebase SDKs",
+      "groupSlug": "firebase-sdks",
+      "automerge": false,
+      "automergeType": "pr",
+      "prTitle": "Update Firebase SDKs ({{groupName}})"
+    },
+    // GitHub Actions の更新はパッチ・マイナーのみ自動マージ
+    {
+      "manager": "github-actions",
+      "updateTypes": [
+        "patch",
+        "minor"
+      ],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    // GitHub Actions のメジャー更新は自動マージ禁止
+    {
+      "manager": "github-actions",
+      "updateTypes": [
+        "major"
+      ],
+      "automerge": false
+    },
+  ]
+}

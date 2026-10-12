@@ -1,0 +1,86 @@
+#!/bin/sh
+
+# 色の定義
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# *.dartの変更がなければ全処理をスキップ
+if ! git diff --cached --name-only | grep -q '\.dart$'; then
+  echo "*.dartファイルの変更なし。pre-commitをスキップします。"
+  exit 0
+fi
+
+# 1. @freezedファイルが変更に含まれる場合はbuild_runnerを実行
+STAGED_FREEZED=$(git diff --cached --name-only -- '*.dart' | xargs grep -l '@freezed' 2>/dev/null || true)
+if [ -n "$STAGED_FREEZED" ]; then
+  echo "🔨 @freezedファイルの変更を検知。build_runnerを実行中..."
+  dart run build_runner build --delete-conflicting-outputs
+  printf "${GREEN} ✅ build_runner 完了${RESET}\n"
+fi
+
+# 2. pubspec.yamlが変更に含まれる場合は依存関係をソート
+if git diff --cached --name-only | grep -q 'pubspec\.yaml'; then
+  echo "📦 pubspec.yamlの変更を検知。依存関係をソート中..."
+  sh "$REPO_ROOT/scripts/sort_pubspec.sh"
+fi
+
+# 3. 自動修正とコード整形を実行
+echo "🛠 修正と整形を実行中..."
+dart fix --apply .
+dart format .
+
+# 4. import層違反チェック
+CHECK_SCRIPT="$REPO_ROOT/scripts/check_import_layers.sh"
+if [ -f "$CHECK_SCRIPT" ]; then
+  git diff --cached --name-only -- '*.dart' | sh "$CHECK_SCRIPT"
+  [ $? -ne 0 ] && exit 1
+fi
+
+# 4.5. 名前付き引数チェック
+CHECK_NAMED_ARGS="$REPO_ROOT/scripts/check_named_args.dart"
+if [ -f "$CHECK_NAMED_ARGS" ]; then
+  echo "🔍 名前付き引数チェック実行中..."
+  git diff --cached --name-only -- '*.dart' | dart "$CHECK_NAMED_ARGS"
+  [ $? -ne 0 ] && exit 1
+fi
+
+# 5. 静的解析を実行
+echo "🔍 dart analyze 実行中..."
+ANALYZE_OUTPUT=$(dart analyze 2>&1)
+ISSUE_LINES=$(printf '%s\n' "$ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
+ISSUE_COUNT=$(printf '%s\n' "$ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
+
+if [ "$ISSUE_COUNT" -gt 0 ]; then
+  printf "${RED} ❌ dart analyze %d件の問題を検出${RESET}\n\n" "$ISSUE_COUNT"
+  printf '%s\n' "$ISSUE_LINES" | while IFS= read -r line; do
+    printf "%s\n" "$line"
+  done
+  printf "\n上記の問題を修正してから再度commitしてください。\n\n"
+  exit 1
+fi
+
+printf "${GREEN} ✅ dart analyze 問題なし${RESET}\n"
+
+echo "🔍 flutter analyze 実行中..."
+FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
+FLUTTER_ISSUE_LINES=$(printf '%s\n' "$FLUTTER_ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
+FLUTTER_ISSUE_COUNT=$(printf '%s\n' "$FLUTTER_ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
+
+if [ "$FLUTTER_ISSUE_COUNT" -gt 0 ]; then
+  printf "${RED} ❌ flutter analyze %d件の問題を検出${RESET}\n\n" "$FLUTTER_ISSUE_COUNT"
+  printf '%s\n' "$FLUTTER_ISSUE_LINES" | while IFS= read -r line; do
+    printf "%s\n" "$line"
+  done
+  printf "\n上記の問題を修正してから再度commitしてください。\n\n"
+  exit 1
+fi
+
+printf "${GREEN} ✅ flutter analyze 問題なし${RESET}\n"
+
+# 6. 修正・生成されたファイルを再ステージング
+if ! git diff --quiet || git ls-files --others --exclude-standard | grep -q .; then
+  git add .
+fi
