@@ -484,13 +484,14 @@ OS通知権限
 | granted | granted | ON | ON | OFF | ON | marketing_offer 以外配信可 |
 | granted | denied | ON | ON | OFF | ON | marketing_offer 配信不可。通知設定トグルは OFF（タップで granted に変更可） |
 | granted | not_requested | ON | ON | OFF | ON | marketing_offer 配信不可。予約後に marketing_consent モーダルを表示 |
-| denied | any | — | — | — | — | Push 不可。アプリ内メッセージのみ。設定誘導バナーを表示 |
-| not_determined | any | — | — | — | — | Push 未設定。予約完了時に権限要求フローを開始 |
+| denied | any | 灰色・操作不可 | 灰色・操作不可 | 灰色・操作不可 | 灰色・操作不可 | Push 不可。アプリ内メッセージのみ。設定誘導バナーを表示 |
+| not_determined | any | 灰色・操作不可 | 灰色・操作不可 | 灰色・操作不可 | 灰色・操作不可 | Push 未設定。予約完了時に権限要求フローを開始 |
 
-**`marketing_offer` 列の読み方**
+**表の読み方**
 
-- `OFF` → 通知設定画面にトグルが表示されており、操作可能。OFF → ON でタップすると `marketing_consent` と `notification_preferences.marketing_offer` が同時に `granted` / `true` へ更新される
-- `—`（OS権限 = denied / not_determined 行のみ）→ Push 自体が届かないため全カテゴリのトグルは**灰色表示・操作不可**。OS権限を有効にするまでカテゴリ設定は変更できない。通知設定画面の最上部に「設定を開く」ボタンを表示し、OS設定への誘導を優先する
+- `ON` / `OFF` → トグルが表示・操作可能
+- `灰色・操作不可` → OS権限がないため Push が届かない状態。全カテゴリのトグルを灰色表示・操作不可にし、通知設定画面の最上部の「設定を開く」ボタンでOS設定への誘導を優先する
+- `marketing_offer` 列の OFF → ON 操作のみ `marketing_consent` と `notification_preferences.marketing_offer` を同時に更新する（他カテゴリは `notification_preferences` のみ）
 
 `marketing_consent = denied` は「初回の同意モーダルでユーザーが『受け取らない』を選んだ状態」。設定トグルは OFF で画面に表示されており、いつでも ON に変更できる（灰色・非表示ではない）。
 
