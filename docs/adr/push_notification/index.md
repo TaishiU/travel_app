@@ -16,3 +16,9 @@
 | BRAZE-003 データスキーマ設計 | `docs/adr/push_notification/phase1_research_and_design/braze_003.md` |
 | BRAZE-004 Deep Linkスキーマ設計 | `docs/adr/push_notification/phase1_research_and_design/braze_004.md` |
 | BRAZE-005 権限・同意フロー設計 | `docs/adr/push_notification/phase1_research_and_design/braze_005.md` |
+
+## Phase 2: 基盤実装
+
+| Topic | Path |
+|-------|------|
+| Phase 2 概要（スコープ・方針・残課題） | `docs/adr/push_notification/phase2_infrastructure_implementation/overview.md` |
