@@ -212,8 +212,8 @@ MethodChannel('deepLinkChannel').setMethodCallHandler((call) async {
 
 | チケット | ADRファイル | 状態 |
 |---|---|---|
-| BRAZE-010 Braze SDK導入 | `braze_010.md` | 未着手 |
-| BRAZE-011 環境別設定 | `braze_011.md` | 未着手 |
+| BRAZE-010 Braze SDK導入 | `braze_010.md` | ✅ 完了（2026-10-14） |
+| BRAZE-011 環境別設定 | `braze_011.md` | ✅ 完了（2026-10-14） |
 | BRAZE-012 Push権限管理 | `braze_012.md` | 未着手 |
 | BRAZE-013 Pushトークン登録 | `braze_013.md` | 未着手 |
 | BRAZE-014 ユーザー識別 | `braze_014.md` | 未着手 |

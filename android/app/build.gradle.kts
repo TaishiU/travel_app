@@ -8,6 +8,36 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// --dart-define で渡された値を Map<String, String> に展開する。
+// Flutter は dart-defines を Base64 エンコードしたカンマ区切り文字列として Gradle に渡す。
+val dartDefines: Map<String, String> = if (project.hasProperty("dart-defines")) {
+    (project.property("dart-defines") as String)
+        .split(",")
+        .filter { it.isNotEmpty() }
+        .associate { encoded ->
+            val decoded = String(java.util.Base64.getDecoder().decode(encoded))
+            val eqIndex = decoded.indexOf('=')
+            if (eqIndex >= 0) decoded.substring(0, eqIndex) to decoded.substring(eqIndex + 1)
+            else decoded to ""
+        }
+} else {
+    emptyMap()
+}
+
+val flavorName = dartDefines["FLAVOR"] ?: "dev"
+
+val brazeAndroidApiKey = when (flavorName) {
+    "prod"    -> "YOUR_PROD_ANDROID_API_KEY"
+    "staging" -> "YOUR_STG_ANDROID_API_KEY"
+    else      -> "YOUR_DEV_ANDROID_API_KEY"
+}
+
+val brazeEndpoint = when (flavorName) {
+    "prod"    -> "YOUR_PROD_BRAZE_ENDPOINT"
+    "staging" -> "YOUR_STG_BRAZE_ENDPOINT"
+    else      -> "YOUR_DEV_BRAZE_ENDPOINT"
+}
+
 android {
     namespace = "com.example.travel_app"
     compileSdk = flutter.compileSdkVersion
@@ -31,6 +61,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // FLAVOR ごとに Braze 設定を切り替える（braze.xml から移管）。
+        resValue("string", "com_braze_api_key", brazeAndroidApiKey)
+        resValue("string", "com_braze_custom_endpoint", brazeEndpoint)
     }
 
     buildTypes {
