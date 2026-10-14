@@ -1,5 +1,5 @@
-import 'package:travel_app/utils/talker.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:travel_app/utils/talker.dart';
 
 /// logger パッケージとの互換性を保つショートカット拡張。
 /// 既存の logger.d/i/w/e() 呼び出しをそのまま維持するために定義。

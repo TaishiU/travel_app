@@ -1,6 +1,6 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/task/task_repository.dart';
 import 'package:travel_app/presentation/task/state.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final AsyncNotifierProvider<TaskScreenNotifier, TaskScreenState>

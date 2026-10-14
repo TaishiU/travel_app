@@ -1,7 +1,7 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/web_api/products/dto.dart';
 import 'package:travel_app/data/services/web_api/products/service.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final stubProductsApiServiceImplProvider = Provider<StubProductsApiServiceImpl>(

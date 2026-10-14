@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:travel_app/presentation/debug/screen.dart';
 import 'package:travel_app/presentation/home/todo_list/screen.dart';
 import 'package:travel_app/presentation/login/screen.dart';
 import 'package:travel_app/presentation/profile/screen.dart';
 import 'package:travel_app/presentation/task/screen.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 /// 画面遷移ヘルパー。
 extension NavigationExtension on BuildContext {

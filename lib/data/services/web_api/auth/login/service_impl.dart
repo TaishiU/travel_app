@@ -1,10 +1,10 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/web_api/api_client.dart';
 import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/data/services/web_api/auth/login/dto.dart';
 import 'package:travel_app/data/services/web_api/auth/login/service.dart';
 import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// AuthApiServiceImplのプロバイダ
 final authApiServiceImplProvider = Provider<AuthApiServiceImpl>(

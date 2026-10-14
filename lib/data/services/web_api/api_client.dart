@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/utils/logger.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart' as http;
 
 /// APIクライアントのインスタンスを提供するプロバイダー。
 ///
@@ -125,12 +125,12 @@ class ApiClientImpl implements ApiClient {
   /// [retryDelay] : リクエストが失敗した場合の再試行の間隔。デフォルトは1秒。
   /// [maxRetries] : リクエストが失敗した場合の最大再試行回数。デフォルトは3回。
   ApiClientImpl({
-    required http.Client client,
+    required this._client,
     required this.baseUrl,
     required this.authSecureStorageService,
     this.retryDelay = const Duration(seconds: 1),
     this.maxRetries = 3,
-  }) : _client = client;
+  });
 
   /// HTTPリクエストの送信に使用されるHTTPクライアント。
   final http.Client _client;

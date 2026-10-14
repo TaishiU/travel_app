@@ -1,7 +1,7 @@
-import 'package:travel_app/data/services/local_storage/database/app_database.dart';
-import 'package:travel_app/data/services/local_storage/database/task/task_local_service.dart';
 import 'package:drift/drift.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_app/data/services/local_storage/database/app_database.dart';
+import 'package:travel_app/data/services/local_storage/database/task/task_local_service.dart';
 
 /// [TaskLocalService] のプロバイダ。
 final taskLocalServiceImplProvider = Provider<TaskLocalServiceImpl>(
@@ -11,7 +11,7 @@ final taskLocalServiceImplProvider = Provider<TaskLocalServiceImpl>(
 /// [TaskLocalService] の実装。Driftを使用してSQLiteへアクセスする。
 class TaskLocalServiceImpl implements TaskLocalService {
   /// コンストラクタ。
-  TaskLocalServiceImpl({required AppDatabase db}) : _db = db;
+  TaskLocalServiceImpl({required this._db});
 
   final AppDatabase _db;
 

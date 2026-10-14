@@ -1,8 +1,8 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/domain/use_cases/auth/auth_use_case.dart';
 import 'package:travel_app/presentation/login/state.dart';
 import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// LoginScreenNotifierのプロバイダ
 final AsyncNotifierProvider<LoginScreenNotifier, LoginScreenState>

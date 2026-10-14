@@ -1,6 +1,6 @@
-import 'package:travel_app/data/services/web_api/stub_api_enabled_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_app/data/services/web_api/stub_api_enabled_provider.dart';
 
 void main() {
   late ProviderContainer container;

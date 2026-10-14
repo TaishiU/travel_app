@@ -48,3 +48,10 @@ app.*.map.json
 .mcp.json
 .serena/
 CLAUDE.md
+
+# Firebase configuration files
+firebase_options.dart
+GoogleService-Info.plist
+firebase.json
+google-services.json
+firepit-log.txt

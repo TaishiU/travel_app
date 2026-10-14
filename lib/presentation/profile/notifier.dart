@@ -1,7 +1,7 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/domain/use_cases/auth/auth_use_case.dart';
 import 'package:travel_app/presentation/profile/state.dart';
 import 'package:travel_app/presentation/profile/use_case.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final AsyncNotifierProvider<ProfileScreenNotifier, ProfileScreenState>

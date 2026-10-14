@@ -1,6 +1,6 @@
-import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service.dart';
 
 /// プロバイダ
 final sharedPreferencesServiceImplProvider =
@@ -19,8 +19,8 @@ class SharedPreferencesServiceImpl implements SharedPreferencesService {
   /// コンストラクタ。
   /// 外部から`SharedPreferencesWithCache`のインスタンスを受け取ります。
   SharedPreferencesServiceImpl({
-    required SharedPreferencesWithCache sharedPreferences,
-  }) : _sharedPreferences = sharedPreferences;
+    required this._sharedPreferences,
+  });
 
   /// `SharedPreferencesWithCache`のインスタンスを保持します。
   final SharedPreferencesWithCache _sharedPreferences;

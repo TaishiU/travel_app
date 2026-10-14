@@ -1,6 +1,6 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_app/data/services/web_api/users/dto.dart' show UserDto;
 import 'package:travel_app/data/services/web_api/users/dto.dart' as dto;
-import 'package:travel_app/data/services/web_api/users/dto.dart'
-    show UserDto;
 import 'package:travel_app/data/services/web_api/users/service.dart';
 import 'package:travel_app/data/services/web_api/users/service_impl.dart'
     show usersApiServiceProvider;
@@ -8,7 +8,6 @@ import 'package:travel_app/domain/entities/user/user.dart';
 import 'package:travel_app/domain/errors/app_error.dart';
 import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final userRepositoryProvider = Provider<UserRepository>(

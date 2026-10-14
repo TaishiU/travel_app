@@ -1,7 +1,7 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/local_storage/preferences/auth/auth_preferences_service.dart';
 import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service.dart';
 import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final authPreferencesServiceImplProvider = Provider<AuthPreferencesServiceImpl>(

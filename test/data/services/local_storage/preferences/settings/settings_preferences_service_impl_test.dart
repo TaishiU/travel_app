@@ -1,12 +1,12 @@
-import 'package:travel_app/data/services/local_storage/preferences/settings/settings_preferences_service_impl.dart';
-import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service.dart';
-import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/misc.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/src/shared_preferences_async.dart';
+import 'package:travel_app/data/services/local_storage/preferences/settings/settings_preferences_service_impl.dart';
+import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service.dart';
+import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
 
 import 'settings_preferences_service_impl_test.mocks.dart';
 

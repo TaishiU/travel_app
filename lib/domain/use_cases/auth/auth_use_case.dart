@@ -1,6 +1,6 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/auth/auth_repository.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// AuthUseCaseのプロバイダ
 final authUseCaseProvider = Provider<AuthUseCase>((ref) {

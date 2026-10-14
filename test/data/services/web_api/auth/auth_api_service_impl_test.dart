@@ -1,12 +1,12 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:travel_app/data/services/web_api/api_client.dart';
 import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/data/services/web_api/auth/login/dto.dart';
 import 'package:travel_app/data/services/web_api/auth/login/service_impl.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'auth_api_service_impl_test.mocks.dart';
 

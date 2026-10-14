@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TODO(BRAZE-011): 環境別APIキーを設定する -->
+    <string translatable="false" name="com_braze_api_key">YOUR_ANDROID_API_KEY</string>
+    <!-- TODO(BRAZE-011): Brazeダッシュボードのエンドポイントを設定する (例: sdk.iad-01.braze.com) -->
+    <string translatable="false" name="com_braze_custom_endpoint">YOUR_CUSTOM_ENDPOINT</string>
+
+    <!-- FCM経由のPush配信を有効化 -->
+    <bool translatable="false" name="com_braze_firebase_cloud_messaging_registration_enabled">true</bool>
+    <!-- TODO(BRAZE-011): google-services.jsonのproject_numberを設定する -->
+    <string translatable="false" name="com_braze_firebase_cloud_messaging_sender_id">YOUR_FCM_SENDER_ID</string>
+
+    <!-- 通知タップ時のDeep LinkをBrazeが自動処理 -->
+    <bool name="com_braze_handle_push_deep_links_automatically">true</bool>
+</resources>

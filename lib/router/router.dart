@@ -1,3 +1,7 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/auth/auth_repository.dart';
 import 'package:travel_app/domain/use_cases/auth/auth_use_case.dart';
 import 'package:travel_app/presentation/debug/screen.dart';
@@ -6,10 +10,6 @@ import 'package:travel_app/presentation/home/todo_list/screen.dart';
 import 'package:travel_app/presentation/login/screen.dart';
 import 'package:travel_app/presentation/profile/screen.dart';
 import 'package:travel_app/presentation/task/screen.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// 共通UIシェルのウィジェット (Bottom Navigation Barを持つScaffold)
 class ScaffoldWithNavBar extends StatefulWidget {

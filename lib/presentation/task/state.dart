@@ -1,5 +1,5 @@
-import 'package:travel_app/domain/entities/task/task.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:travel_app/domain/entities/task/task.dart';
 
 part 'state.freezed.dart';
 

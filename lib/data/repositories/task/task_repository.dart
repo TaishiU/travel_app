@@ -1,8 +1,8 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/local_storage/database/app_database.dart';
 import 'package:travel_app/data/services/local_storage/database/task/task_local_service.dart';
 import 'package:travel_app/data/services/local_storage/database/task/task_local_service_impl.dart';
 import 'package:travel_app/domain/entities/task/task.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// [TaskRepository] のプロバイダ。
 final taskRepositoryProvider = Provider<TaskRepository>(

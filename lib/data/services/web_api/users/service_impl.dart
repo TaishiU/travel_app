@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/web_api/api_client.dart';
 import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/data/services/web_api/stub_api_enabled_provider.dart';
@@ -6,8 +8,6 @@ import 'package:travel_app/data/services/web_api/users/service.dart';
 import 'package:travel_app/data/services/web_api/users/stub_service_impl.dart';
 import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:flutter/foundation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final usersApiServiceImplProvider = Provider<UsersApiServiceImpl>(

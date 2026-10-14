@@ -1,5 +1,5 @@
-import 'package:travel_app/domain/errors/app_error.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_app/domain/errors/app_error.dart';
 
 /// 共通エラーコンポーネント
 ///

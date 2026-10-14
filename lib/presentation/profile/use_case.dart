@@ -1,9 +1,9 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/user/user_repository.dart';
 import 'package:travel_app/domain/entities/user/user.dart';
 import 'package:travel_app/presentation/profile/state.dart';
 import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// ProfileScreenUseCaseのプロバイダ
 final profileScreenUseCaseProvider = Provider<ProfileScreenUseCase>(
