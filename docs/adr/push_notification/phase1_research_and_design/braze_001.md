@@ -154,8 +154,8 @@ flowchart TD
 | `lib/data/services/braze/braze_analytics_service.dart` | Braze SDK 呼び出しの抽象インターフェース |
 | `lib/data/services/braze/braze_analytics_service_impl.dart` | `braze_plugin` を使った実装 |
 | `lib/data/services/braze/stub_braze_analytics_service_impl.dart` | テスト用スタブ |
-| `lib/data/repositories/notification/notification_analytics_repository.dart` | 属性・カスタムイベント送信の集約（UI から直接 SDK を呼ばない） |
-| `lib/domain/use_cases/notification/notification_permission_use_case.dart` | Push 権限取得・状態管理 |
+| `../../../../lib/data/repositories/permission/notification/notification_analytics_repository.dart` | 属性・カスタムイベント送信の集約（UI から直接 SDK を呼ばない） |
+| `../../../../lib/domain/use_cases/permission/notification/notification_permission_use_case.dart` | Push 権限取得・状態管理 |
 | `lib/presentation/notification_settings/screen.dart` 等 | 通知設定UI（カテゴリ別 ON/OFF・マーケ同意）（Phase 3） |
 
 ---

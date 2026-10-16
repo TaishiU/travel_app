@@ -163,6 +163,51 @@ Notifier + UseCase + Repository を**まとめてテスト**し、スタブServi
 
 ---
 
+### Integration テストのファイル配置原則
+
+Integration テストは複数レイヤーを横断するため、Unit テストのように「対象ファイルと1対1でミラー」できない。配置の判断軸は **「テストのエントリーポイント（最上位の被テスト層）にミラーする」**。
+
+#### 原則
+
+テストコード内でどの層のメソッドを呼び出しているか（= 公開 API として扱っているか）が配置先を決める。
+
+```
+UseCase → RepositoryImpl → StubService
+   ↑
+ useCase.checkStatus() を呼ぶ → UseCase が entry point
+ → test/domain/use_cases/{feature}/ に配置
+```
+
+スタブの境界（StubService）の場所ではなく、**テストの主語（何をテストしているか）** に合わせる。
+
+#### 各パターンの配置
+
+| テスト内容 | Entry point | 配置先 |
+|---|---|---|
+| UseCase → RepositoryImpl → StubService | UseCase | `test/domain/use_cases/{feature}/` |
+| Notifier → UseCase → RepositoryImpl → StubService | Notifier | `test/presentation/{feature}/` |
+| Repository → StubService | Repository | `test/data/repositories/{feature}/` |
+
+#### Unit テストとの共存
+
+同じディレクトリに Unit テストと Integration テストが共存する場合、ファイル名サフィックスで区別する。
+
+```
+test/domain/use_cases/permission/notification/
+  notification_permission_use_case_test.dart              ← Unit
+  notification_permission_use_case_integration_test.dart  ← Integration
+```
+
+#### StubService の場所に置いてはいけない理由
+
+`test/data/services/{feature}/` に Integration テストを置くと：
+
+- 「Service をテストしている」と読み手が誤解する
+- スタブ境界（= テストが通り抜けた場所）で分類しており本末転倒
+- Unit テストの配置規則（対象ファイルとミラー）と命名規則が崩れる
+
+---
+
 ## テスト記述規約（Given-When-Then）
 
 全テストを **Given-When-Then 構文** で記述する。3条件との対応を明示することで、AI実装指示の精度が上がり、テストの意図が自明になる。

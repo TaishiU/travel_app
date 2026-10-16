@@ -46,9 +46,10 @@ lcov --extract coverage/lcov.info 'lib/data/**/*_repository.dart' \
   --extract coverage/lcov.info 'lib/ui/**/*_view_model.dart' \
   -o coverage/lcov_extract.info 2>/dev/null
 
-# 自動生成ファイルを除外
+# 自動生成ファイル・スタブを除外
 lcov --remove coverage/lcov_extract.info 'lib/**/*.g.dart' \
   --remove coverage/lcov_extract.info 'lib/**/*.freezed.dart' \
+  --remove coverage/lcov_extract.info 'lib/**/stub_*.dart' \
   -o coverage/lcov_extract.info 2>/dev/null
 
 # 4. カバレッジ 100% チェック

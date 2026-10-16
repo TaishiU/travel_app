@@ -240,6 +240,181 @@ Android では「1回目拒否後に理由を説明してから再プロンプ�
 
 ---
 
+### 2.4 OS権限APIの異常系設計方針
+
+#### 権限処理に異常系は存在するか
+
+`permission_handler` は MethodChannel 経由でOS APIを呼び出す。そのため、技術的には以下の例外が throw される可能性がある。
+
+| 例外 | 発生条件 |
+|---|---|
+| `PlatformException` | ネイティブ側（iOS/Android）の処理失敗 |
+| `MissingPluginException` | プラグイン未登録（ビルド設定ミス） |
+| SharedPreferences 書き込み失敗 | ストレージ極端な不足（実質稀） |
+
+ただし、これらは「ユーザーが操作することで解決できる状態」ではない。ビルド設定ミスや端末レベルの異常であり、正しくビルドされたアプリの実行時には実質発生しない。
+
+> **注意**: iOS で `PERMISSION_NOTIFICATIONS=1` マクロが抜けた場合は例外を throw せず、常に `denied` を返すという動作になる（BRAZE-012 参照）。設定ミスはクラッシュではなく値の劣化として現れる。
+
+---
+
+#### 通信系エラーとの本質的な違い
+
+権限APIの例外を通信系エラーと同じ観点で扱ってはならない。
+
+| 軸 | 通信系エラー | 権限API例外 |
+|---|---|---|
+| 原因 | ネットワーク未接続・サーバー障害 | ビルド設定ミス・OSバグ |
+| ユーザーに対処手段はあるか | **あり**（WiFi ON / 再試行） | **なし** |
+| 実行時に頻繁に発生するか | 発生しうる | 正しいビルドでは実質発生しない |
+| UIで伝える価値 | 高い（ユーザーが解決できる） | ない（伝えても解決できない） |
+
+通信系エラーはスナックバーや「再試行」ボタンで意味のある対処ができるが、権限API例外でユーザーができることは何もない。スナックバーやダイアログを表示しても混乱させるだけである。
+
+---
+
+#### 設計方針の結論
+
+**権限処理において、ユーザーが操作できる異常系は存在しない。**
+
+- `denied` / `permanentlyDenied` はエラーではなくドメインの正常状態として既に `NotificationPermissionStatus` enum でモデル化済み
+- 技術的例外（`PlatformException`）はビルド設定エラーを意味するため、フォールバック値を返すより例外を伝播させてサーフェスさせる方が正しい
+- `error_handling.md` の `AppError` は HTTP API 向けの設計であり、権限APIには持ち込まない
+- スナックバー・ダイアログ等のUIは**追加しない**
+
+---
+
+#### 現状のコードで例外が起きたときの伝播
+
+`AndroidNotificationPermissionServiceImpl.checkStatus()` でOS APIを呼ぶ箇所：
+
+```dart
+// android_notification_permission_service_impl.dart
+final status = await Permission.notification.status; // ← PlatformException が throw される可能性
+```
+
+現状、どのレイヤーも try/catch を持っていないため、例外はそのまま伝播する。
+
+```
+AndroidNotificationPermissionServiceImpl.checkStatus()
+  └─ PlatformException throw
+       ↑ キャッチなし
+  NotificationPermissionRepositoryImpl.checkStatus()
+       ↑ キャッチなし
+  NotificationPermissionUseCase.checkStatus()
+       ↑ キャッチなし
+  Notifier.build() または Notifier.someMethod()
+```
+
+**各レイヤーに try/catch は追加しない**。これは意図した設計である。
+
+---
+
+#### Notifier を書いたときの挙動
+
+`build()` とアクションメソッドで挙動が異なる。
+
+---
+
+**`build()` の場合（自動キャッチ）**
+
+`build()` は Riverpod が戻り値の `Future` を `AsyncValue` でラップする仕組みになっている。そのため、`build()` 内で throw された例外は Riverpod が自動でキャッチし `state = AsyncError` に変換する。try/catch は不要。
+
+```dart
+@override
+Future<SomeState> build() async {
+  final status = await ref.read(notificationPermissionUseCaseProvider).checkStatus();
+  // ↑ PlatformException が伝播してきた場合、Riverpod が自動でキャッチ → AsyncError
+  return SomeState(permissionStatus: status);
+}
+```
+
+```
+Service → (PlatformException 伝播) → Repository → UseCase → Notifier.build()
+                                                               ↓
+                                               Riverpod が自動キャッチ
+                                                               ↓
+                                                         AsyncError
+```
+
+---
+
+**アクションメソッドの場合（自動キャッチなし）**
+
+`build()` 以外の通常メソッドでは Riverpod は例外を自動キャッチしない。throw された例外は呼び出し元（View の `onPressed` 等）まで伝播する。`state` も更新されない。
+
+```dart
+Future<void> requestPermission() async {
+  final status = await ref.read(notificationPermissionUseCaseProvider).requestPermission();
+  // ↑ PlatformException が伝播してきた場合、Riverpod はキャッチしない
+  //   例外は View の onPressed まで伝播する
+  state = AsyncData(state.requireValue.copyWith(permissionStatus: status));
+}
+```
+
+アクションメソッドでエラーを捕捉して特定の処理をしたい場合は、`error_handling.md` が定義するコールバック方式を使う：
+
+```dart
+Future<void> requestPermission({
+  required VoidCallback onGranted,
+  required VoidCallback onDenied,
+  required VoidCallback onFailure,
+}) async {
+  try {
+    final status = await ref.read(notificationPermissionUseCaseProvider).requestPermission();
+    switch (status) {
+      case NotificationPermissionStatus.granted: onGranted();
+      default: onDenied();
+    }
+  } on Exception catch (_) {
+    onFailure();
+  }
+}
+```
+
+または `state` を `AsyncError` にしたい場合は `AsyncValue.guard` を使う：
+
+```dart
+Future<void> refresh() async {
+  state = const AsyncLoading();
+  state = await AsyncValue.guard(() async {
+    final status = await ref.read(notificationPermissionUseCaseProvider).checkStatus();
+    return SomeState(permissionStatus: status);
+  });
+  // throw された場合 state = AsyncError になる
+}
+```
+
+---
+
+**本権限実装においての結論**
+
+`checkStatus()` / `requestPermission()` をどちらで呼ぶかは Notifier 実装時に決定する。いずれの呼び出し方であっても、PlatformException は正しいビルドでは実質発生しないため、追加の try/catch は現時点では不要と判断している。将来エラー時に特定のUI制御が必要になった場合は、`build()` 経由であれば AsyncError として自動伝播し、アクションメソッド経由であればコールバック方式で対応する。
+
+---
+
+#### View での受け取り
+
+`PlatformException` は `AppError` ではないため、`error_handling.md` の View パターンにおける `_` ワイルドカードが受け取る。
+
+```dart
+// View
+switch (viewModel) {
+  AsyncLoading() => ...,
+  AsyncData(:final value) => _Body(state: value),
+  AsyncError(:final error) => switch (error) {
+    NetworkError() => ...,
+    ServerError()  => ...,
+    AppError()     => CoreError(error: error, onPressed: ...),
+    _ => CoreError(error: Exception(error), onPressed: ...), // ← PlatformException はここ
+  },
+}
+```
+
+本番環境では Crashlytics 等のクラッシュレポートに自動記録されるため、例外のサイレント握り潰しよりも開発・運用上のメリットがある。
+
+---
+
 ## 3. marketing_consent フロー
 
 ### marketing_consent とは

@@ -62,10 +62,10 @@ Firebase関連作業はすべてBRAZE-010に吸収し、後続タスクで実機
 | Firebase / FCM セットアップ（Android） | Firebase Consoleでアプリ登録 → `google-services.json` を `android/app/` に配置<br>`pubspec.yaml` に `firebase_core` / `firebase_messaging` 追加<br>`android/build.gradle` / `app/build.gradle` に `google-services` プラグイン追加 |
 | Braze SDK導入・初期化 | `pubspec.yaml` に `braze_plugin` 追加<br>`lib/main.dart` でSDK初期化<br>`ios/Runner/AppDelegate.swift` で `BrazePlugin.configure` 設定<br>`android/app/src/main/res/values/braze.xml` でAndroid設定 |
 | 環境別APIキー管理 | `lib/config/braze_config.dart`（dev / staging / prod） |
-| Push権限管理 | `lib/domain/use_cases/notification/notification_permission_use_case.dart` |
+| Push権限管理 | `../../../../lib/domain/use_cases/permission/notification/notification_permission_use_case.dart` |
 | Pushトークン登録 | Braze SDKの `registerPushToken` をService経由で呼ぶ |
 | ユーザー識別 | `AuthSecureStorageService` に `userId` 追加 + `AuthUseCase.login` / `logout` に `changeUser` / Brazeログアウト追加 |
-| 属性送信インフラ | `lib/data/services/braze/braze_analytics_service.dart`（interface）<br>`lib/data/services/braze/braze_analytics_service_impl.dart`（impl）<br>`lib/data/services/braze/stub_braze_analytics_service_impl.dart`（stub）<br>`lib/data/repositories/notification/notification_analytics_repository.dart` |
+| 属性送信インフラ | `lib/data/services/braze/braze_analytics_service.dart`（interface）<br>`lib/data/services/braze/braze_analytics_service_impl.dart`（impl）<br>`lib/data/services/braze/stub_braze_analytics_service_impl.dart`（stub）<br>`../../../../lib/data/repositories/permission/notification/notification_analytics_repository.dart` |
 | 最小イベント送信 | `login_completed`, `logout_completed`, `push_permission_requested`, `push_permission_granted` のみ |
 | Deep Link（既存ルートのみ） | `lib/router/router.dart` にBrazeタップコールバック追加。`/todo_list` `/profile` のみ遷移先として定義 |
 
@@ -214,7 +214,7 @@ MethodChannel('deepLinkChannel').setMethodCallHandler((call) async {
 |---|---|---|
 | BRAZE-010 Braze SDK導入 | `braze_010.md` | ✅ 完了（2026-10-14） |
 | BRAZE-011 環境別設定 | `braze_011.md` | ✅ 完了（2026-10-14） |
-| BRAZE-012 Push権限管理 | `braze_012.md` | 未着手 |
+| BRAZE-012 Push権限管理 | `braze_012.md` | ✅ 完了（2026-10-14） |
 | BRAZE-013 Pushトークン登録 | `braze_013.md` | 未着手 |
 | BRAZE-014 ユーザー識別 | `braze_014.md` | 未着手 |
 | BRAZE-015 属性送信Repository | `braze_015.md` | 未着手 |

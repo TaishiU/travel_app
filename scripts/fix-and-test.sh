@@ -55,9 +55,10 @@ lcov --extract coverage/lcov.info 'lib/data/**/*_repository.dart' \
   --extract coverage/lcov.info 'lib/data/**/api_client.dart' \
   --extract coverage/lcov.info 'lib/presentation/**/*_view_model.dart' \
   -o coverage/lcov_extract.info
-# 自動生成ファイルを対象から除外
+# 自動生成ファイル・スタブを対象から除外
 lcov --remove coverage/lcov_extract.info 'lib/**/*.g.dart' \
   --remove coverage/lcov_extract.info 'lib/**/*.freezed.dart' \
+  --remove coverage/lcov_extract.info 'lib/**/stub_*.dart' \
   -o coverage/lcov_extract.info
 # HTML生成
 genhtml coverage/lcov_extract.info -o coverage/html
