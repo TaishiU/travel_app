@@ -39,6 +39,9 @@ jobs:
       - name: 依存関係を取得
         run: flutter pub get
 
+      - name: firebase_options.dartを復元
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
+
       - name: widgetbookの依存関係を取得
         run: cd widgetbook && flutter pub get
 
@@ -73,6 +76,9 @@ jobs:
 
       - name: 依存関係を取得
         run: flutter pub get
+
+      - name: firebase_options.dartを復元
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
 
       - name: テスト実行
         run: flutter test
