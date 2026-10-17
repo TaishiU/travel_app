@@ -15,6 +15,8 @@ void main() {
   const notificationPermissionValue = 17;
   const denied = 0;
   const granted = 1;
+  const restricted = 2;
+  const limited = 3;
   const permanentlyDenied = 4;
 
   void mockCheckStatus(int statusCode) {
@@ -34,9 +36,6 @@ void main() {
           return null;
         });
   }
-
-  const restricted = 2;
-  const limited = 3;
 
   tearDown(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -235,6 +234,57 @@ void main() {
           },
         );
       });
+    });
+
+    // requestPermission グループの 正常系 の後に 異常系 を追加
+    group('異常系', () {
+      test(
+        'OS=restricted → permanentlyDenied を返すが permanentlyDenied フラグが立たない（欠陥）',
+        () async {
+          // Given
+          mockRequestPermission(restricted);
+          final prefsService =
+              StubAndroidNotificationPermissionPreferencesServiceImpl();
+          final service = AndroidNotificationPermissionServiceImpl(
+            preferencesService: prefsService,
+          );
+
+          // When
+          final result = await service.requestPermission();
+
+          // Then: 呼び出し元には permanentlyDenied が返るが…
+          expect(
+            result,
+            equals(NotificationPermissionStatus.permanentlyDenied),
+          );
+          // …フラグは立っていない（欠陥）
+          expect(prefsService.getPermanentlyDenied(), isFalse);
+        },
+      );
+
+      test(
+        '欠陥の連鎖: requestPermission(restricted) 後に checkStatus(denied) を呼ぶと '
+        'permanentlyDenied ではなく denied が返る',
+        () async {
+          // Given
+          final prefsService =
+              StubAndroidNotificationPermissionPreferencesServiceImpl();
+          final service = AndroidNotificationPermissionServiceImpl(
+            preferencesService: prefsService,
+          );
+
+          // Step 1: requestPermission が restricted を返す（フラグ未設定のまま）
+          mockRequestPermission(restricted);
+          await service.requestPermission();
+
+          // Step 2: 次の checkStatus が denied を返す
+          mockCheckStatus(denied);
+          final status = await service.checkStatus();
+
+          // Then: permanentlyDenied を期待するが denied が返る（欠陥）
+          expect(status, equals(NotificationPermissionStatus.denied));
+        },
+      );
     });
   });
 }

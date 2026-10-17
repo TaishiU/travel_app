@@ -1,3 +1,6 @@
+import java.util.Base64
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -15,7 +18,7 @@ val dartDefines: Map<String, String> = if (project.hasProperty("dart-defines")) 
         .split(",")
         .filter { it.isNotEmpty() }
         .associate { encoded ->
-            val decoded = String(java.util.Base64.getDecoder().decode(encoded))
+            val decoded = String(Base64.getDecoder().decode(encoded))
             val eqIndex = decoded.indexOf('=')
             if (eqIndex >= 0) decoded.substring(0, eqIndex) to decoded.substring(eqIndex + 1)
             else decoded to ""
@@ -40,16 +43,16 @@ val brazeEndpoint = when (flavorName) {
 
 android {
     namespace = "com.example.travel_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
+
+    buildFeatures {
+        resValues = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
@@ -73,6 +76,12 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 

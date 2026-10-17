@@ -9,9 +9,10 @@ enum NotificationPermissionStatus {
   /// 通知が許可されている（iOS: granted / Android: granted）
   granted,
 
-  /// 一度拒否済み・再要求可能（iOS: denied / Android: 1st_denied）
+  /// 一度拒否済み・再要求可能（Android: 1st_denied）
   ///
-  /// iOS では OS設定への誘導が必要。Android では rationale UI + 再プロンプト可能。
+  /// Android では rationale UI + 再プロンプト可能。
+  /// iOS では通常パスでこの状態は返らない（PermissionStatus.denied → notDetermined に変換）。
   denied,
 
   /// 恒久的に拒否（アプリから再要求不可 — OS設定への誘導が必要）

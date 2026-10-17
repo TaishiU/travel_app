@@ -36,6 +36,8 @@ Future<void> main() async {
       allowList: <String>{
         'access_token',
         'refresh_token',
+        'notification_permission_requested',
+        'notification_permission_permanently_denied',
       },
     ),
   );

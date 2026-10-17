@@ -12,7 +12,7 @@ import 'package:travel_app/data/services/permission/notification/notification_pe
 final notificationPermissionServiceImplProvider =
     Provider<NotificationPermissionService>(
       (ref) => buildNotificationPermissionService(
-        preferencesService: ref.read(
+        preferencesServiceFactory: () => ref.read(
           androidNotificationPermissionPreferencesServiceImplProvider,
         ),
         isIos: Platform.isIOS,
@@ -21,11 +21,13 @@ final notificationPermissionServiceImplProvider =
 
 /// [NotificationPermissionService] のインスタンスを生成する。
 /// [isIos] を注入可能にすることでテスト時にプラットフォーム分岐を制御できる。
+/// [preferencesServiceFactory] は lazy に評価されるため、[isIos] が true の場合は呼ばれない。
 NotificationPermissionService buildNotificationPermissionService({
-  required AndroidNotificationPermissionPreferencesService preferencesService,
+  required AndroidNotificationPermissionPreferencesService Function()
+  preferencesServiceFactory,
   required bool isIos,
 }) => isIos
     ? IosNotificationPermissionServiceImpl()
     : AndroidNotificationPermissionServiceImpl(
-        preferencesService: preferencesService,
+        preferencesService: preferencesServiceFactory(),
       );

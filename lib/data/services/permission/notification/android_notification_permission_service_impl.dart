@@ -2,6 +2,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:travel_app/data/services/local_storage/preferences/permission/notification/android_notification_permission_preferences_service.dart';
 import 'package:travel_app/data/services/permission/notification/notification_permission_service.dart';
 import 'package:travel_app/domain/entities/permission/notification/notification_permission_status.dart';
+import 'package:travel_app/utils/logger.dart';
 
 /// Android 向け [NotificationPermissionService] の実装クラス。
 /// `permission_handler` の OS 権限 API と
@@ -19,6 +20,24 @@ class AndroidNotificationPermissionServiceImpl
 
   @override
   Future<NotificationPermissionStatus> checkStatus() async {
+    logger.i(
+      message:
+          '[AndroidNotificationPermissionServiceImpl] checkStatus(): start',
+    );
+    final notificationPermissionRequested = preferencesService.getRequested();
+    final notificationPermissionPermanentlyDenied = preferencesService
+        .getPermanentlyDenied();
+    logger
+      ..w(
+        message:
+            'notification_permission_requested: '
+            '$notificationPermissionRequested',
+      )
+      ..w(
+        message:
+            'notification_permission_permanently_denied: '
+            '$notificationPermissionPermanentlyDenied',
+      );
     final status = await Permission.notification.status;
     return switch (status) {
       PermissionStatus.granted => _handleGranted(),

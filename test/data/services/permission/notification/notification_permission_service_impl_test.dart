@@ -33,13 +33,11 @@ void main() {
   });
 
   group('buildNotificationPermissionService', () {
-    final prefsService =
-        StubAndroidNotificationPermissionPreferencesServiceImpl();
-
     group('正常系', () {
       test('isIos=true → IosNotificationPermissionServiceImplを返すこと', () {
         final service = buildNotificationPermissionService(
-          preferencesService: prefsService,
+          preferencesServiceFactory:
+              StubAndroidNotificationPermissionPreferencesServiceImpl.new,
           isIos: true,
         );
 
@@ -50,11 +48,33 @@ void main() {
         'isIos=false → AndroidNotificationPermissionServiceImplを返すこと',
         () {
           final service = buildNotificationPermissionService(
-            preferencesService: prefsService,
+            preferencesServiceFactory:
+                StubAndroidNotificationPermissionPreferencesServiceImpl.new,
             isIos: false,
           );
 
           expect(service, isA<AndroidNotificationPermissionServiceImpl>());
+        },
+      );
+    });
+
+    group('lazy factory', () {
+      test(
+        'isIos=true のとき preferencesServiceFactory は呼ばれないこと',
+        () {
+          // preferencesServiceFactory はクロージャとして渡されるため、
+          // isIos=true の場合は関数本体で呼ばれず Android 専用の依存が評価されない。
+          var wasEvaluated = false;
+
+          buildNotificationPermissionService(
+            preferencesServiceFactory: () {
+              wasEvaluated = true;
+              return StubAndroidNotificationPermissionPreferencesServiceImpl();
+            },
+            isIos: true,
+          );
+
+          expect(wasEvaluated, isFalse);
         },
       );
     });
