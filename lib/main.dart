@@ -32,16 +32,11 @@ Future<void> main() async {
   }
 
   final sharedPreferencesWithCache = await SharedPreferencesWithCache.create(
-    cacheOptions: const SharedPreferencesWithCacheOptions(
-      allowList: <String>{
-        'access_token',
-        'refresh_token',
-        'notification_permission_requested',
-        'notification_permission_permanently_denied',
-      },
-    ),
+    // allowList: null（デフォルト）で全キーをキャッシュ対象にする。
+    // キーを明示管理する集約クラス案と比較検討したが、新キー追加のたびに
+    // 集約クラスの更新が必要になる保守コストを回避するために null を採用。
+    cacheOptions: const SharedPreferencesWithCacheOptions(),
   );
-
   final sharedPreferencesServiceImpl = SharedPreferencesServiceImpl(
     sharedPreferences: sharedPreferencesWithCache,
   );
