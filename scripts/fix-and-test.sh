@@ -49,11 +49,12 @@ TEST_OUTPUT=$(cat "$TEST_LOG")
 rm -f "$TEST_LOG"
 
 # カバレッジをhtml化する
-lcov --extract coverage/lcov.info 'lib/data/**/*_repository.dart' \
+lcov --extract coverage/lcov.info 'lib/presentation/**/notifier.dart' \
+  --extract coverage/lcov.info 'lib/presentation/**/use_case.dart' \
+  --extract coverage/lcov.info 'lib/domain/**/*_use_case.dart' \
+  --extract coverage/lcov.info 'lib/data/**/*_repository_impl.dart' \
   --extract coverage/lcov.info 'lib/data/**/*_service_impl.dart' \
-  --extract coverage/lcov.info 'lib/data/**/service_impl.dart' \
   --extract coverage/lcov.info 'lib/data/**/api_client.dart' \
-  --extract coverage/lcov.info 'lib/presentation/**/*_view_model.dart' \
   -o coverage/lcov_extract.info
 # 自動生成ファイル・スタブを対象から除外
 lcov --remove coverage/lcov_extract.info 'lib/**/*.g.dart' \

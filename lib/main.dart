@@ -10,6 +10,7 @@ import 'package:talker_riverpod_logger/talker_riverpod_logger.dart';
 import 'package:travel_app/config/braze_config.dart';
 import 'package:travel_app/data/services/braze/braze_plugin_provider.dart';
 import 'package:travel_app/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
+import 'package:travel_app/domain/use_cases/push_token/register_push_token_use_case.dart';
 import 'package:travel_app/firebase_options.dart';
 import 'package:travel_app/router/router.dart';
 import 'package:travel_app/utils/talker.dart';
@@ -41,24 +42,30 @@ Future<void> main() async {
     sharedPreferences: sharedPreferencesWithCache,
   );
 
+  final container = ProviderContainer(
+    observers: [
+      UnauthorizedErrorObserver(),
+      TalkerRiverpodObserver(
+        talker: talker,
+        settings: const TalkerRiverpodLoggerSettings(
+          printProviderAdded: false,
+          printProviderUpdated: false,
+        ),
+      ),
+    ],
+    overrides: [
+      sharedPreferencesServiceImplProvider.overrideWithValue(
+        sharedPreferencesServiceImpl,
+      ),
+      brazePluginProvider.overrideWithValue(brazePlugin),
+    ],
+  );
+
+  await container.read(registerPushTokenUseCaseProvider).register();
+
   runApp(
-    ProviderScope(
-      observers: [
-        UnauthorizedErrorObserver(),
-        TalkerRiverpodObserver(
-          talker: talker,
-          settings: const TalkerRiverpodLoggerSettings(
-            printProviderAdded: false,
-            printProviderUpdated: false,
-          ),
-        ),
-      ],
-      overrides: [
-        sharedPreferencesServiceImplProvider.overrideWithValue(
-          sharedPreferencesServiceImpl,
-        ),
-        brazePluginProvider.overrideWithValue(brazePlugin),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: const MyApp(),
     ),
   );
