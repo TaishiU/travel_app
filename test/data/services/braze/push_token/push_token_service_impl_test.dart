@@ -133,5 +133,25 @@ void main() {
       verifyNever(mockFirebaseMessaging.getToken());
       verifyNever(mockBrazePlugin.registerPushToken(any));
     });
+
+    test('Android・getTokenが例外: 例外が伝播すること', () async {
+      final controller = StreamController<String>.broadcast();
+      addTearDown(controller.close);
+      when(
+        mockFirebaseMessaging.onTokenRefresh,
+      ).thenAnswer((_) => controller.stream);
+      when(
+        mockFirebaseMessaging.getToken(),
+      ).thenThrow(Exception('FCM error'));
+
+      final service = PushTokenServiceImpl(
+        brazePlugin: mockBrazePlugin,
+        firebaseMessaging: mockFirebaseMessaging,
+        isAndroid: true,
+      );
+
+      await expectLater(service.register(), throwsA(isA<Exception>()));
+      verifyNever(mockBrazePlugin.registerPushToken(any));
+    });
   });
 }

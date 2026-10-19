@@ -46,16 +46,11 @@ class PushTokenServiceImpl implements PushTokenService {
 
   @override
   Future<void> register() async {
-    logger.i(message: '[PushTokenServiceImpl] register(): start');
-    try {
-      if (!_isAndroid) return;
-      final token = await _firebaseMessaging.getToken();
-      logger.w(message: 'token: $token');
-      if (token != null) {
-        _brazePlugin.registerPushToken(token);
-      }
-    } on Exception catch (error) {
-      logger.e(message: 'error: $error');
+    if (!_isAndroid) return;
+    final token = await _firebaseMessaging.getToken();
+    logger.i(message: 'push token: $token');
+    if (token != null) {
+      _brazePlugin.registerPushToken(token);
     }
   }
 }
