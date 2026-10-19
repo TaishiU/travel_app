@@ -2,7 +2,7 @@
 
 ## ステータス
 
-完了（2026-10-18）
+完了（2026-10-18）、不具合対応（2026-10-19）
 
 ---
 
@@ -23,7 +23,8 @@ FCMトークン（Android）/ APNsトークン（iOS）をBrazeに登録する�
 | `lib/domain/interfaces/push_token/push_token_repository.dart` | 新規 | Pushトークン登録のRepositoryインターフェース |
 | `lib/data/repositories/push_token/push_token_repository_impl.dart` | 新規 | Repository実装 + Provider |
 | `lib/domain/use_cases/push_token/register_push_token_use_case.dart` | 新規 | ドメインユースケース + Provider |
-| `lib/main.dart` | 変更 | `ProviderScope` → `ProviderContainer` + `UncontrolledProviderScope` へ移行。起動時に `RegisterPushTokenUseCase.register()` を呼ぶ |
+| `lib/main.dart` | 変更 | `ProviderScope` → `ProviderContainer` + `UncontrolledProviderScope` へ移行。起動時に `RegisterPushTokenUseCase.register()` を呼ぶ。例外をキャッチしてアプリ起動継続（後述） |
+| `android/app/src/main/AndroidManifest.xml` | 変更 | Braze SDK が注入する `firebase_messaging_installation_id_enabled=true` を `tools:replace` でオーバーライド（後述） |
 
 ---
 
@@ -81,13 +82,52 @@ BRAZE-013以降: `ProviderContainer` を先に作り、UseCase呼び出し後に
 
 ```dart
 final container = ProviderContainer(observers: [...], overrides: [...]);
-await container.read(registerPushTokenUseCaseProvider).register();
+try {
+  await container.read(registerPushTokenUseCaseProvider).register();
+} on Exception catch (error) {
+  talker.warning('Push token registration failed. App continues without push token.', error);
+}
 runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 ```
 
 **移行理由**: `runApp` 前にProviderにアクセスするためには `ProviderContainer` を直接生成する必要がある。`ProviderScope` は `Widget` のため `runApp` 前に使えない。`UncontrolledProviderScope` は既存の `container` を `Widget` ツリーに expose する標準パターン。
 
-### 4. UseCase / Repository は薄いパススルー
+**try-catch 追加理由**: `register()` 呼び出しチェーン全体（UseCase → Repository → Service）に例外処理がなく、`FirebaseMessaging.getToken()` がネットワーク不達・FCMサービス不可等で例外を投げると `runApp` に到達せずアプリ起動不能になる。プッシュトークン登録失敗はアプリ起動をブロックすべきでないため、`main()` でキャッチして継続する。
+
+### 4. AndroidManifest.xml — Braze SDK によるマニフェスト汚染の回避
+
+**事象**: Android実機で `FirebaseMessaging.getToken()` が以下の例外を投げてトークン取得不能。
+
+```
+java.lang.IllegalStateException: API disabled. Please use register() instead or
+enable this API by removing <meta-data android:name="firebase_messaging_installation_id_enabled"
+android:value="true" /> from your app's manifest.
+```
+
+**原因**: Braze Android SDK (`android-sdk-ui-43.1.1`) が自身の `AndroidManifest.xml` に `firebase_messaging_installation_id_enabled=true` を注入する。この値が `true` の場合、Firebase Messaging の新 API（Firebase Installations API）が無効化され `getToken()` が `IllegalStateException` を投げる。
+
+**対応**: アプリの `AndroidManifest.xml` で `tools:replace="android:value"` を使って `false` で上書き。
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+  <application ...>
+    <!-- Braze Android SDK が firebase_messaging_installation_id_enabled=true を注入するため上書き。
+         true のままだと FirebaseMessaging.getToken() が IllegalStateException を投げる。 -->
+    <meta-data
+        android:name="firebase_messaging_installation_id_enabled"
+        android:value="false"
+        tools:replace="android:value" />
+  </application>
+</manifest>
+```
+
+この回避方法は Braze SDK 自身の `AndroidManifest.xml` コメントにも明記されている公式手順。  
+適用後は `flutter clean && flutter run` によるクリーンビルドが必要（インクリメンタルビルドでは merged manifest が更新されない）。
+
+---
+
+### 5. UseCase / Repository は薄いパススルー
 
 ```
 RegisterPushTokenUseCase.register()

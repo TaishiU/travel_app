@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/braze/braze_plugin_provider.dart';
 import 'package:travel_app/data/services/braze/push_token/push_token_service.dart';
+import 'package:travel_app/utils/logger.dart';
 
 /// [FirebaseMessaging.instance] を提供するProvider。テスト時に差し替え可能。
 final firebaseMessagingProvider = Provider<FirebaseMessaging>(
@@ -45,10 +46,16 @@ class PushTokenServiceImpl implements PushTokenService {
 
   @override
   Future<void> register() async {
-    if (!_isAndroid) return;
-    final token = await _firebaseMessaging.getToken();
-    if (token != null) {
-      _brazePlugin.registerPushToken(token);
+    logger.i(message: '[PushTokenServiceImpl] register(): start');
+    try {
+      if (!_isAndroid) return;
+      final token = await _firebaseMessaging.getToken();
+      logger.w(message: 'token: $token');
+      if (token != null) {
+        _brazePlugin.registerPushToken(token);
+      }
+    } on Exception catch (error) {
+      logger.e(message: 'error: $error');
     }
   }
 }

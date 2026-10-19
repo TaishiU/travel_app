@@ -13,6 +13,7 @@ import 'package:travel_app/data/services/local_storage/preferences/shared_prefer
 import 'package:travel_app/domain/use_cases/push_token/register_push_token_use_case.dart';
 import 'package:travel_app/firebase_options.dart';
 import 'package:travel_app/router/router.dart';
+import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/talker.dart';
 import 'package:travel_app/utils/unauthorized_error_observer.dart';
 
@@ -61,7 +62,18 @@ Future<void> main() async {
     ],
   );
 
-  await container.read(registerPushTokenUseCaseProvider).register();
+  // logger.i(message: '[main.dart] register(): start');
+  // await container.read(registerPushTokenUseCaseProvider).register();
+
+  try {
+    logger.i(message: '[main.dart] register(): start');
+    await container.read(registerPushTokenUseCaseProvider).register();
+  } on Exception catch (error) {
+    talker.warning(
+      'Push token registration failed. App continues without push token.',
+      error,
+    );
+  }
 
   runApp(
     UncontrolledProviderScope(
