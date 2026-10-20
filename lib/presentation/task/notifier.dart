@@ -25,10 +25,7 @@ class TaskScreenNotifier extends AsyncNotifier<TaskScreenState> {
   Future<void> updateCompletion({required int id, required bool completed}) =>
       ref
           .read(taskRepositoryProvider)
-          .updateCompletion(
-            id: id,
-            completed: completed,
-          );
+          .updateCompletion(id: id, completed: completed);
 
   /// データの再読み込みを行う
   Future<void> refresh() async {

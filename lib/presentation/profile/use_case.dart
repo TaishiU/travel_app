@@ -21,9 +21,7 @@ class ProfileScreenUseCase {
   /// プロフィール画面の初期状態を構築する
   Future<ProfileScreenState> initState() async {
     final user = await fetchUser();
-    return ProfileScreenState(
-      user: user,
-    );
+    return ProfileScreenState(user: user);
   }
 
   /// ユーザー情報を取得する。失敗時は throw。

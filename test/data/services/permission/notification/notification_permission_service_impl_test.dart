@@ -9,26 +9,23 @@ import 'package:travel_app/data/services/permission/notification/notification_pe
 void main() {
   group('notificationPermissionServiceImplProvider', () {
     group('正常系', () {
-      test(
-        'AndroidNotificationPermissionServiceImplのインスタンスを返すこと',
-        () {
-          final container = ProviderContainer(
-            overrides: [
-              androidNotificationPermissionPreferencesServiceImplProvider
-                  .overrideWithValue(
-                    StubAndroidNotificationPermissionPreferencesServiceImpl(),
-                  ),
-            ],
-          );
-          addTearDown(container.dispose);
+      test('AndroidNotificationPermissionServiceImplのインスタンスを返すこと', () {
+        final container = ProviderContainer(
+          overrides: [
+            androidNotificationPermissionPreferencesServiceImplProvider
+                .overrideWithValue(
+                  StubAndroidNotificationPermissionPreferencesServiceImpl(),
+                ),
+          ],
+        );
+        addTearDown(container.dispose);
 
-          final service = container.read(
-            notificationPermissionServiceImplProvider,
-          );
+        final service = container.read(
+          notificationPermissionServiceImplProvider,
+        );
 
-          expect(service, isA<AndroidNotificationPermissionServiceImpl>());
-        },
-      );
+        expect(service, isA<AndroidNotificationPermissionServiceImpl>());
+      });
     });
   });
 
@@ -44,39 +41,33 @@ void main() {
         expect(service, isA<IosNotificationPermissionServiceImpl>());
       });
 
-      test(
-        'isIos=false → AndroidNotificationPermissionServiceImplを返すこと',
-        () {
-          final service = buildNotificationPermissionService(
-            preferencesServiceFactory:
-                StubAndroidNotificationPermissionPreferencesServiceImpl.new,
-            isIos: false,
-          );
+      test('isIos=false → AndroidNotificationPermissionServiceImplを返すこと', () {
+        final service = buildNotificationPermissionService(
+          preferencesServiceFactory:
+              StubAndroidNotificationPermissionPreferencesServiceImpl.new,
+          isIos: false,
+        );
 
-          expect(service, isA<AndroidNotificationPermissionServiceImpl>());
-        },
-      );
+        expect(service, isA<AndroidNotificationPermissionServiceImpl>());
+      });
     });
 
     group('lazy factory', () {
-      test(
-        'isIos=true のとき preferencesServiceFactory は呼ばれないこと',
-        () {
-          // preferencesServiceFactory はクロージャとして渡されるため、
-          // isIos=true の場合は関数本体で呼ばれず Android 専用の依存が評価されない。
-          var wasEvaluated = false;
+      test('isIos=true のとき preferencesServiceFactory は呼ばれないこと', () {
+        // preferencesServiceFactory はクロージャとして渡されるため、
+        // isIos=true の場合は関数本体で呼ばれず Android 専用の依存が評価されない。
+        var wasEvaluated = false;
 
-          buildNotificationPermissionService(
-            preferencesServiceFactory: () {
-              wasEvaluated = true;
-              return StubAndroidNotificationPermissionPreferencesServiceImpl();
-            },
-            isIos: true,
-          );
+        buildNotificationPermissionService(
+          preferencesServiceFactory: () {
+            wasEvaluated = true;
+            return StubAndroidNotificationPermissionPreferencesServiceImpl();
+          },
+          isIos: true,
+        );
 
-          expect(wasEvaluated, isFalse);
-        },
-      );
+        expect(wasEvaluated, isFalse);
+      });
     });
   });
 }

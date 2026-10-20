@@ -27,9 +27,7 @@ void main() {
     setUp(() {
       mockApiClient = MockApiClient();
       container = ProviderContainer(
-        overrides: [
-          apiClientProvider.overrideWithValue(mockApiClient),
-        ],
+        overrides: [apiClientProvider.overrideWithValue(mockApiClient)],
       );
     });
 
@@ -45,10 +43,7 @@ void main() {
     test('authApiServiceImplProviderは指定されたApiClientで初期化されること', () async {
       final service = container.read(authApiServiceImplProvider);
       when(
-        mockApiClient.post(
-          endpoint: 'auth/login',
-          body: anyNamed('body'),
-        ),
+        mockApiClient.post(endpoint: 'auth/login', body: anyNamed('body')),
       ).thenAnswer(
         (_) async => {
           'id': 1,
@@ -62,15 +57,9 @@ void main() {
           'refreshToken': 'refreshToken',
         },
       );
-      await service.login(
-        username: 'emilys',
-        password: 'emilyspass',
-      );
+      await service.login(username: 'emilys', password: 'emilyspass');
       verify(
-        mockApiClient.post(
-          endpoint: 'auth/login',
-          body: anyNamed('body'),
-        ),
+        mockApiClient.post(endpoint: 'auth/login', body: anyNamed('body')),
       ).called(1);
     });
   });
@@ -89,10 +78,7 @@ void main() {
         'refreshToken': 'refreshToken',
       };
       when(
-        mockApiClient.post(
-          endpoint: 'auth/login',
-          body: anyNamed('body'),
-        ),
+        mockApiClient.post(endpoint: 'auth/login', body: anyNamed('body')),
       ).thenAnswer((_) async => mockResponse);
 
       final result = await authApiServiceImpl.login(
@@ -111,10 +97,7 @@ void main() {
         statusCode: 401,
       );
       when(
-        mockApiClient.post(
-          endpoint: 'auth/login',
-          body: anyNamed('body'),
-        ),
+        mockApiClient.post(endpoint: 'auth/login', body: anyNamed('body')),
       ).thenThrow(apiException);
 
       final result = await authApiServiceImpl.login(
@@ -129,10 +112,7 @@ void main() {
     test('その他の例外が発生した場合、FailureResultを返すこと', () async {
       final exception = Exception('Something went wrong');
       when(
-        mockApiClient.post(
-          endpoint: 'auth/login',
-          body: anyNamed('body'),
-        ),
+        mockApiClient.post(endpoint: 'auth/login', body: anyNamed('body')),
       ).thenThrow(exception);
 
       final result = await authApiServiceImpl.login(

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'state.dart';
@@ -9,6 +9,7 @@ part of 'state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -27,16 +28,21 @@ $TodoListScreenStateCopyWith<TodoListScreenState> get copyWith => _$TodoListScre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, todos)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
+  final _this = this as TodoListScreenState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, _this.todos)&&(identical(other.searchQuery, _this.searchQuery) || other.searchQuery == _this.searchQuery));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(todos),searchQuery);
+int get hashCode {
+  final _this = this as TodoListScreenState;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.todos),_this.searchQuery);
+}
 
 @override
 String toString() {
-  return 'TodoListScreenState(todos: $todos, searchQuery: $searchQuery)';
+  final _this = this as TodoListScreenState;
+  return 'TodoListScreenState(todos: ${_this.todos}, searchQuery: ${_this.searchQuery})';
 }
 
 
@@ -65,7 +71,7 @@ class _$TodoListScreenStateCopyWithImpl<$Res>
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? todos = null,Object? searchQuery = null,}) {
-  return _then(_self.copyWith(
+  return _then(TodoListScreenState(
 todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
 as List<Todo>,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
 as String,
@@ -209,7 +215,7 @@ return $default(_that.todos,_that.searchQuery);case _:
 
 
 class _TodoListScreenState implements TodoListScreenState {
-  const _TodoListScreenState({required final  List<Todo> todos, required this.searchQuery}): _todos = todos;
+  const _TodoListScreenState({required  List<Todo> todos, required this.searchQuery}): _todos = todos;
   
 
 /// SSOTから提供されるTodoリスト
@@ -234,16 +240,18 @@ _$TodoListScreenStateCopyWith<_TodoListScreenState> get copyWith => __$TodoListS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoListScreenState&&const DeepCollectionEquality().equals(other._todos, _todos)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, _todos)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_todos),searchQuery);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_todos),searchQuery);
+}
 
 @override
 String toString() {
-  return 'TodoListScreenState(todos: $todos, searchQuery: $searchQuery)';
+    return 'TodoListScreenState(todos: $todos, searchQuery: $searchQuery)';
 }
 
 

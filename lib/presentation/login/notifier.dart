@@ -15,9 +15,7 @@ loginScreenProvider =
 class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
   @override
   Future<LoginScreenState> build() async {
-    return const LoginScreenState(
-      isLoggedIn: false,
-    );
+    return const LoginScreenState(isLoggedIn: false);
   }
 
   /// ログイン

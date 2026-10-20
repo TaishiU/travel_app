@@ -12,9 +12,7 @@ import 'package:travel_app/utils/result.dart';
 
 /// RepositoryのProvider
 final todoRepositoryProvider = Provider<TodoRepository>(
-  (ref) => TodoRepository(
-    todoApiService: ref.watch(todosApiServiceProvider),
-  ),
+  (ref) => TodoRepository(todoApiService: ref.watch(todosApiServiceProvider)),
 );
 
 /// SSOTであるTodoリストのStreamを公開するProvider

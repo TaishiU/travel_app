@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'state.dart';
@@ -9,6 +9,7 @@ part of 'state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -26,16 +27,21 @@ $TodoDetailScreenStateCopyWith<TodoDetailScreenState> get copyWith => _$TodoDeta
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoDetailScreenState&&(identical(other.todo, todo) || other.todo == todo));
+  final _this = this as TodoDetailScreenState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoDetailScreenState&&(identical(other.todo, _this.todo) || other.todo == _this.todo));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,todo);
+int get hashCode {
+  final _this = this as TodoDetailScreenState;
+  return Object.hash(runtimeType,_this.todo);
+}
 
 @override
 String toString() {
-  return 'TodoDetailScreenState(todo: $todo)';
+  final _this = this as TodoDetailScreenState;
+  return 'TodoDetailScreenState(todo: ${_this.todo})';
 }
 
 
@@ -64,7 +70,7 @@ class _$TodoDetailScreenStateCopyWithImpl<$Res>
 /// Create a copy of TodoDetailScreenState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? todo = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TodoDetailScreenState(
 todo: freezed == todo ? _self.todo : todo // ignore: cast_nullable_to_non_nullable
 as Todo?,
   ));
@@ -235,16 +241,18 @@ _$TodoDetailScreenStateCopyWith<_TodoDetailScreenState> get copyWith => __$TodoD
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoDetailScreenState&&(identical(other.todo, todo) || other.todo == todo));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoDetailScreenState&&(identical(other.todo, todo) || other.todo == todo));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,todo);
+int get hashCode {
+    return Object.hash(runtimeType,todo);
+}
 
 @override
 String toString() {
-  return 'TodoDetailScreenState(todo: $todo)';
+    return 'TodoDetailScreenState(todo: $todo)';
 }
 
 

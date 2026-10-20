@@ -17,7 +17,7 @@ class AuthUseCase {
 
   /// ログイン済みかどうかを確認する
   Future<bool> checkIsLoggedIn() async {
-    return ref.read(authRepositoryProvider).isLoggedIn;
+    return await ref.read(authRepositoryProvider).isLoggedIn;
   }
 
   /// ログインを実行する
@@ -25,12 +25,9 @@ class AuthUseCase {
     required String username,
     required String password,
   }) async {
-    return ref
+    return await ref
         .read(authRepositoryProvider)
-        .login(
-          username: username,
-          password: password,
-        );
+        .login(username: username, password: password);
   }
 
   /// ログアウトを実行する

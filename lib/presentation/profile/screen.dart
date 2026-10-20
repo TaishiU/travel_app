@@ -177,9 +177,9 @@ class _SectionTitle extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -238,10 +238,7 @@ class _InfoItem extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            child: Text(value, style: Theme.of(context).textTheme.bodyLarge),
           ),
           if (isCopyable)
             Icon(

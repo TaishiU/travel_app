@@ -47,18 +47,15 @@ void main() {
       container.dispose();
     });
 
-    test(
-      'AndroidNotificationPermissionPreferencesServiceImplのインスタンスを返すこと',
-      () {
-        final service = container.read(
-          androidNotificationPermissionPreferencesServiceImplProvider,
-        );
-        expect(
-          service,
-          isA<AndroidNotificationPermissionPreferencesServiceImpl>(),
-        );
-      },
-    );
+    test('AndroidNotificationPermissionPreferencesServiceImplのインスタンスを返すこと', () {
+      final service = container.read(
+        androidNotificationPermissionPreferencesServiceImplProvider,
+      );
+      expect(
+        service,
+        isA<AndroidNotificationPermissionPreferencesServiceImpl>(),
+      );
+    });
 
     test('overridesなしの場合ProviderExceptionがスローされること', () {
       final emptyContainer = ProviderContainer();

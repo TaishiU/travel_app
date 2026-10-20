@@ -6,9 +6,8 @@ import 'package:travel_app/domain/entities/task/task.dart';
 
 /// [TaskRepository] のプロバイダ。
 final taskRepositoryProvider = Provider<TaskRepository>(
-  (ref) => TaskRepository(
-    taskLocalService: ref.read(taskLocalServiceImplProvider),
-  ),
+  (ref) =>
+      TaskRepository(taskLocalService: ref.read(taskLocalServiceImplProvider)),
 );
 
 /// タスク一覧のSSOTを提供するStreamProvider。

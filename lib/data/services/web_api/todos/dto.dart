@@ -7,9 +7,7 @@ part 'dto.g.dart';
 @freezed
 abstract class TodosDto with _$TodosDto {
   /// コンストラクタ
-  const factory TodosDto({
-    List<TodoDto>? todos,
-  }) = _TodosDto;
+  const factory TodosDto({List<TodoDto>? todos}) = _TodosDto;
 
   /// JSONから生成
   factory TodosDto.fromJson(Map<String, dynamic> json) =>

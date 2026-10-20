@@ -11,9 +11,7 @@ import 'package:travel_app/utils/result.dart';
 
 /// プロバイダ
 final userRepositoryProvider = Provider<UserRepository>(
-  (ref) => UserRepository(
-    usersApiService: ref.watch(usersApiServiceProvider),
-  ),
+  (ref) => UserRepository(usersApiService: ref.watch(usersApiServiceProvider)),
 );
 
 /// リポジトリクラス
@@ -85,10 +83,7 @@ class UserRepository {
   }
 
   Hair _toHairEntity({required dto.Hair? hairDto}) {
-    return Hair(
-      color: hairDto?.color ?? '',
-      type: hairDto?.type ?? '',
-    );
+    return Hair(color: hairDto?.color ?? '', type: hairDto?.type ?? '');
   }
 
   Address _toAddressEntity({required dto.Address? addressDto}) {

@@ -15,12 +15,8 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: CoreAppBar(
-        title: 'LoginScreen',
-      ),
-      body: SafeArea(
-        child: _Body(),
-      ),
+      appBar: CoreAppBar(title: 'LoginScreen'),
+      body: SafeArea(child: _Body()),
     );
   }
 }
@@ -38,15 +34,9 @@ class _Body extends HookConsumerWidget {
         width: 200,
         child: ElevatedButton(
           onPressed: () async {
-            await notifier.login(
-              username: 'emilys',
-              password: 'emilyspass',
-            );
+            await notifier.login(username: 'emilys', password: 'emilyspass');
           },
-          child: const Text(
-            'Login',
-            style: AppTextStyle.t26,
-          ),
+          child: const Text('Login', style: AppTextStyle.t26),
         ),
       ),
     );

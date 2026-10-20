@@ -14,10 +14,7 @@ import 'package:travel_app/presentation/task/screen.dart';
 /// 共通UIシェルのウィジェット (Bottom Navigation Barを持つScaffold)
 class ScaffoldWithNavBar extends StatefulWidget {
   /// コンストラクタ
-  const ScaffoldWithNavBar({
-    required this.child,
-    super.key,
-  });
+  const ScaffoldWithNavBar({required this.child, super.key});
 
   /// 子Widget
   final Widget child;
@@ -50,18 +47,9 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
           }
         },
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.task),
-            label: 'Task',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Task'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         type: BottomNavigationBarType.fixed,
       ),
@@ -77,74 +65,70 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 // --- GoRouterの定義 ---
 /// プロバイダ
-final routerProvider = Provider<GoRouter>(
-  (ref) {
-    return GoRouter(
-      initialLocation: TodoListScreen.path,
-      navigatorKey: _rootNavigatorKey,
-      routes: [
-        // ログイン画面 (共通のShellRouteとは独立したルート)
-        GoRoute(
-          path: LoginScreen.path,
-          builder: (context, state) => const LoginScreen(),
-        ),
-
-        // デバッグメニュー（kDebugMode 限定）
-        if (kDebugMode)
-          GoRoute(
-            path: DebugMenuScreen.path,
-            builder: (context, state) => const DebugMenuScreen(),
-          ),
-
-        // Bottom Navigation Bar を持つShellRoute
-        ShellRoute(
-          navigatorKey: _shellNavigatorKey,
-          builder: (context, state, child) {
-            return ScaffoldWithNavBar(child: child);
-          },
-          routes: [
-            GoRoute(
-              path: TodoListScreen.path,
-              builder: (context, state) => const TodoListScreen(),
-              routes: [
-                GoRoute(
-                  path: ':todoId', // /todo_list/:todoId
-                  builder: (context, state) {
-                    final todoId = int.parse(
-                      state.pathParameters['todoId']!,
-                    );
-                    return TodoDetailScreen(todoId: todoId);
-                  },
-                ),
-              ],
-            ),
-            GoRoute(
-              path: TaskScreen.path,
-              builder: (context, state) => const TaskScreen(),
-            ),
-            GoRoute(
-              path: ProfileScreen.path,
-              builder: (context, state) => const ProfileScreen(),
-            ),
-          ],
-        ),
-      ],
-      refreshListenable: ref.read(authRepositoryProvider),
-      redirect: (context, state) async {
-        final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
-        final loggingIn = state.matchedLocation == LoginScreen.path;
-        if (!loggedIn) {
-          return LoginScreen.path;
-        }
-        if (loggingIn) {
-          return TodoListScreen.path;
-        }
-        return null;
-      },
-      errorBuilder: (context, state) => Scaffold(
-        appBar: AppBar(title: const Text('エラー')),
-        body: Center(child: Text('エラー: ${state.error}')),
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: TodoListScreen.path,
+    navigatorKey: _rootNavigatorKey,
+    routes: [
+      // ログイン画面 (共通のShellRouteとは独立したルート)
+      GoRoute(
+        path: LoginScreen.path,
+        builder: (context, state) => const LoginScreen(),
       ),
-    );
-  },
-);
+
+      // デバッグメニュー（kDebugMode 限定）
+      if (kDebugMode)
+        GoRoute(
+          path: DebugMenuScreen.path,
+          builder: (context, state) => const DebugMenuScreen(),
+        ),
+
+      // Bottom Navigation Bar を持つShellRoute
+      ShellRoute(
+        navigatorKey: _shellNavigatorKey,
+        builder: (context, state, child) {
+          return ScaffoldWithNavBar(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: TodoListScreen.path,
+            builder: (context, state) => const TodoListScreen(),
+            routes: [
+              GoRoute(
+                path: ':todoId', // /todo_list/:todoId
+                builder: (context, state) {
+                  final todoId = int.parse(state.pathParameters['todoId']!);
+                  return TodoDetailScreen(todoId: todoId);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: TaskScreen.path,
+            builder: (context, state) => const TaskScreen(),
+          ),
+          GoRoute(
+            path: ProfileScreen.path,
+            builder: (context, state) => const ProfileScreen(),
+          ),
+        ],
+      ),
+    ],
+    refreshListenable: ref.read(authRepositoryProvider),
+    redirect: (context, state) async {
+      final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
+      final loggingIn = state.matchedLocation == LoginScreen.path;
+      if (!loggedIn) {
+        return LoginScreen.path;
+      }
+      if (loggingIn) {
+        return TodoListScreen.path;
+      }
+      return null;
+    },
+    errorBuilder: (context, state) => Scaffold(
+      appBar: AppBar(title: const Text('エラー')),
+      body: Center(child: Text('エラー: ${state.error}')),
+    ),
+  );
+});

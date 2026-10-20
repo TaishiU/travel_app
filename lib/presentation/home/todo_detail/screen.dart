@@ -8,10 +8,7 @@ import 'package:travel_app/presentation/home/todo_detail/state.dart';
 /// Todo詳細画面
 class TodoDetailScreen extends HookConsumerWidget {
   /// コンストラクタ
-  const TodoDetailScreen({
-    required this.todoId,
-    super.key,
-  });
+  const TodoDetailScreen({required this.todoId, super.key});
 
   /// パス
   static const path = '/todo_detail/:todoId';
@@ -24,9 +21,7 @@ class TodoDetailScreen extends HookConsumerWidget {
     final viewModel = ref.watch(todoDetailScreenProvider(todoId));
 
     return Scaffold(
-      appBar: const CoreAppBar(
-        title: 'TodoDetailScreen',
-      ),
+      appBar: const CoreAppBar(title: 'TodoDetailScreen'),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
         AsyncData(:final value) => _Body(state: value),
@@ -59,10 +54,7 @@ class _Body extends HookConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'ID: ${todo.id}',
-            style: const TextStyle(fontSize: 18),
-          ),
+          Text('ID: ${todo.id}', style: const TextStyle(fontSize: 18)),
           const SizedBox(height: 16),
           Text(
             'Todo: ${todo.todo}',
@@ -75,10 +67,7 @@ class _Body extends HookConsumerWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Text(
-                'Completed:',
-                style: TextStyle(fontSize: 18),
-              ),
+              const Text('Completed:', style: TextStyle(fontSize: 18)),
               Checkbox(
                 value: todo.completed,
                 onChanged: (_) => ref

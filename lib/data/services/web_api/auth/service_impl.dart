@@ -60,10 +60,7 @@ class AuthApiServiceImpl implements AuthApiService {
     required String password,
   }) async {
     try {
-      final body = <String, dynamic>{
-        'email': email,
-        'password': password,
-      };
+      final body = <String, dynamic>{'email': email, 'password': password};
       final response = await apiClient.post(
         endpoint: _loginEndpoint,
         body: body,
@@ -86,9 +83,7 @@ class AuthApiServiceImpl implements AuthApiService {
     required String refreshToken,
   }) async {
     try {
-      final body = <String, dynamic>{
-        'refreshToken': refreshToken,
-      };
+      final body = <String, dynamic>{'refreshToken': refreshToken};
       final response = await apiClient.post(
         endpoint: _refreshEndpoint,
         body: body,
@@ -107,9 +102,7 @@ class AuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Result<void>> logout({
-    required String refreshToken,
-  }) async {
+  Future<Result<void>> logout({required String refreshToken}) async {
     try {
       await apiClient.post(
         endpoint: _logoutEndpoint,
@@ -129,9 +122,7 @@ class AuthApiServiceImpl implements AuthApiService {
   Future<Result<UserDto>> me() async {
     try {
       final response = await apiClient.get(endpoint: _meEndpoint);
-      final dto = UserDto.fromJson(
-        response['data'] as Map<String, dynamic>,
-      );
+      final dto = UserDto.fromJson(response['data'] as Map<String, dynamic>);
       return SuccessResult(dto);
     } on ApiClientException catch (error) {
       logger.e(message: '[AuthApiServiceImpl] ApiClientException: $error');

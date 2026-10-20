@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'result.dart';
@@ -9,6 +9,7 @@ part of 'result.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$Result<T> {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Result<T>);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is Result<T>);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'Result<$T>()';
+    return 'Result<$T>()';
 }
 
 
@@ -190,16 +191,18 @@ $SuccessResultCopyWith<T, SuccessResult<T>> get copyWith => _$SuccessResultCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SuccessResult<T>&&const DeepCollectionEquality().equals(other.value, value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SuccessResult<T>&&const DeepCollectionEquality().equals(other.value, value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(value));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(value));
+}
 
 @override
 String toString() {
-  return 'Result<$T>.success(value: $value)';
+    return 'Result<$T>.success(value: $value)';
 }
 
 
@@ -256,16 +259,18 @@ $FailureResultCopyWith<T, FailureResult<T>> get copyWith => _$FailureResultCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FailureResult<T>&&(identical(other.error, error) || other.error == error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is FailureResult<T>&&(identical(other.error, error) || other.error == error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,error);
+int get hashCode {
+    return Object.hash(runtimeType,error);
+}
 
 @override
 String toString() {
-  return 'Result<$T>.failure(error: $error)';
+    return 'Result<$T>.failure(error: $error)';
 }
 
 

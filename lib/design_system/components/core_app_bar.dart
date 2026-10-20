@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 /// 共通 [AppBar]
 class CoreAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// コンストラクタ
-  const CoreAppBar({
-    required this.title,
-    this.actions,
-    super.key,
-  });
+  const CoreAppBar({required this.title, this.actions, super.key});
 
   /// タイトル
   final String title;

@@ -17,14 +17,10 @@ abstract class AuthApiService {
   });
 
   /// アクセストークン再発行
-  Future<Result<RefreshTokenDto>> refresh({
-    required String refreshToken,
-  });
+  Future<Result<RefreshTokenDto>> refresh({required String refreshToken});
 
   /// ログアウト
-  Future<Result<void>> logout({
-    required String refreshToken,
-  });
+  Future<Result<void>> logout({required String refreshToken});
 
   /// ログインユーザー取得
   Future<Result<UserDto>> me();

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'task.dart';
@@ -9,6 +9,7 @@ part of 'task.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -29,16 +30,21 @@ $TaskCopyWith<Task> get copyWith => _$TaskCopyWithImpl<Task>(this as Task, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Task&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.completed, completed) || other.completed == completed));
+  final _this = this as Task;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Task&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.completed, _this.completed) || other.completed == _this.completed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,title,completed);
+int get hashCode {
+  final _this = this as Task;
+  return Object.hash(runtimeType,_this.id,_this.userId,_this.title,_this.completed);
+}
 
 @override
 String toString() {
-  return 'Task(id: $id, userId: $userId, title: $title, completed: $completed)';
+  final _this = this as Task;
+  return 'Task(id: ${_this.id}, userId: ${_this.userId}, title: ${_this.title}, completed: ${_this.completed})';
 }
 
 
@@ -67,7 +73,7 @@ class _$TaskCopyWithImpl<$Res>
 /// Create a copy of Task
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? title = null,Object? completed = null,}) {
-  return _then(_self.copyWith(
+  return _then(Task(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -235,16 +241,18 @@ _$TaskCopyWith<_Task> get copyWith => __$TaskCopyWithImpl<_Task>(this, _$identit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Task&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.completed, completed) || other.completed == completed));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Task&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.completed, completed) || other.completed == completed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,title,completed);
+int get hashCode {
+    return Object.hash(runtimeType,id,userId,title,completed);
+}
 
 @override
 String toString() {
-  return 'Task(id: $id, userId: $userId, title: $title, completed: $completed)';
+    return 'Task(id: $id, userId: $userId, title: $title, completed: $completed)';
 }
 
 

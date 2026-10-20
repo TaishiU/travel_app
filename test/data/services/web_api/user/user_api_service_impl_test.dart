@@ -30,9 +30,7 @@ void main() {
     setUp(() {
       mockApiClient = MockApiClient();
       container = ProviderContainer(
-        overrides: [
-          apiClientProvider.overrideWithValue(mockApiClient),
-        ],
+        overrides: [apiClientProvider.overrideWithValue(mockApiClient)],
       );
     });
 
@@ -49,16 +47,9 @@ void main() {
       final service = container.read(usersApiServiceImplProvider);
       when(
         mockApiClient.get(endpoint: 'users/1'),
-      ).thenAnswer(
-        (_) async => {
-          'id': 1,
-          'firstName': 'Test',
-        },
-      );
+      ).thenAnswer((_) async => {'id': 1, 'firstName': 'Test'});
       await service.fetchById();
-      verify(
-        mockApiClient.get(endpoint: 'users/1'),
-      ).called(1);
+      verify(mockApiClient.get(endpoint: 'users/1')).called(1);
     });
   });
 
@@ -67,9 +58,7 @@ void main() {
 
     setUp(() {
       container = ProviderContainer(
-        overrides: [
-          apiClientProvider.overrideWithValue(MockApiClient()),
-        ],
+        overrides: [apiClientProvider.overrideWithValue(MockApiClient())],
       );
     });
 
@@ -168,9 +157,7 @@ void main() {
         message: 'Not Found',
         statusCode: 404,
       );
-      when(
-        mockApiClient.get(endpoint: 'users/1'),
-      ).thenThrow(apiException);
+      when(mockApiClient.get(endpoint: 'users/1')).thenThrow(apiException);
 
       final result = await userApiServiceImpl.fetchById();
 
@@ -180,9 +167,7 @@ void main() {
 
     test('その他の例外が発生した場合、FailureResultを返すこと', () async {
       final exception = Exception('Something went wrong');
-      when(
-        mockApiClient.get(endpoint: 'users/1'),
-      ).thenThrow(exception);
+      when(mockApiClient.get(endpoint: 'users/1')).thenThrow(exception);
 
       final result = await userApiServiceImpl.fetchById();
 

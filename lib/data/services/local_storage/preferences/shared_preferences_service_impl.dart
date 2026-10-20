@@ -18,9 +18,7 @@ final sharedPreferencesServiceImplProvider =
 class SharedPreferencesServiceImpl implements SharedPreferencesService {
   /// コンストラクタ。
   /// 外部から`SharedPreferencesWithCache`のインスタンスを受け取ります。
-  SharedPreferencesServiceImpl({
-    required this._sharedPreferences,
-  });
+  SharedPreferencesServiceImpl({required this._sharedPreferences});
 
   /// `SharedPreferencesWithCache`のインスタンスを保持します。
   final SharedPreferencesWithCache _sharedPreferences;

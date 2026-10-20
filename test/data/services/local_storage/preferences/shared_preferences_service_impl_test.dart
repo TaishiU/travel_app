@@ -45,50 +45,39 @@ void main() {
       container.dispose();
     });
 
-    test(
-      'sharedPreferencesServiceImplProviderは'
-      'SharedPreferencesServiceImplのインスタンスを返すこと',
-      () {
-        final service = container.read(sharedPreferencesServiceImplProvider);
-        expect(service, isA<SharedPreferencesServiceImpl>());
-      },
-    );
+    test('sharedPreferencesServiceImplProviderは'
+        'SharedPreferencesServiceImplのインスタンスを返すこと', () {
+      final service = container.read(sharedPreferencesServiceImplProvider);
+      expect(service, isA<SharedPreferencesServiceImpl>());
+    });
 
-    test(
-      'sharedPreferencesServiceImplProviderは'
-      '指定されたMockSharedPreferencesWithCacheで初期化されること',
-      () async {
-        final service = container.read(sharedPreferencesServiceImplProvider);
+    test('sharedPreferencesServiceImplProviderは'
+        '指定されたMockSharedPreferencesWithCacheで初期化されること', () async {
+      final service = container.read(sharedPreferencesServiceImplProvider);
 
-        // モックされたgetStringメソッドを呼び出すことで、
-        // 内部で渡されたMockSharedPreferencesWithCacheが使用されていることを確認
-        when(
-          mockSharedPreferencesWithCache.getString('test_key'),
-        ).thenReturn('test_value');
-        final value = service.getString(key: 'test_key');
-        expect(value, 'test_value');
-        verify(
-          mockSharedPreferencesWithCache.getString('test_key'),
-        ).called(1);
-      },
-    );
+      // モックされたgetStringメソッドを呼び出すことで、
+      // 内部で渡されたMockSharedPreferencesWithCacheが使用されていることを確認
+      when(
+        mockSharedPreferencesWithCache.getString('test_key'),
+      ).thenReturn('test_value');
+      final value = service.getString(key: 'test_key');
+      expect(value, 'test_value');
+      verify(mockSharedPreferencesWithCache.getString('test_key')).called(1);
+    });
 
     // overrideを行わない場合
-    test(
-      'overridesなしでsharedPreferencesServiceImplProviderにアクセスした場合、'
-      'ProviderExceptionがスローされること',
-      () {
-        // Providerをオーバーライドせずにコンテナを作成
-        final container = ProviderContainer();
-        addTearDown(container.dispose);
+    test('overridesなしでsharedPreferencesServiceImplProviderにアクセスした場合、'
+        'ProviderExceptionがスローされること', () {
+      // Providerをオーバーライドせずにコンテナを作成
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
 
-        // プロバイダを読み込もうとするとProviderExceptionがスローされることを確認
-        expect(
-          () => container.read(sharedPreferencesServiceImplProvider),
-          throwsA(isA<ProviderException>()),
-        );
-      },
-    );
+      // プロバイダを読み込もうとするとProviderExceptionがスローされることを確認
+      expect(
+        () => container.read(sharedPreferencesServiceImplProvider),
+        throwsA(isA<ProviderException>()),
+      );
+    });
   });
 
   // getStringメソッドのテスト
@@ -145,9 +134,7 @@ void main() {
   // getBoolメソッドのテスト
   group('getBool', () {
     test('キーに対応する真偽値が保存されている場合、その真偽値を返すこと', () {
-      when(
-        mockSharedPreferencesWithCache.getBool('test_key'),
-      ).thenReturn(true);
+      when(mockSharedPreferencesWithCache.getBool('test_key')).thenReturn(true);
       final result = serviceImpl.getBool(key: 'test_key');
       expect(result, isTrue);
       verify(mockSharedPreferencesWithCache.getBool('test_key')).called(1);
@@ -236,9 +223,7 @@ void main() {
         mockSharedPreferencesWithCache.setInt('test_key', 123),
       ).thenAnswer((_) async => true);
       await serviceImpl.setInt(key: 'test_key', value: 123);
-      verify(
-        mockSharedPreferencesWithCache.setInt('test_key', 123),
-      ).called(1);
+      verify(mockSharedPreferencesWithCache.setInt('test_key', 123)).called(1);
     });
   });
 
@@ -264,23 +249,20 @@ void main() {
       ).called(1);
     });
 
-    test(
-      'キーに対応する浮動小数点数が保存されておらず、defaultValueが指定されている場合、'
-      'defaultValueを返すこと',
-      () {
-        when(
-          mockSharedPreferencesWithCache.getDouble('non_existent_key'),
-        ).thenReturn(null);
-        final result = serviceImpl.getDouble(
-          key: 'non_existent_key',
-          defaultValue: 0,
-        );
-        expect(result, 0.0);
-        verify(
-          mockSharedPreferencesWithCache.getDouble('non_existent_key'),
-        ).called(1);
-      },
-    );
+    test('キーに対応する浮動小数点数が保存されておらず、defaultValueが指定されている場合、'
+        'defaultValueを返すこと', () {
+      when(
+        mockSharedPreferencesWithCache.getDouble('non_existent_key'),
+      ).thenReturn(null);
+      final result = serviceImpl.getDouble(
+        key: 'non_existent_key',
+        defaultValue: 0,
+      );
+      expect(result, 0.0);
+      verify(
+        mockSharedPreferencesWithCache.getDouble('non_existent_key'),
+      ).called(1);
+    });
   });
 
   // setDoubleメソッドのテスト
@@ -320,23 +302,20 @@ void main() {
       ).called(1);
     });
 
-    test(
-      'キーに対応する文字列リストが保存されておらず、defaultValueが指定されている場合、'
-      'defaultValueを返すこと',
-      () {
-        when(
-          mockSharedPreferencesWithCache.getStringList('non_existent_key'),
-        ).thenReturn(null);
-        final result = serviceImpl.getStringList(
-          key: 'non_existent_key',
-          defaultValue: ['d', 'e'],
-        );
-        expect(result, ['d', 'e']);
-        verify(
-          mockSharedPreferencesWithCache.getStringList('non_existent_key'),
-        ).called(1);
-      },
-    );
+    test('キーに対応する文字列リストが保存されておらず、defaultValueが指定されている場合、'
+        'defaultValueを返すこと', () {
+      when(
+        mockSharedPreferencesWithCache.getStringList('non_existent_key'),
+      ).thenReturn(null);
+      final result = serviceImpl.getStringList(
+        key: 'non_existent_key',
+        defaultValue: ['d', 'e'],
+      );
+      expect(result, ['d', 'e']);
+      verify(
+        mockSharedPreferencesWithCache.getStringList('non_existent_key'),
+      ).called(1);
+    });
   });
 
   // setStringListメソッドのテスト

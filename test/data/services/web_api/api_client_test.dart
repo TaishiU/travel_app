@@ -342,25 +342,22 @@ void main() {
           refreshCallCount++;
           await Future<void>.delayed(const Duration(milliseconds: 100));
           return http.Response(
-            jsonEncode({
-              'accessToken': 'new_at',
-              'refreshToken': 'new_rt',
-            }),
+            jsonEncode({'accessToken': 'new_at', 'refreshToken': 'new_rt'}),
             200,
           );
         });
 
         var getCallCount = 0;
-        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-          (_) async {
-            getCallCount++;
-            // 最初の2回（req1, req2）は401を返し、リトライ時は200を返す
-            if (getCallCount <= 2) {
-              return http.Response('{}', 401);
-            }
-            return http.Response('{}', 200);
-          },
-        );
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer((
+          _,
+        ) async {
+          getCallCount++;
+          // 最初の2回（req1, req2）は401を返し、リトライ時は200を返す
+          if (getCallCount <= 2) {
+            return http.Response('{}', 401);
+          }
+          return http.Response('{}', 200);
+        });
 
         // 同時に2つのリクエスト
         final results = await Future.wait([
@@ -376,9 +373,9 @@ void main() {
       test('リフレッシュ中に例外が発生した場合、falseを返しUnauthorizedExceptionを投げること', () async {
         when(mockAuthService.getRefreshToken()).thenReturn('refresh_token');
 
-        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-          (_) async => http.Response('{}', 401),
-        );
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('{}', 401));
 
         when(
           mockHttpClient.post(
@@ -434,9 +431,9 @@ void main() {
       });
 
       test('http.ClientExceptionが発生した場合、ApiClientExceptionを投げること', () async {
-        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenThrow(
-          http.ClientException('Client error'),
-        );
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenThrow(http.ClientException('Client error'));
 
         await expectLater(
           apiClient.get(endpoint: 'test'),
@@ -445,9 +442,9 @@ void main() {
       });
 
       test('予期せぬ例外が発生した場合、そのままスローされること', () async {
-        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenThrow(
-          ArgumentError('Unexpected error'),
-        );
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenThrow(ArgumentError('Unexpected error'));
 
         await expectLater(
           apiClient.get(endpoint: 'test'),

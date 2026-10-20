@@ -2,9 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// スタブ切り替えフラグのProvider
 final NotifierProvider<StubApiEnabledNotifier, bool> isStubApiEnabledProvider =
-    NotifierProvider<StubApiEnabledNotifier, bool>(
-      StubApiEnabledNotifier.new,
-    );
+    NotifierProvider<StubApiEnabledNotifier, bool>(StubApiEnabledNotifier.new);
 
 /// スタブ切り替えフラグのNotifier
 class StubApiEnabledNotifier extends Notifier<bool> {

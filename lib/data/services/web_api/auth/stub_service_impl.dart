@@ -47,11 +47,7 @@ class StubAuthApiServiceImpl implements AuthApiService {
       TokenResponseDto(
         accessToken: _accessToken,
         refreshToken: _refreshToken,
-        user: UserDto(
-          id: _userId,
-          email: email,
-          displayName: _displayName,
-        ),
+        user: UserDto(id: _userId, email: email, displayName: _displayName),
       ),
     );
   }
@@ -61,28 +57,19 @@ class StubAuthApiServiceImpl implements AuthApiService {
     required String refreshToken,
   }) async {
     return const SuccessResult(
-      RefreshTokenDto(
-        accessToken: _accessToken,
-        refreshToken: _refreshToken,
-      ),
+      RefreshTokenDto(accessToken: _accessToken, refreshToken: _refreshToken),
     );
   }
 
   @override
-  Future<Result<void>> logout({
-    required String refreshToken,
-  }) async {
+  Future<Result<void>> logout({required String refreshToken}) async {
     return const SuccessResult(null);
   }
 
   @override
   Future<Result<UserDto>> me() async {
     return const SuccessResult(
-      UserDto(
-        id: _userId,
-        email: _email,
-        displayName: _displayName,
-      ),
+      UserDto(id: _userId, email: _email, displayName: _displayName),
     );
   }
 }

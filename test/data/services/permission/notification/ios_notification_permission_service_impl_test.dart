@@ -98,15 +98,12 @@ void main() {
           );
         });
 
-        test(
-          'OS=denied → notDetermined（iOS固有: denied は未要求を意味する）',
-          () async {
-            await expectCheckStatus(
-              osStatusCode: denied,
-              expected: NotificationPermissionStatus.notDetermined,
-            );
-          },
-        );
+        test('OS=denied → notDetermined（iOS固有: denied は未要求を意味する）', () async {
+          await expectCheckStatus(
+            osStatusCode: denied,
+            expected: NotificationPermissionStatus.notDetermined,
+          );
+        });
 
         test('OS=permanentlyDenied → permanentlyDenied', () async {
           await expectCheckStatus(

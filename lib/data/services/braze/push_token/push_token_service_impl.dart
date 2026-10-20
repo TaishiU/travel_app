@@ -34,9 +34,7 @@ class PushTokenServiceImpl implements PushTokenService {
   }) {
     if (_isAndroid) {
       // トークン更新時にBrazeへ再登録
-      _firebaseMessaging.onTokenRefresh.listen(
-        _brazePlugin.registerPushToken,
-      );
+      _firebaseMessaging.onTokenRefresh.listen(_brazePlugin.registerPushToken);
     }
   }
 

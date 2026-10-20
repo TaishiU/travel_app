@@ -63,9 +63,9 @@ void main() {
     );
 
     test('API取得成功時にSuccessResult<User>を返すこと', () async {
-      when(mockUserApiService.fetchById()).thenAnswer(
-        (_) async => const SuccessResult(mockUserDto),
-      );
+      when(
+        mockUserApiService.fetchById(),
+      ).thenAnswer((_) async => const SuccessResult(mockUserDto));
 
       final result = await userRepository.fetch();
 
@@ -141,9 +141,9 @@ void main() {
         role: 'admin',
       );
 
-      when(mockUserApiService.fetchById()).thenAnswer(
-        (_) async => const SuccessResult(fullDto),
-      );
+      when(
+        mockUserApiService.fetchById(),
+      ).thenAnswer((_) async => const SuccessResult(fullDto));
 
       final result = await userRepository.fetch();
 
@@ -165,9 +165,9 @@ void main() {
 
     test('APIがFailureResultを返した場合、FailureResultを返すこと', () async {
       final exception = Exception('API Error');
-      when(mockUserApiService.fetchById()).thenAnswer(
-        (_) async => FailureResult(exception),
-      );
+      when(
+        mockUserApiService.fetchById(),
+      ).thenAnswer((_) async => FailureResult(exception));
 
       final result = await userRepository.fetch();
 
@@ -190,9 +190,9 @@ void main() {
   group('Entity変換のバリデーション', () {
     test('必須フィールド(id)が欠損している場合はFailureResultを返すこと', () async {
       const incompleteDto = dto.UserDto(firstName: 'No ID');
-      when(mockUserApiService.fetchById()).thenAnswer(
-        (_) async => const SuccessResult(incompleteDto),
-      );
+      when(
+        mockUserApiService.fetchById(),
+      ).thenAnswer((_) async => const SuccessResult(incompleteDto));
 
       final result = await userRepository.fetch();
 
@@ -202,9 +202,9 @@ void main() {
 
     test('null可能なフィールドにはデフォルト値が入ること', () async {
       const minimalDto = dto.UserDto(id: 1);
-      when(mockUserApiService.fetchById()).thenAnswer(
-        (_) async => const SuccessResult(minimalDto),
-      );
+      when(
+        mockUserApiService.fetchById(),
+      ).thenAnswer((_) async => const SuccessResult(minimalDto));
 
       final result = await userRepository.fetch();
 

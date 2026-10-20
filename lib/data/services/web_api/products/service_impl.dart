@@ -110,10 +110,7 @@ class ProductsApiServiceImpl implements ProductsApiService {
         'status': ?status,
         'images': ?images,
       };
-      final response = await apiClient.post(
-        endpoint: endpoint,
-        body: body,
-      );
+      final response = await apiClient.post(endpoint: endpoint, body: body);
       final dto = ProductDetailDto.fromJson(response);
       return SuccessResult(dto);
     } on ApiClientException catch (error) {

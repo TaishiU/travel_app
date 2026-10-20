@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'todos.dart';
@@ -9,6 +9,7 @@ part of 'todos.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -29,16 +30,21 @@ $TodosCopyWith<Todos> get copyWith => _$TodosCopyWithImpl<Todos>(this as Todos, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Todos&&const DeepCollectionEquality().equals(other.todos, todos));
+  final _this = this as Todos;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Todos&&const DeepCollectionEquality().equals(other.todos, _this.todos));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(todos));
+int get hashCode {
+  final _this = this as Todos;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.todos));
+}
 
 @override
 String toString() {
-  return 'Todos(todos: $todos)';
+  final _this = this as Todos;
+  return 'Todos(todos: ${_this.todos})';
 }
 
 
@@ -67,7 +73,7 @@ class _$TodosCopyWithImpl<$Res>
 /// Create a copy of Todos
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? todos = null,}) {
-  return _then(_self.copyWith(
+  return _then(Todos(
 todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
 as List<Todo>,
   ));
@@ -210,7 +216,7 @@ return $default(_that.todos);case _:
 @JsonSerializable()
 
 class _Todos implements Todos {
-  const _Todos({required final  List<Todo> todos}): _todos = todos;
+  const _Todos({required  List<Todo> todos}): _todos = todos;
   factory _Todos.fromJson(Map<String, dynamic> json) => _$TodosFromJson(json);
 
 /// 単一のTodoアイテムのリスト
@@ -236,16 +242,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Todos&&const DeepCollectionEquality().equals(other._todos, _todos));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Todos&&const DeepCollectionEquality().equals(other.todos, _todos));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_todos));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_todos));
+}
 
 @override
 String toString() {
-  return 'Todos(todos: $todos)';
+    return 'Todos(todos: $todos)';
 }
 
 
@@ -304,16 +312,21 @@ $TodoCopyWith<Todo> get copyWith => _$TodoCopyWithImpl<Todo>(this as Todo, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Todo&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.todo, todo) || other.todo == todo)&&(identical(other.completed, completed) || other.completed == completed));
+  final _this = this as Todo;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Todo&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.todo, _this.todo) || other.todo == _this.todo)&&(identical(other.completed, _this.completed) || other.completed == _this.completed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,todo,completed);
+int get hashCode {
+  final _this = this as Todo;
+  return Object.hash(runtimeType,_this.id,_this.userId,_this.todo,_this.completed);
+}
 
 @override
 String toString() {
-  return 'Todo(id: $id, userId: $userId, todo: $todo, completed: $completed)';
+  final _this = this as Todo;
+  return 'Todo(id: ${_this.id}, userId: ${_this.userId}, todo: ${_this.todo}, completed: ${_this.completed})';
 }
 
 
@@ -342,7 +355,7 @@ class _$TodoCopyWithImpl<$Res>
 /// Create a copy of Todo
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? todo = null,Object? completed = null,}) {
-  return _then(_self.copyWith(
+  return _then(Todo(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,todo: null == todo ? _self.todo : todo // ignore: cast_nullable_to_non_nullable
@@ -513,16 +526,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Todo&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.todo, todo) || other.todo == todo)&&(identical(other.completed, completed) || other.completed == completed));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Todo&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.todo, todo) || other.todo == todo)&&(identical(other.completed, completed) || other.completed == completed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,todo,completed);
+int get hashCode {
+    return Object.hash(runtimeType,id,userId,todo,completed);
+}
 
 @override
 String toString() {
-  return 'Todo(id: $id, userId: $userId, todo: $todo, completed: $completed)';
+    return 'Todo(id: $id, userId: $userId, todo: $todo, completed: $completed)';
 }
 
 

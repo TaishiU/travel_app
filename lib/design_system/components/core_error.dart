@@ -6,11 +6,7 @@ import 'package:travel_app/domain/errors/app_error.dart';
 /// 画面描画時のAsyncErrorにて、例外の種類に応じたメッセージとUIを表示します。
 class CoreError extends StatelessWidget {
   /// コンストラクタ
-  const CoreError({
-    required this.error,
-    required this.onPressed,
-    super.key,
-  });
+  const CoreError({required this.error, required this.onPressed, super.key});
 
   /// 発生したエラーオブジェクト
   final Object error;
@@ -42,11 +38,7 @@ class CoreError extends StatelessWidget {
         Icons.error_outline,
         false,
       ),
-      _ => (
-        '予期せぬエラーが発生しました。\n$error',
-        Icons.bug_report,
-        true,
-      ),
+      _ => ('予期せぬエラーが発生しました。\n$error', Icons.bug_report, true),
     };
 
     return Center(
@@ -63,9 +55,9 @@ class CoreError extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               message,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             if (showRetry) ...[

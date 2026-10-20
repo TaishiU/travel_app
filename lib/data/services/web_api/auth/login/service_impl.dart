@@ -30,11 +30,7 @@ class AuthApiServiceImpl implements AuthApiService {
     try {
       final response = await apiClient.post(
         endpoint: endpoint,
-        body: {
-          'username': username,
-          'password': password,
-          'expiresInMins': 30,
-        },
+        body: {'username': username, 'password': password, 'expiresInMins': 30},
       );
       final loginDto = LoginDto.fromJson(response);
       return SuccessResult(loginDto);

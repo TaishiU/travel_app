@@ -64,25 +64,24 @@ void main() {
         final mockTodoDtos = [
           const TodoDto(userId: 1, id: 1, todo: 'Test Todo', completed: false),
         ];
-        when(mockTodosApiServiceImpl.fetch()).thenAnswer(
-          (_) async => SuccessResult(TodosDto(todos: mockTodoDtos)),
-        );
+        when(
+          mockTodosApiServiceImpl.fetch(),
+        ).thenAnswer((_) async => SuccessResult(TodosDto(todos: mockTodoDtos)));
 
         final repository = container.read(todoRepositoryProvider);
         final completer = Completer<List<Todo>>();
 
         // Providerの状態変化を監視し、データが届いたらCompleterを完了させる
-        container.listen<AsyncValue<List<Todo>>>(
-          todosStreamProvider,
-          (previous, next) {
-            next.whenData((todos) {
-              if (!completer.isCompleted) {
-                completer.complete(todos);
-              }
-            });
-          },
-          fireImmediately: true,
-        );
+        container.listen<AsyncValue<List<Todo>>>(todosStreamProvider, (
+          previous,
+          next,
+        ) {
+          next.whenData((todos) {
+            if (!completer.isCompleted) {
+              completer.complete(todos);
+            }
+          });
+        }, fireImmediately: true);
 
         // データの取得を実行
         await repository.fetch();
@@ -105,9 +104,9 @@ void main() {
     ];
 
     test('初回fetch成功時にキャッシュとStreamが更新されること', () async {
-      when(mockTodosApiService.fetch()).thenAnswer(
-        (_) async => SuccessResult(TodosDto(todos: mockTodoDtos)),
-      );
+      when(
+        mockTodosApiService.fetch(),
+      ).thenAnswer((_) async => SuccessResult(TodosDto(todos: mockTodoDtos)));
 
       // Streamを監視
       final expectation = expectLater(
@@ -124,9 +123,9 @@ void main() {
     });
 
     test('2回目以降のfetchは、forceフラグがfalseならAPIを叩かないこと', () async {
-      when(mockTodosApiService.fetch()).thenAnswer(
-        (_) async => SuccessResult(TodosDto(todos: mockTodoDtos)),
-      );
+      when(
+        mockTodosApiService.fetch(),
+      ).thenAnswer((_) async => SuccessResult(TodosDto(todos: mockTodoDtos)));
 
       // 1回目
       await todoRepository.fetch();
@@ -137,9 +136,9 @@ void main() {
     });
 
     test('forceフラグがtrueなら、取得済みでもAPIを叩くこと', () async {
-      when(mockTodosApiService.fetch()).thenAnswer(
-        (_) async => SuccessResult(TodosDto(todos: mockTodoDtos)),
-      );
+      when(
+        mockTodosApiService.fetch(),
+      ).thenAnswer((_) async => SuccessResult(TodosDto(todos: mockTodoDtos)));
 
       // 1回目
       await todoRepository.fetch();
@@ -151,9 +150,9 @@ void main() {
 
     test('APIがエラーを返した場合、FailureResultを返しキャッシュは更新されないこと', () async {
       final exception = Exception('API Error');
-      when(mockTodosApiService.fetch()).thenAnswer(
-        (_) async => FailureResult(exception),
-      );
+      when(
+        mockTodosApiService.fetch(),
+      ).thenAnswer((_) async => FailureResult(exception));
 
       final result = await todoRepository.fetch();
 
@@ -177,9 +176,9 @@ void main() {
       final mockTodoDtos = [
         const TodoDto(userId: 1, id: 1, todo: 'Todo 1', completed: false),
       ];
-      when(mockTodosApiService.fetch()).thenAnswer(
-        (_) async => SuccessResult(TodosDto(todos: mockTodoDtos)),
-      );
+      when(
+        mockTodosApiService.fetch(),
+      ).thenAnswer((_) async => SuccessResult(TodosDto(todos: mockTodoDtos)));
       await todoRepository.fetch();
     });
 
@@ -212,9 +211,9 @@ void main() {
         const TodoDto(id: 2), // userId欠損
         const TodoDto(userId: 3), // id欠損
       ];
-      when(mockTodosApiService.fetch()).thenAnswer(
-        (_) async => SuccessResult(TodosDto(todos: mockTodoDtos)),
-      );
+      when(
+        mockTodosApiService.fetch(),
+      ).thenAnswer((_) async => SuccessResult(TodosDto(todos: mockTodoDtos)));
 
       await todoRepository.fetch();
 
@@ -223,12 +222,10 @@ void main() {
     });
 
     test('null可能なフィールドにはデフォルト値が入ること', () async {
-      final mockTodoDtos = [
-        const TodoDto(userId: 1, id: 1),
-      ];
-      when(mockTodosApiService.fetch()).thenAnswer(
-        (_) async => SuccessResult(TodosDto(todos: mockTodoDtos)),
-      );
+      final mockTodoDtos = [const TodoDto(userId: 1, id: 1)];
+      when(
+        mockTodosApiService.fetch(),
+      ).thenAnswer((_) async => SuccessResult(TodosDto(todos: mockTodoDtos)));
 
       await todoRepository.fetch();
 

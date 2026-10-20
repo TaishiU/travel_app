@@ -11,9 +11,7 @@ import 'package:travel_app/utils/logger.dart';
 class AndroidNotificationPermissionServiceImpl
     implements NotificationPermissionService {
   /// コンストラクタ
-  AndroidNotificationPermissionServiceImpl({
-    required this.preferencesService,
-  });
+  AndroidNotificationPermissionServiceImpl({required this.preferencesService});
 
   /// Android 権限フラグ永続化サービス
   final AndroidNotificationPermissionPreferencesService preferencesService;
@@ -40,11 +38,11 @@ class AndroidNotificationPermissionServiceImpl
       );
     final status = await Permission.notification.status;
     return switch (status) {
-      PermissionStatus.granted => _handleGranted(),
-      PermissionStatus.denied => Future.value(_handleDenied()),
+      PermissionStatus.granted => await _handleGranted(),
+      PermissionStatus.denied => _handleDenied(),
       PermissionStatus.permanentlyDenied || PermissionStatus.restricted =>
-        Future.value(NotificationPermissionStatus.permanentlyDenied),
-      _ => Future.value(NotificationPermissionStatus.denied),
+        NotificationPermissionStatus.permanentlyDenied,
+      _ => NotificationPermissionStatus.denied,
     };
   }
 

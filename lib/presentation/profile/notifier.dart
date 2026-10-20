@@ -9,15 +9,13 @@ profileScreenProvider =
     AsyncNotifierProvider.autoDispose<
       ProfileScreenNotifier,
       ProfileScreenState
-    >(
-      ProfileScreenNotifier.new,
-    );
+    >(ProfileScreenNotifier.new);
 
 /// プロフィール画面のNotifier
 class ProfileScreenNotifier extends AsyncNotifier<ProfileScreenState> {
   @override
   Future<ProfileScreenState> build() async {
-    return ref.read(profileScreenUseCaseProvider).initState();
+    return await ref.read(profileScreenUseCaseProvider).initState();
   }
 
   /// データの再読み込みを行う

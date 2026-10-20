@@ -32,10 +32,7 @@ class StubUsersApiServiceImpl implements UsersApiService {
       height: 193.24,
       weight: 63.16,
       eyeColor: 'Green',
-      hair: Hair(
-        color: 'Brown',
-        type: 'Curly',
-      ),
+      hair: Hair(color: 'Brown', type: 'Curly'),
       ip: '42.48.100.32',
       address: Address(
         address: '626 Main Street',
@@ -43,10 +40,7 @@ class StubUsersApiServiceImpl implements UsersApiService {
         state: 'Mississippi',
         stateCode: 'MS',
         postalCode: '29112',
-        coordinates: Coordinates(
-          lat: -77.16213,
-          lng: -92.084824,
-        ),
+        coordinates: Coordinates(lat: -77.16213, lng: -92.084824),
         country: 'United States',
       ),
       macAddress: '47:fa:41:18:ec:eb',
@@ -68,10 +62,7 @@ class StubUsersApiServiceImpl implements UsersApiService {
           state: 'Wisconsin',
           stateCode: 'WI',
           postalCode: '37657',
-          coordinates: Coordinates(
-            lat: 71.814525,
-            lng: -161.150263,
-          ),
+          coordinates: Coordinates(lat: 71.814525, lng: -161.150263),
           country: 'United States',
         ),
       ),

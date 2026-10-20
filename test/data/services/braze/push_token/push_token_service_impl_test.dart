@@ -105,9 +105,7 @@ void main() {
       when(
         mockFirebaseMessaging.onTokenRefresh,
       ).thenAnswer((_) => controller.stream);
-      when(
-        mockFirebaseMessaging.getToken(),
-      ).thenAnswer((_) async => null);
+      when(mockFirebaseMessaging.getToken()).thenAnswer((_) async => null);
 
       final service = PushTokenServiceImpl(
         brazePlugin: mockBrazePlugin,
@@ -140,9 +138,7 @@ void main() {
       when(
         mockFirebaseMessaging.onTokenRefresh,
       ).thenAnswer((_) => controller.stream);
-      when(
-        mockFirebaseMessaging.getToken(),
-      ).thenThrow(Exception('FCM error'));
+      when(mockFirebaseMessaging.getToken()).thenThrow(Exception('FCM error'));
 
       final service = PushTokenServiceImpl(
         brazePlugin: mockBrazePlugin,

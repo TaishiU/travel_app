@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'dto.dart';
@@ -9,6 +9,7 @@ part of 'dto.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -56,16 +57,21 @@ $UserDtoCopyWith<UserDto> get copyWith => _$UserDtoCopyWithImpl<UserDto>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserDto&&(identical(other.id, id) || other.id == id)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.maidenName, maidenName) || other.maidenName == maidenName)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.username, username) || other.username == username)&&(identical(other.password, password) || other.password == password)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.image, image) || other.image == image)&&(identical(other.bloodGroup, bloodGroup) || other.bloodGroup == bloodGroup)&&(identical(other.height, height) || other.height == height)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.eyeColor, eyeColor) || other.eyeColor == eyeColor)&&(identical(other.hair, hair) || other.hair == hair)&&(identical(other.ip, ip) || other.ip == ip)&&(identical(other.address, address) || other.address == address)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.university, university) || other.university == university)&&(identical(other.bank, bank) || other.bank == bank)&&(identical(other.company, company) || other.company == company)&&(identical(other.ein, ein) || other.ein == ein)&&(identical(other.ssn, ssn) || other.ssn == ssn)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent)&&(identical(other.crypto, crypto) || other.crypto == crypto)&&(identical(other.role, role) || other.role == role));
+  final _this = this as UserDto;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserDto&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.firstName, _this.firstName) || other.firstName == _this.firstName)&&(identical(other.lastName, _this.lastName) || other.lastName == _this.lastName)&&(identical(other.maidenName, _this.maidenName) || other.maidenName == _this.maidenName)&&(identical(other.age, _this.age) || other.age == _this.age)&&(identical(other.gender, _this.gender) || other.gender == _this.gender)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.phone, _this.phone) || other.phone == _this.phone)&&(identical(other.username, _this.username) || other.username == _this.username)&&(identical(other.password, _this.password) || other.password == _this.password)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.image, _this.image) || other.image == _this.image)&&(identical(other.bloodGroup, _this.bloodGroup) || other.bloodGroup == _this.bloodGroup)&&(identical(other.height, _this.height) || other.height == _this.height)&&(identical(other.weight, _this.weight) || other.weight == _this.weight)&&(identical(other.eyeColor, _this.eyeColor) || other.eyeColor == _this.eyeColor)&&(identical(other.hair, _this.hair) || other.hair == _this.hair)&&(identical(other.ip, _this.ip) || other.ip == _this.ip)&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.macAddress, _this.macAddress) || other.macAddress == _this.macAddress)&&(identical(other.university, _this.university) || other.university == _this.university)&&(identical(other.bank, _this.bank) || other.bank == _this.bank)&&(identical(other.company, _this.company) || other.company == _this.company)&&(identical(other.ein, _this.ein) || other.ein == _this.ein)&&(identical(other.ssn, _this.ssn) || other.ssn == _this.ssn)&&(identical(other.userAgent, _this.userAgent) || other.userAgent == _this.userAgent)&&(identical(other.crypto, _this.crypto) || other.crypto == _this.crypto)&&(identical(other.role, _this.role) || other.role == _this.role));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,firstName,lastName,maidenName,age,gender,email,phone,username,password,birthDate,image,bloodGroup,height,weight,eyeColor,hair,ip,address,macAddress,university,bank,company,ein,ssn,userAgent,crypto,role]);
+int get hashCode {
+  final _this = this as UserDto;
+  return Object.hashAll([runtimeType,_this.id,_this.firstName,_this.lastName,_this.maidenName,_this.age,_this.gender,_this.email,_this.phone,_this.username,_this.password,_this.birthDate,_this.image,_this.bloodGroup,_this.height,_this.weight,_this.eyeColor,_this.hair,_this.ip,_this.address,_this.macAddress,_this.university,_this.bank,_this.company,_this.ein,_this.ssn,_this.userAgent,_this.crypto,_this.role]);
+}
 
 @override
 String toString() {
-  return 'UserDto(id: $id, firstName: $firstName, lastName: $lastName, maidenName: $maidenName, age: $age, gender: $gender, email: $email, phone: $phone, username: $username, password: $password, birthDate: $birthDate, image: $image, bloodGroup: $bloodGroup, height: $height, weight: $weight, eyeColor: $eyeColor, hair: $hair, ip: $ip, address: $address, macAddress: $macAddress, university: $university, bank: $bank, company: $company, ein: $ein, ssn: $ssn, userAgent: $userAgent, crypto: $crypto, role: $role)';
+  final _this = this as UserDto;
+  return 'UserDto(id: ${_this.id}, firstName: ${_this.firstName}, lastName: ${_this.lastName}, maidenName: ${_this.maidenName}, age: ${_this.age}, gender: ${_this.gender}, email: ${_this.email}, phone: ${_this.phone}, username: ${_this.username}, password: ${_this.password}, birthDate: ${_this.birthDate}, image: ${_this.image}, bloodGroup: ${_this.bloodGroup}, height: ${_this.height}, weight: ${_this.weight}, eyeColor: ${_this.eyeColor}, hair: ${_this.hair}, ip: ${_this.ip}, address: ${_this.address}, macAddress: ${_this.macAddress}, university: ${_this.university}, bank: ${_this.bank}, company: ${_this.company}, ein: ${_this.ein}, ssn: ${_this.ssn}, userAgent: ${_this.userAgent}, crypto: ${_this.crypto}, role: ${_this.role})';
 }
 
 
@@ -94,7 +100,7 @@ class _$UserDtoCopyWithImpl<$Res>
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? firstName = freezed,Object? lastName = freezed,Object? maidenName = freezed,Object? age = freezed,Object? gender = freezed,Object? email = freezed,Object? phone = freezed,Object? username = freezed,Object? password = freezed,Object? birthDate = freezed,Object? image = freezed,Object? bloodGroup = freezed,Object? height = freezed,Object? weight = freezed,Object? eyeColor = freezed,Object? hair = freezed,Object? ip = freezed,Object? address = freezed,Object? macAddress = freezed,Object? university = freezed,Object? bank = freezed,Object? company = freezed,Object? ein = freezed,Object? ssn = freezed,Object? userAgent = freezed,Object? crypto = freezed,Object? role = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(UserDto(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,firstName: freezed == firstName ? _self.firstName : firstName // ignore: cast_nullable_to_non_nullable
 as String?,lastName: freezed == lastName ? _self.lastName : lastName // ignore: cast_nullable_to_non_nullable
@@ -397,16 +403,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserDto&&(identical(other.id, id) || other.id == id)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.maidenName, maidenName) || other.maidenName == maidenName)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.username, username) || other.username == username)&&(identical(other.password, password) || other.password == password)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.image, image) || other.image == image)&&(identical(other.bloodGroup, bloodGroup) || other.bloodGroup == bloodGroup)&&(identical(other.height, height) || other.height == height)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.eyeColor, eyeColor) || other.eyeColor == eyeColor)&&(identical(other.hair, hair) || other.hair == hair)&&(identical(other.ip, ip) || other.ip == ip)&&(identical(other.address, address) || other.address == address)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.university, university) || other.university == university)&&(identical(other.bank, bank) || other.bank == bank)&&(identical(other.company, company) || other.company == company)&&(identical(other.ein, ein) || other.ein == ein)&&(identical(other.ssn, ssn) || other.ssn == ssn)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent)&&(identical(other.crypto, crypto) || other.crypto == crypto)&&(identical(other.role, role) || other.role == role));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserDto&&(identical(other.id, id) || other.id == id)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.maidenName, maidenName) || other.maidenName == maidenName)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.username, username) || other.username == username)&&(identical(other.password, password) || other.password == password)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.image, image) || other.image == image)&&(identical(other.bloodGroup, bloodGroup) || other.bloodGroup == bloodGroup)&&(identical(other.height, height) || other.height == height)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.eyeColor, eyeColor) || other.eyeColor == eyeColor)&&(identical(other.hair, hair) || other.hair == hair)&&(identical(other.ip, ip) || other.ip == ip)&&(identical(other.address, address) || other.address == address)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.university, university) || other.university == university)&&(identical(other.bank, bank) || other.bank == bank)&&(identical(other.company, company) || other.company == company)&&(identical(other.ein, ein) || other.ein == ein)&&(identical(other.ssn, ssn) || other.ssn == ssn)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent)&&(identical(other.crypto, crypto) || other.crypto == crypto)&&(identical(other.role, role) || other.role == role));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,firstName,lastName,maidenName,age,gender,email,phone,username,password,birthDate,image,bloodGroup,height,weight,eyeColor,hair,ip,address,macAddress,university,bank,company,ein,ssn,userAgent,crypto,role]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,firstName,lastName,maidenName,age,gender,email,phone,username,password,birthDate,image,bloodGroup,height,weight,eyeColor,hair,ip,address,macAddress,university,bank,company,ein,ssn,userAgent,crypto,role]);
+}
 
 @override
 String toString() {
-  return 'UserDto(id: $id, firstName: $firstName, lastName: $lastName, maidenName: $maidenName, age: $age, gender: $gender, email: $email, phone: $phone, username: $username, password: $password, birthDate: $birthDate, image: $image, bloodGroup: $bloodGroup, height: $height, weight: $weight, eyeColor: $eyeColor, hair: $hair, ip: $ip, address: $address, macAddress: $macAddress, university: $university, bank: $bank, company: $company, ein: $ein, ssn: $ssn, userAgent: $userAgent, crypto: $crypto, role: $role)';
+    return 'UserDto(id: $id, firstName: $firstName, lastName: $lastName, maidenName: $maidenName, age: $age, gender: $gender, email: $email, phone: $phone, username: $username, password: $password, birthDate: $birthDate, image: $image, bloodGroup: $bloodGroup, height: $height, weight: $weight, eyeColor: $eyeColor, hair: $hair, ip: $ip, address: $address, macAddress: $macAddress, university: $university, bank: $bank, company: $company, ein: $ein, ssn: $ssn, userAgent: $userAgent, crypto: $crypto, role: $role)';
 }
 
 
@@ -550,16 +558,21 @@ $HairCopyWith<Hair> get copyWith => _$HairCopyWithImpl<Hair>(this as Hair, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Hair&&(identical(other.color, color) || other.color == color)&&(identical(other.type, type) || other.type == type));
+  final _this = this as Hair;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Hair&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.type, _this.type) || other.type == _this.type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,color,type);
+int get hashCode {
+  final _this = this as Hair;
+  return Object.hash(runtimeType,_this.color,_this.type);
+}
 
 @override
 String toString() {
-  return 'Hair(color: $color, type: $type)';
+  final _this = this as Hair;
+  return 'Hair(color: ${_this.color}, type: ${_this.type})';
 }
 
 
@@ -588,7 +601,7 @@ class _$HairCopyWithImpl<$Res>
 /// Create a copy of Hair
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? color = freezed,Object? type = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Hair(
 color: freezed == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
 as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -753,16 +766,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Hair&&(identical(other.color, color) || other.color == color)&&(identical(other.type, type) || other.type == type));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Hair&&(identical(other.color, color) || other.color == color)&&(identical(other.type, type) || other.type == type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,color,type);
+int get hashCode {
+    return Object.hash(runtimeType,color,type);
+}
 
 @override
 String toString() {
-  return 'Hair(color: $color, type: $type)';
+    return 'Hair(color: $color, type: $type)';
 }
 
 
@@ -825,16 +840,21 @@ $AddressCopyWith<Address> get copyWith => _$AddressCopyWithImpl<Address>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Address&&(identical(other.address, address) || other.address == address)&&(identical(other.city, city) || other.city == city)&&(identical(other.state, state) || other.state == state)&&(identical(other.stateCode, stateCode) || other.stateCode == stateCode)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.coordinates, coordinates) || other.coordinates == coordinates)&&(identical(other.country, country) || other.country == country));
+  final _this = this as Address;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Address&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.city, _this.city) || other.city == _this.city)&&(identical(other.state, _this.state) || other.state == _this.state)&&(identical(other.stateCode, _this.stateCode) || other.stateCode == _this.stateCode)&&(identical(other.postalCode, _this.postalCode) || other.postalCode == _this.postalCode)&&(identical(other.coordinates, _this.coordinates) || other.coordinates == _this.coordinates)&&(identical(other.country, _this.country) || other.country == _this.country));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,address,city,state,stateCode,postalCode,coordinates,country);
+int get hashCode {
+  final _this = this as Address;
+  return Object.hash(runtimeType,_this.address,_this.city,_this.state,_this.stateCode,_this.postalCode,_this.coordinates,_this.country);
+}
 
 @override
 String toString() {
-  return 'Address(address: $address, city: $city, state: $state, stateCode: $stateCode, postalCode: $postalCode, coordinates: $coordinates, country: $country)';
+  final _this = this as Address;
+  return 'Address(address: ${_this.address}, city: ${_this.city}, state: ${_this.state}, stateCode: ${_this.stateCode}, postalCode: ${_this.postalCode}, coordinates: ${_this.coordinates}, country: ${_this.country})';
 }
 
 
@@ -863,7 +883,7 @@ class _$AddressCopyWithImpl<$Res>
 /// Create a copy of Address
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? address = freezed,Object? city = freezed,Object? state = freezed,Object? stateCode = freezed,Object? postalCode = freezed,Object? coordinates = freezed,Object? country = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Address(
 address: freezed == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as String?,city: freezed == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
 as String?,state: freezed == state ? _self.state : state // ignore: cast_nullable_to_non_nullable
@@ -1055,16 +1075,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Address&&(identical(other.address, address) || other.address == address)&&(identical(other.city, city) || other.city == city)&&(identical(other.state, state) || other.state == state)&&(identical(other.stateCode, stateCode) || other.stateCode == stateCode)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.coordinates, coordinates) || other.coordinates == coordinates)&&(identical(other.country, country) || other.country == country));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Address&&(identical(other.address, address) || other.address == address)&&(identical(other.city, city) || other.city == city)&&(identical(other.state, state) || other.state == state)&&(identical(other.stateCode, stateCode) || other.stateCode == stateCode)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.coordinates, coordinates) || other.coordinates == coordinates)&&(identical(other.country, country) || other.country == country));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,address,city,state,stateCode,postalCode,coordinates,country);
+int get hashCode {
+    return Object.hash(runtimeType,address,city,state,stateCode,postalCode,coordinates,country);
+}
 
 @override
 String toString() {
-  return 'Address(address: $address, city: $city, state: $state, stateCode: $stateCode, postalCode: $postalCode, coordinates: $coordinates, country: $country)';
+    return 'Address(address: $address, city: $city, state: $state, stateCode: $stateCode, postalCode: $postalCode, coordinates: $coordinates, country: $country)';
 }
 
 
@@ -1139,16 +1161,21 @@ $CoordinatesCopyWith<Coordinates> get copyWith => _$CoordinatesCopyWithImpl<Coor
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Coordinates&&(identical(other.lat, lat) || other.lat == lat)&&(identical(other.lng, lng) || other.lng == lng));
+  final _this = this as Coordinates;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Coordinates&&(identical(other.lat, _this.lat) || other.lat == _this.lat)&&(identical(other.lng, _this.lng) || other.lng == _this.lng));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,lat,lng);
+int get hashCode {
+  final _this = this as Coordinates;
+  return Object.hash(runtimeType,_this.lat,_this.lng);
+}
 
 @override
 String toString() {
-  return 'Coordinates(lat: $lat, lng: $lng)';
+  final _this = this as Coordinates;
+  return 'Coordinates(lat: ${_this.lat}, lng: ${_this.lng})';
 }
 
 
@@ -1177,7 +1204,7 @@ class _$CoordinatesCopyWithImpl<$Res>
 /// Create a copy of Coordinates
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? lat = freezed,Object? lng = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Coordinates(
 lat: freezed == lat ? _self.lat : lat // ignore: cast_nullable_to_non_nullable
 as double?,lng: freezed == lng ? _self.lng : lng // ignore: cast_nullable_to_non_nullable
 as double?,
@@ -1342,16 +1369,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Coordinates&&(identical(other.lat, lat) || other.lat == lat)&&(identical(other.lng, lng) || other.lng == lng));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Coordinates&&(identical(other.lat, lat) || other.lat == lat)&&(identical(other.lng, lng) || other.lng == lng));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,lat,lng);
+int get hashCode {
+    return Object.hash(runtimeType,lat,lng);
+}
 
 @override
 String toString() {
-  return 'Coordinates(lat: $lat, lng: $lng)';
+    return 'Coordinates(lat: $lat, lng: $lng)';
 }
 
 
@@ -1412,16 +1441,21 @@ $BankCopyWith<Bank> get copyWith => _$BankCopyWithImpl<Bank>(this as Bank, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bank&&(identical(other.cardExpire, cardExpire) || other.cardExpire == cardExpire)&&(identical(other.cardNumber, cardNumber) || other.cardNumber == cardNumber)&&(identical(other.cardType, cardType) || other.cardType == cardType)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.iban, iban) || other.iban == iban));
+  final _this = this as Bank;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bank&&(identical(other.cardExpire, _this.cardExpire) || other.cardExpire == _this.cardExpire)&&(identical(other.cardNumber, _this.cardNumber) || other.cardNumber == _this.cardNumber)&&(identical(other.cardType, _this.cardType) || other.cardType == _this.cardType)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.iban, _this.iban) || other.iban == _this.iban));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cardExpire,cardNumber,cardType,currency,iban);
+int get hashCode {
+  final _this = this as Bank;
+  return Object.hash(runtimeType,_this.cardExpire,_this.cardNumber,_this.cardType,_this.currency,_this.iban);
+}
 
 @override
 String toString() {
-  return 'Bank(cardExpire: $cardExpire, cardNumber: $cardNumber, cardType: $cardType, currency: $currency, iban: $iban)';
+  final _this = this as Bank;
+  return 'Bank(cardExpire: ${_this.cardExpire}, cardNumber: ${_this.cardNumber}, cardType: ${_this.cardType}, currency: ${_this.currency}, iban: ${_this.iban})';
 }
 
 
@@ -1450,7 +1484,7 @@ class _$BankCopyWithImpl<$Res>
 /// Create a copy of Bank
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? cardExpire = freezed,Object? cardNumber = freezed,Object? cardType = freezed,Object? currency = freezed,Object? iban = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Bank(
 cardExpire: freezed == cardExpire ? _self.cardExpire : cardExpire // ignore: cast_nullable_to_non_nullable
 as String?,cardNumber: freezed == cardNumber ? _self.cardNumber : cardNumber // ignore: cast_nullable_to_non_nullable
 as String?,cardType: freezed == cardType ? _self.cardType : cardType // ignore: cast_nullable_to_non_nullable
@@ -1624,16 +1658,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bank&&(identical(other.cardExpire, cardExpire) || other.cardExpire == cardExpire)&&(identical(other.cardNumber, cardNumber) || other.cardNumber == cardNumber)&&(identical(other.cardType, cardType) || other.cardType == cardType)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.iban, iban) || other.iban == iban));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bank&&(identical(other.cardExpire, cardExpire) || other.cardExpire == cardExpire)&&(identical(other.cardNumber, cardNumber) || other.cardNumber == cardNumber)&&(identical(other.cardType, cardType) || other.cardType == cardType)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.iban, iban) || other.iban == iban));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cardExpire,cardNumber,cardType,currency,iban);
+int get hashCode {
+    return Object.hash(runtimeType,cardExpire,cardNumber,cardType,currency,iban);
+}
 
 @override
 String toString() {
-  return 'Bank(cardExpire: $cardExpire, cardNumber: $cardNumber, cardType: $cardType, currency: $currency, iban: $iban)';
+    return 'Bank(cardExpire: $cardExpire, cardNumber: $cardNumber, cardType: $cardType, currency: $currency, iban: $iban)';
 }
 
 
@@ -1696,16 +1732,21 @@ $CompanyCopyWith<Company> get copyWith => _$CompanyCopyWithImpl<Company>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Company&&(identical(other.department, department) || other.department == department)&&(identical(other.name, name) || other.name == name)&&(identical(other.title, title) || other.title == title)&&(identical(other.address, address) || other.address == address));
+  final _this = this as Company;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Company&&(identical(other.department, _this.department) || other.department == _this.department)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.address, _this.address) || other.address == _this.address));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,department,name,title,address);
+int get hashCode {
+  final _this = this as Company;
+  return Object.hash(runtimeType,_this.department,_this.name,_this.title,_this.address);
+}
 
 @override
 String toString() {
-  return 'Company(department: $department, name: $name, title: $title, address: $address)';
+  final _this = this as Company;
+  return 'Company(department: ${_this.department}, name: ${_this.name}, title: ${_this.title}, address: ${_this.address})';
 }
 
 
@@ -1734,7 +1775,7 @@ class _$CompanyCopyWithImpl<$Res>
 /// Create a copy of Company
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? department = freezed,Object? name = freezed,Object? title = freezed,Object? address = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Company(
 department: freezed == department ? _self.department : department // ignore: cast_nullable_to_non_nullable
 as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -1917,16 +1958,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Company&&(identical(other.department, department) || other.department == department)&&(identical(other.name, name) || other.name == name)&&(identical(other.title, title) || other.title == title)&&(identical(other.address, address) || other.address == address));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Company&&(identical(other.department, department) || other.department == department)&&(identical(other.name, name) || other.name == name)&&(identical(other.title, title) || other.title == title)&&(identical(other.address, address) || other.address == address));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,department,name,title,address);
+int get hashCode {
+    return Object.hash(runtimeType,department,name,title,address);
+}
 
 @override
 String toString() {
-  return 'Company(department: $department, name: $name, title: $title, address: $address)';
+    return 'Company(department: $department, name: $name, title: $title, address: $address)';
 }
 
 
@@ -1999,16 +2042,21 @@ $CryptoCopyWith<Crypto> get copyWith => _$CryptoCopyWithImpl<Crypto>(this as Cry
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Crypto&&(identical(other.coin, coin) || other.coin == coin)&&(identical(other.wallet, wallet) || other.wallet == wallet)&&(identical(other.network, network) || other.network == network));
+  final _this = this as Crypto;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Crypto&&(identical(other.coin, _this.coin) || other.coin == _this.coin)&&(identical(other.wallet, _this.wallet) || other.wallet == _this.wallet)&&(identical(other.network, _this.network) || other.network == _this.network));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,coin,wallet,network);
+int get hashCode {
+  final _this = this as Crypto;
+  return Object.hash(runtimeType,_this.coin,_this.wallet,_this.network);
+}
 
 @override
 String toString() {
-  return 'Crypto(coin: $coin, wallet: $wallet, network: $network)';
+  final _this = this as Crypto;
+  return 'Crypto(coin: ${_this.coin}, wallet: ${_this.wallet}, network: ${_this.network})';
 }
 
 
@@ -2037,7 +2085,7 @@ class _$CryptoCopyWithImpl<$Res>
 /// Create a copy of Crypto
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? coin = freezed,Object? wallet = freezed,Object? network = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Crypto(
 coin: freezed == coin ? _self.coin : coin // ignore: cast_nullable_to_non_nullable
 as String?,wallet: freezed == wallet ? _self.wallet : wallet // ignore: cast_nullable_to_non_nullable
 as String?,network: freezed == network ? _self.network : network // ignore: cast_nullable_to_non_nullable
@@ -2205,16 +2253,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Crypto&&(identical(other.coin, coin) || other.coin == coin)&&(identical(other.wallet, wallet) || other.wallet == wallet)&&(identical(other.network, network) || other.network == network));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Crypto&&(identical(other.coin, coin) || other.coin == coin)&&(identical(other.wallet, wallet) || other.wallet == wallet)&&(identical(other.network, network) || other.network == network));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,coin,wallet,network);
+int get hashCode {
+    return Object.hash(runtimeType,coin,wallet,network);
+}
 
 @override
 String toString() {
-  return 'Crypto(coin: $coin, wallet: $wallet, network: $network)';
+    return 'Crypto(coin: $coin, wallet: $wallet, network: $network)';
 }
 
 

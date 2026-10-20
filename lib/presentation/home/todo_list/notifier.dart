@@ -11,9 +11,7 @@ todoListScreenProvider =
     AsyncNotifierProvider.autoDispose<
       TodoListScreenNotifier,
       TodoListScreenState
-    >(
-      TodoListScreenNotifier.new,
-    );
+    >(TodoListScreenNotifier.new);
 
 /// Todoリスト画面のNotifier
 class TodoListScreenNotifier extends AsyncNotifier<TodoListScreenState> {

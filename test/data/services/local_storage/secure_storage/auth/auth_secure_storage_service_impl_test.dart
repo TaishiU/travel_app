@@ -9,10 +9,7 @@ import 'package:travel_app/data/services/local_storage/secure_storage/secure_sto
 
 import 'auth_secure_storage_service_impl_test.mocks.dart';
 
-@GenerateMocks([
-  SecureStorageService,
-  FlutterSecureStorage,
-])
+@GenerateMocks([SecureStorageService, FlutterSecureStorage])
 void main() {
   late MockSecureStorageService mockSecureStorage;
   late MockFlutterSecureStorage mockFlutterSecureStorage;
@@ -53,33 +50,25 @@ void main() {
       container.dispose();
     });
 
-    test(
-      'authSecureStorageServiceImplProviderは'
-      'AuthSecureStorageServiceImplのインスタンスを返すこと',
-      () {
-        final service = container.read(authSecureStorageServiceImplProvider);
-        expect(service, isA<AuthSecureStorageServiceImpl>());
-      },
-    );
+    test('authSecureStorageServiceImplProviderは'
+        'AuthSecureStorageServiceImplのインスタンスを返すこと', () {
+      final service = container.read(authSecureStorageServiceImplProvider);
+      expect(service, isA<AuthSecureStorageServiceImpl>());
+    });
 
-    test(
-      'authSecureStorageServiceImplProviderは'
-      '指定されたMockFlutterSecureStorageで初期化されること',
-      () async {
-        final service = container.read(authSecureStorageServiceImplProvider);
-        final impl = service as AuthSecureStorageServiceImpl;
+    test('authSecureStorageServiceImplProviderは'
+        '指定されたMockFlutterSecureStorageで初期化されること', () async {
+      final service = container.read(authSecureStorageServiceImplProvider);
+      final impl = service as AuthSecureStorageServiceImpl;
 
-        when(
-          mockFlutterSecureStorage.read(key: 'test_key'),
-        ).thenAnswer((_) async => 'test_value');
+      when(
+        mockFlutterSecureStorage.read(key: 'test_key'),
+      ).thenAnswer((_) async => 'test_value');
 
-        final value = await impl.secureStorage.read(key: 'test_key');
-        expect(value, 'test_value');
-        verify(
-          mockFlutterSecureStorage.read(key: 'test_key'),
-        ).called(1);
-      },
-    );
+      final value = await impl.secureStorage.read(key: 'test_key');
+      expect(value, 'test_value');
+      verify(mockFlutterSecureStorage.read(key: 'test_key')).called(1);
+    });
   });
 
   group('AuthSecureStorageServiceImpl', () {
@@ -136,10 +125,7 @@ void main() {
     test('clearAuthDataはメモリとストレージの両方をクリアすること', () async {
       // 事前にデータをセット
       when(
-        mockSecureStorage.write(
-          key: anyNamed('key'),
-          value: anyNamed('value'),
-        ),
+        mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')),
       ).thenAnswer((_) async {});
       await authSecureStorageService.setAccessToken(token: 'token');
       await authSecureStorageService.setRefreshToken(token: 'token');

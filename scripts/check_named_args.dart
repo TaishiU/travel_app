@@ -137,9 +137,7 @@ void main(List<String> args) {
   }
   final affectedFileCount = allViolations.map((v) => v.path).toSet().length;
   stderr
-    ..writeln(
-      '\x1B[33m位置引数を名前付き引数（{ ... }）に変更してください。\x1B[0m\n',
-    )
+    ..writeln('\x1B[33m位置引数を名前付き引数（{ ... }）に変更してください。\x1B[0m\n')
     ..writeln(
       '\x1B[31m ❌ 名前付き引数違反 ${allViolations.length}件を検出'
       ' （$affectedFileCountファイル）\x1B[0m\n',
@@ -330,9 +328,7 @@ List<_Violation> _checkFile({
         ? rawLines[lineNum - 1].trim()
         : funcName;
 
-    violations.add(
-      _Violation(path: path, line: lineNum, signature: sigLine),
-    );
+    violations.add(_Violation(path: path, line: lineNum, signature: sigLine));
   }
 
   return violations;

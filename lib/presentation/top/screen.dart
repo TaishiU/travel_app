@@ -4,10 +4,7 @@ import 'package:go_router/go_router.dart';
 /// タブバー付きのScaffold
 class TopScreen extends StatefulWidget {
   /// コンストラクタ
-  const TopScreen({
-    required this.child,
-    super.key,
-  });
+  const TopScreen({required this.child, super.key});
 
   /// 子Widget
   final Widget child;

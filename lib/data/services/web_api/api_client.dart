@@ -40,17 +40,15 @@ enum Method {
 }
 
 /// APIクライアントのインスタンスを提供するプロバイダー。
-final apiClientProvider = Provider<ApiClient>(
-  (ref) {
-    final client = http.Client();
-    final baseUrl = ref.watch(baseUrlProvider);
-    return ApiClientImpl(
-      client: client,
-      baseUrl: baseUrl,
-      authSecureStorageService: ref.read(authSecureStorageServiceImplProvider),
-    );
-  },
-);
+final apiClientProvider = Provider<ApiClient>((ref) {
+  final client = http.Client();
+  final baseUrl = ref.watch(baseUrlProvider);
+  return ApiClientImpl(
+    client: client,
+    baseUrl: baseUrl,
+    authSecureStorageService: ref.read(authSecureStorageServiceImplProvider),
+  );
+});
 
 /// API操作のための抽象クライアントインターフェース。
 ///
@@ -108,9 +106,7 @@ abstract class ApiClient {
   ///
   /// [endpoint] : リソースのパス。
   /// 戻り値: レスポンスボディを表すマップ。
-  Future<Map<String, dynamic>> delete({
-    required String endpoint,
-  });
+  Future<Map<String, dynamic>> delete({required String endpoint});
 }
 
 /// [ApiClient] の実装クラス。
@@ -211,10 +207,7 @@ class ApiClientImpl implements ApiClient {
 
   @override
   Future<Map<String, dynamic>> delete({required String endpoint}) {
-    return _safeApiCall(
-      method: Method.delete,
-      endpoint: endpoint,
-    );
+    return _safeApiCall(method: Method.delete, endpoint: endpoint);
   }
 
   Uri _buildUri({
@@ -419,10 +412,7 @@ class ApiClientImpl implements ApiClient {
       final response = await _client.post(
         refreshUri,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'refreshToken': refreshToken,
-          'expiresInMins': 30,
-        }),
+        body: jsonEncode({'refreshToken': refreshToken, 'expiresInMins': 30}),
       );
 
       if (response.statusCode == 200) {

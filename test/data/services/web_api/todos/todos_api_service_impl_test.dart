@@ -30,9 +30,7 @@ void main() {
     setUp(() {
       mockApiClient = MockApiClient();
       container = ProviderContainer(
-        overrides: [
-          apiClientProvider.overrideWithValue(mockApiClient),
-        ],
+        overrides: [apiClientProvider.overrideWithValue(mockApiClient)],
       );
     });
 
@@ -49,15 +47,9 @@ void main() {
       final service = container.read(todosApiServiceImplProvider);
       when(
         mockApiClient.get(endpoint: 'todos'),
-      ).thenAnswer(
-        (_) async => {
-          'todos': <Map<String, dynamic>>[],
-        },
-      );
+      ).thenAnswer((_) async => {'todos': <Map<String, dynamic>>[]});
       await service.fetch();
-      verify(
-        mockApiClient.get(endpoint: 'todos'),
-      ).called(1);
+      verify(mockApiClient.get(endpoint: 'todos')).called(1);
     });
   });
 
@@ -66,9 +58,7 @@ void main() {
 
     setUp(() {
       container = ProviderContainer(
-        overrides: [
-          apiClientProvider.overrideWithValue(MockApiClient()),
-        ],
+        overrides: [apiClientProvider.overrideWithValue(MockApiClient())],
       );
     });
 
@@ -172,9 +162,7 @@ void main() {
         message: 'Not Found',
         statusCode: 404,
       );
-      when(
-        mockApiClient.get(endpoint: 'todos'),
-      ).thenThrow(apiException);
+      when(mockApiClient.get(endpoint: 'todos')).thenThrow(apiException);
 
       final result = await todosApiServiceImpl.fetch();
 
@@ -184,9 +172,7 @@ void main() {
 
     test('その他の例外が発生した場合、FailureResultを返すこと', () async {
       final exception = Exception('Something went wrong');
-      when(
-        mockApiClient.get(endpoint: 'todos'),
-      ).thenThrow(exception);
+      when(mockApiClient.get(endpoint: 'todos')).thenThrow(exception);
 
       final result = await todosApiServiceImpl.fetch();
 

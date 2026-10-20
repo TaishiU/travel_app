@@ -16,9 +16,7 @@ abstract class ProductsApiService {
   });
 
   /// 商品詳細を取得
-  Future<Result<ProductDetailDto>> fetchById({
-    required int id,
-  });
+  Future<Result<ProductDetailDto>> fetchById({required int id});
 
   /// 商品を出品
   Future<Result<ProductDetailDto>> create({
@@ -44,7 +42,5 @@ abstract class ProductsApiService {
   });
 
   /// 商品を出品停止（論理削除）
-  Future<Result<void>> delete({
-    required int id,
-  });
+  Future<Result<void>> delete({required int id});
 }

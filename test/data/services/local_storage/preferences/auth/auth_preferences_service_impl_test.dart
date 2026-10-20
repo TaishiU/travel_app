@@ -10,10 +10,7 @@ import 'package:travel_app/data/services/local_storage/preferences/shared_prefer
 
 import 'auth_preferences_service_impl_test.mocks.dart';
 
-@GenerateMocks([
-  SharedPreferencesService,
-  SharedPreferencesWithCache,
-])
+@GenerateMocks([SharedPreferencesService, SharedPreferencesWithCache])
 void main() {
   late MockSharedPreferencesService mockSharedPreferencesService;
   late MockSharedPreferencesWithCache mockSharedPreferencesWithCache;
@@ -59,49 +56,38 @@ void main() {
       container.dispose();
     });
 
-    test(
-      'authPreferencesServiceImplProviderは'
-      'AuthPreferencesServiceImplのインスタンスを返すこと',
-      () {
-        final service = container.read(authPreferencesServiceImplProvider);
-        expect(service, isA<AuthPreferencesServiceImpl>());
-      },
-    );
+    test('authPreferencesServiceImplProviderは'
+        'AuthPreferencesServiceImplのインスタンスを返すこと', () {
+      final service = container.read(authPreferencesServiceImplProvider);
+      expect(service, isA<AuthPreferencesServiceImpl>());
+    });
 
-    test(
-      'authPreferencesServiceImplProviderは'
-      '指定されたMockSharedPreferencesWithCacheで初期化されること',
-      () {
-        final service = container.read(authPreferencesServiceImplProvider);
+    test('authPreferencesServiceImplProviderは'
+        '指定されたMockSharedPreferencesWithCacheで初期化されること', () {
+      final service = container.read(authPreferencesServiceImplProvider);
 
-        // モックされたgetStringメソッドを呼び出すことで、
-        // 内部で渡されたMockSharedPreferencesWithCacheが使用されていることを確認
-        when(
-          mockSharedPreferencesWithCache.getString('test_key'),
-        ).thenReturn('test_value');
-        final value = service.generalPreferences.getString(key: 'test_key');
-        expect(value, 'test_value');
-        verify(
-          mockSharedPreferencesWithCache.getString('test_key'),
-        ).called(1);
-      },
-    );
+      // モックされたgetStringメソッドを呼び出すことで、
+      // 内部で渡されたMockSharedPreferencesWithCacheが使用されていることを確認
+      when(
+        mockSharedPreferencesWithCache.getString('test_key'),
+      ).thenReturn('test_value');
+      final value = service.generalPreferences.getString(key: 'test_key');
+      expect(value, 'test_value');
+      verify(mockSharedPreferencesWithCache.getString('test_key')).called(1);
+    });
 
-    test(
-      'overridesなしでauthPreferencesServiceImplProviderにアクセスした場合、'
-      'ProviderExceptionがスローされること',
-      () {
-        // Providerをオーバーライドせずにコンテナを作成
-        final container = ProviderContainer();
-        addTearDown(container.dispose);
+    test('overridesなしでauthPreferencesServiceImplProviderにアクセスした場合、'
+        'ProviderExceptionがスローされること', () {
+      // Providerをオーバーライドせずにコンテナを作成
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
 
-        // プロバイダを読み込もうとするとProviderExceptionがスローされることを確認
-        expect(
-          () => container.read(authPreferencesServiceImplProvider),
-          throwsA(isA<ProviderException>()),
-        );
-      },
-    );
+      // プロバイダを読み込もうとするとProviderExceptionがスローされることを確認
+      expect(
+        () => container.read(authPreferencesServiceImplProvider),
+        throwsA(isA<ProviderException>()),
+      );
+    });
   });
 
   group('AuthPreferencesServiceImpl', () {

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'state.dart';
@@ -9,6 +9,7 @@ part of 'state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -26,16 +27,21 @@ $TaskScreenStateCopyWith<TaskScreenState> get copyWith => _$TaskScreenStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskScreenState&&const DeepCollectionEquality().equals(other.tasks, tasks));
+  final _this = this as TaskScreenState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskScreenState&&const DeepCollectionEquality().equals(other.tasks, _this.tasks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(tasks));
+int get hashCode {
+  final _this = this as TaskScreenState;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.tasks));
+}
 
 @override
 String toString() {
-  return 'TaskScreenState(tasks: $tasks)';
+  final _this = this as TaskScreenState;
+  return 'TaskScreenState(tasks: ${_this.tasks})';
 }
 
 
@@ -64,7 +70,7 @@ class _$TaskScreenStateCopyWithImpl<$Res>
 /// Create a copy of TaskScreenState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? tasks = null,}) {
-  return _then(_self.copyWith(
+  return _then(TaskScreenState(
 tasks: null == tasks ? _self.tasks : tasks // ignore: cast_nullable_to_non_nullable
 as List<Task>,
   ));
@@ -207,7 +213,7 @@ return $default(_that.tasks);case _:
 
 
 class _TaskScreenState implements TaskScreenState {
-  const _TaskScreenState({required final  List<Task> tasks}): _tasks = tasks;
+  const _TaskScreenState({required  List<Task> tasks}): _tasks = tasks;
   
 
 /// タスク一覧
@@ -230,16 +236,18 @@ _$TaskScreenStateCopyWith<_TaskScreenState> get copyWith => __$TaskScreenStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskScreenState&&const DeepCollectionEquality().equals(other._tasks, _tasks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskScreenState&&const DeepCollectionEquality().equals(other.tasks, _tasks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_tasks));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_tasks));
+}
 
 @override
 String toString() {
-  return 'TaskScreenState(tasks: $tasks)';
+    return 'TaskScreenState(tasks: $tasks)';
 }
 
 

@@ -462,7 +462,16 @@ class $$TaskItemsTableTableManager
                 completed: completed,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$TaskItemsTable, TaskItem>(table),
+                  BaseReferences<_$AppDatabase, $TaskItemsTable, TaskItem>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),

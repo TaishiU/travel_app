@@ -18,9 +18,7 @@ void _setupDummyValues() {
   provideDummyBuilder<Result<LoginDto>>(
     (_, _) => const SuccessResult(LoginDto()),
   );
-  provideDummyBuilder<Result<void>>(
-    (_, _) => const SuccessResult(null),
-  );
+  provideDummyBuilder<Result<void>>((_, _) => const SuccessResult(null));
 }
 
 @GenerateMocks([
@@ -132,10 +130,7 @@ void main() {
         mockAuthApiService.login(username: username, password: password),
       ).thenAnswer(
         (_) async => const SuccessResult(
-          LoginDto(
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-          ),
+          LoginDto(accessToken: accessToken, refreshToken: refreshToken),
         ),
       );
       when(
@@ -176,9 +171,7 @@ void main() {
       expect(result, isA<FailureResult<void>>());
       expect((result as FailureResult<void>).error, isA<AppError>());
       verifyNever(
-        mockAuthSecureStorageService.setAccessToken(
-          token: anyNamed('token'),
-        ),
+        mockAuthSecureStorageService.setAccessToken(token: anyNamed('token')),
       );
     });
 
