@@ -15,11 +15,9 @@ import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_
 import 'package:travel_app/data/services/local_storage/secure_storage/secure_storage_service.dart'
     as _i3;
 import 'package:travel_app/data/services/web_api/api_client.dart' as _i2;
-import 'package:travel_app/data/services/web_api/auth/login/dto.dart' as _i7;
-import 'package:travel_app/data/services/web_api/auth/login/service.dart'
-    as _i4;
-import 'package:travel_app/data/services/web_api/auth/login/service_impl.dart'
-    as _i9;
+import 'package:travel_app/data/services/web_api/auth/dto.dart' as _i7;
+import 'package:travel_app/data/services/web_api/auth/service.dart' as _i4;
+import 'package:travel_app/data/services/web_api/auth/service_impl.dart' as _i9;
 import 'package:travel_app/utils/result.dart' as _i6;
 
 // ignore_for_file: type=lint
@@ -58,26 +56,89 @@ class MockAuthApiService extends _i1.Mock implements _i4.AuthApiService {
   }
 
   @override
-  _i5.Future<_i6.Result<_i7.LoginDto>> login({
-    required String? username,
+  _i5.Future<_i6.Result<_i7.TokenResponseDto>> register({
+    required String? email,
+    required String? password,
+    String? displayName,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#register, [], {
+              #email: email,
+              #password: password,
+              #displayName: displayName,
+            }),
+            returnValue: _i5.Future<_i6.Result<_i7.TokenResponseDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.TokenResponseDto>>(
+                this,
+                Invocation.method(#register, [], {
+                  #email: email,
+                  #password: password,
+                  #displayName: displayName,
+                }),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<_i7.TokenResponseDto>>);
+
+  @override
+  _i5.Future<_i6.Result<_i7.TokenResponseDto>> login({
+    required String? email,
     required String? password,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#login, [], {
-              #username: username,
-              #password: password,
-            }),
-            returnValue: _i5.Future<_i6.Result<_i7.LoginDto>>.value(
-              _i8.dummyValue<_i6.Result<_i7.LoginDto>>(
+            Invocation.method(#login, [], {#email: email, #password: password}),
+            returnValue: _i5.Future<_i6.Result<_i7.TokenResponseDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.TokenResponseDto>>(
                 this,
                 Invocation.method(#login, [], {
-                  #username: username,
+                  #email: email,
                   #password: password,
                 }),
               ),
             ),
           )
-          as _i5.Future<_i6.Result<_i7.LoginDto>>);
+          as _i5.Future<_i6.Result<_i7.TokenResponseDto>>);
+
+  @override
+  _i5.Future<_i6.Result<_i7.RefreshTokenDto>> refresh({
+    required String? refreshToken,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#refresh, [], {#refreshToken: refreshToken}),
+            returnValue: _i5.Future<_i6.Result<_i7.RefreshTokenDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.RefreshTokenDto>>(
+                this,
+                Invocation.method(#refresh, [], {#refreshToken: refreshToken}),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<_i7.RefreshTokenDto>>);
+
+  @override
+  _i5.Future<_i6.Result<void>> logout({required String? refreshToken}) =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, [], {#refreshToken: refreshToken}),
+            returnValue: _i5.Future<_i6.Result<void>>.value(
+              _i8.dummyValue<_i6.Result<void>>(
+                this,
+                Invocation.method(#logout, [], {#refreshToken: refreshToken}),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<void>>);
+
+  @override
+  _i5.Future<_i6.Result<_i7.UserDto>> me() =>
+      (super.noSuchMethod(
+            Invocation.method(#me, []),
+            returnValue: _i5.Future<_i6.Result<_i7.UserDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.UserDto>>(
+                this,
+                Invocation.method(#me, []),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<_i7.UserDto>>);
 }
 
 /// A class which mocks [AuthApiServiceImpl].
@@ -98,26 +159,89 @@ class MockAuthApiServiceImpl extends _i1.Mock
           as _i2.ApiClient);
 
   @override
-  _i5.Future<_i6.Result<_i7.LoginDto>> login({
-    required String? username,
+  _i5.Future<_i6.Result<_i7.TokenResponseDto>> register({
+    required String? email,
+    required String? password,
+    String? displayName,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#register, [], {
+              #email: email,
+              #password: password,
+              #displayName: displayName,
+            }),
+            returnValue: _i5.Future<_i6.Result<_i7.TokenResponseDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.TokenResponseDto>>(
+                this,
+                Invocation.method(#register, [], {
+                  #email: email,
+                  #password: password,
+                  #displayName: displayName,
+                }),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<_i7.TokenResponseDto>>);
+
+  @override
+  _i5.Future<_i6.Result<_i7.TokenResponseDto>> login({
+    required String? email,
     required String? password,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#login, [], {
-              #username: username,
-              #password: password,
-            }),
-            returnValue: _i5.Future<_i6.Result<_i7.LoginDto>>.value(
-              _i8.dummyValue<_i6.Result<_i7.LoginDto>>(
+            Invocation.method(#login, [], {#email: email, #password: password}),
+            returnValue: _i5.Future<_i6.Result<_i7.TokenResponseDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.TokenResponseDto>>(
                 this,
                 Invocation.method(#login, [], {
-                  #username: username,
+                  #email: email,
                   #password: password,
                 }),
               ),
             ),
           )
-          as _i5.Future<_i6.Result<_i7.LoginDto>>);
+          as _i5.Future<_i6.Result<_i7.TokenResponseDto>>);
+
+  @override
+  _i5.Future<_i6.Result<_i7.RefreshTokenDto>> refresh({
+    required String? refreshToken,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#refresh, [], {#refreshToken: refreshToken}),
+            returnValue: _i5.Future<_i6.Result<_i7.RefreshTokenDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.RefreshTokenDto>>(
+                this,
+                Invocation.method(#refresh, [], {#refreshToken: refreshToken}),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<_i7.RefreshTokenDto>>);
+
+  @override
+  _i5.Future<_i6.Result<void>> logout({required String? refreshToken}) =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, [], {#refreshToken: refreshToken}),
+            returnValue: _i5.Future<_i6.Result<void>>.value(
+              _i8.dummyValue<_i6.Result<void>>(
+                this,
+                Invocation.method(#logout, [], {#refreshToken: refreshToken}),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<void>>);
+
+  @override
+  _i5.Future<_i6.Result<_i7.UserDto>> me() =>
+      (super.noSuchMethod(
+            Invocation.method(#me, []),
+            returnValue: _i5.Future<_i6.Result<_i7.UserDto>>.value(
+              _i8.dummyValue<_i6.Result<_i7.UserDto>>(
+                this,
+                Invocation.method(#me, []),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<_i7.UserDto>>);
 }
 
 /// A class which mocks [AuthSecureStorageService].

@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/design_system/components/core_app_bar.dart';
 import 'package:travel_app/design_system/components/core_error.dart';
 import 'package:travel_app/presentation/home/todo_list/notifier.dart';
 import 'package:travel_app/presentation/home/todo_list/state.dart';
+import 'package:travel_app/presentation/login/screen.dart';
 import 'package:travel_app/router/navigation_extension.dart';
 
 /// Todoリスト画面
@@ -19,6 +21,11 @@ class TodoListScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(todoListScreenProvider);
 
+    final isLoggedIn = switch (viewModel) {
+      AsyncData(:final value) => value.isLoggedIn,
+      _ => false,
+    };
+
     return Scaffold(
       appBar: CoreAppBar(
         title: 'TodoListScreen',
@@ -28,12 +35,18 @@ class TodoListScreen extends HookConsumerWidget {
               onPressed: () => context.toDebugMenuScreen(),
               icon: const Icon(Icons.bug_report_outlined),
             ),
-          IconButton(
-            onPressed: () async {
-              await ref.read(todoListScreenProvider.notifier).logout();
-            },
-            icon: const Icon(Icons.logout),
-          ),
+          if (isLoggedIn)
+            IconButton(
+              onPressed: () async {
+                await ref.read(todoListScreenProvider.notifier).logout();
+              },
+              icon: const Icon(Icons.logout),
+            )
+          else
+            IconButton(
+              onPressed: () => context.push(LoginScreen.path),
+              icon: const Icon(Icons.login),
+            ),
         ],
       ),
       body: switch (viewModel) {

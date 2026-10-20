@@ -12,7 +12,6 @@ import 'package:travel_app/utils/result.dart';
 
 import 'user_repository_test.mocks.dart';
 
-// MissingDummyValueErrorを解決するためにダミー値を提供するヘルパー関数
 void _setupDummyValues() {
   provideDummyBuilder<Result<dto.UserDto>>(
     (_, _) => const SuccessResult(dto.UserDto()),
@@ -55,165 +54,74 @@ void main() {
   });
 
   group('fetch メソッドのテスト', () {
-    const mockUserDto = dto.UserDto(
-      id: 1,
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-    );
+    const mockUserDto = dto.UserDto(id: 1, email: 'john.doe@example.com');
 
-    test('API取得成功時にSuccessResult<User>を返すこと', () async {
-      when(
-        mockUserApiService.fetchById(),
-      ).thenAnswer((_) async => const SuccessResult(mockUserDto));
+    group('正常系', () {
+      test('API取得成功時にSuccessResult<User>を返すこと', () async {
+        when(
+          mockUserApiService.fetchById(),
+        ).thenAnswer((_) async => const SuccessResult(mockUserDto));
 
-      final result = await userRepository.fetch();
+        final result = await userRepository.fetch();
 
-      expect(result, isA<SuccessResult<User>>());
-      final user = (result as SuccessResult<User>).value;
-      expect(user.id, 1);
-      expect(user.firstName, 'John');
-      expect(user.lastName, 'Doe');
-      expect(user.email, 'john.doe@example.com');
-      verify(mockUserApiService.fetchById()).called(1);
+        expect(result, isA<SuccessResult<User>>());
+        final user = (result as SuccessResult<User>).value;
+        expect(user.id, '1');
+        expect(user.email, 'john.doe@example.com');
+        verify(mockUserApiService.fetchById()).called(1);
+      });
+
+      test('emailがnullの場合、空文字が入ること', () async {
+        const noEmailDto = dto.UserDto(id: 1);
+        when(
+          mockUserApiService.fetchById(),
+        ).thenAnswer((_) async => const SuccessResult(noEmailDto));
+
+        final result = await userRepository.fetch();
+
+        expect(result, isA<SuccessResult<User>>());
+        final user = (result as SuccessResult<User>).value;
+        expect(user.id, '1');
+        expect(user.email, isEmpty);
+        expect(user.displayName, isNull);
+      });
     });
 
-    test('すべてのフィールドが定義されたAPI取得成功時に、エンティティに正しく変換されること', () async {
-      const fullDto = dto.UserDto(
-        id: 1,
-        firstName: 'John',
-        lastName: 'Doe',
-        maidenName: 'Smith',
-        age: 30,
-        gender: 'male',
-        email: 'john.doe@example.com',
-        phone: '1234567890',
-        username: 'johndoe',
-        password: 'password',
-        birthDate: '1990-01-01',
-        image: 'http://example.com/image.png',
-        bloodGroup: 'A+',
-        height: 180,
-        weight: 75,
-        eyeColor: 'blue',
-        hair: dto.Hair(color: 'black', type: 'straight'),
-        ip: '127.0.0.1',
-        address: dto.Address(
-          address: '123 Main St',
-          city: 'New York',
-          state: 'NY',
-          stateCode: 'NY',
-          postalCode: '10001',
-          coordinates: dto.Coordinates(lat: 40.7128, lng: -74.0060),
-          country: 'USA',
-        ),
-        macAddress: '00:00:00:00:00:00',
-        university: 'MIT',
-        bank: dto.Bank(
-          cardExpire: '12/25',
-          cardNumber: '1234567890123456',
-          cardType: 'Visa',
-          currency: 'USD',
-          iban: 'US1234567890',
-        ),
-        company: dto.Company(
-          department: 'Engineering',
-          name: 'Tech Corp',
-          title: 'Software Engineer',
-          address: dto.Address(
-            address: '456 Tech Lane',
-            city: 'San Francisco',
-            state: 'CA',
-            stateCode: 'CA',
-            postalCode: '94105',
-            coordinates: dto.Coordinates(lat: 37.7749, lng: -122.4194),
-            country: 'USA',
-          ),
-        ),
-        ein: '12-3456789',
-        ssn: '123-45-6789',
-        userAgent: 'Mozilla/5.0',
-        crypto: dto.Crypto(
-          coin: 'Bitcoin',
-          wallet: '0x123',
-          network: 'Ethereum',
-        ),
-        role: 'admin',
-      );
+    group('異常系', () {
+      test('APIがFailureResultを返した場合、FailureResultを返すこと', () async {
+        final exception = Exception('API Error');
+        when(
+          mockUserApiService.fetchById(),
+        ).thenAnswer((_) async => FailureResult(exception));
 
-      when(
-        mockUserApiService.fetchById(),
-      ).thenAnswer((_) async => const SuccessResult(fullDto));
+        final result = await userRepository.fetch();
 
-      final result = await userRepository.fetch();
+        expect(result, isA<FailureResult<User>>());
+        expect((result as FailureResult).error, isA<AppError>());
+      });
 
-      expect(result, isA<SuccessResult<User>>());
-      final user = (result as SuccessResult<User>).value;
+      test('例外発生時にFailureResultを返すこと', () async {
+        when(
+          mockUserApiService.fetchById(),
+        ).thenThrow(Exception('Network Error'));
 
-      // 各フィールドの変換を確認
-      expect(user.id, 1);
-      expect(user.firstName, 'John');
-      expect(user.hair.color, 'black');
-      expect(user.address.city, 'New York');
-      expect(user.address.coordinates.lat, 40.7128);
-      expect(user.bank.cardType, 'Visa');
-      expect(user.company.name, 'Tech Corp');
-      expect(user.company.address.city, 'San Francisco');
-      expect(user.crypto.coin, 'Bitcoin');
-      expect(user.role, 'admin');
-    });
+        final result = await userRepository.fetch();
 
-    test('APIがFailureResultを返した場合、FailureResultを返すこと', () async {
-      final exception = Exception('API Error');
-      when(
-        mockUserApiService.fetchById(),
-      ).thenAnswer((_) async => FailureResult(exception));
+        expect(result, isA<FailureResult<User>>());
+        expect((result as FailureResult).error, isA<AppError>());
+      });
 
-      final result = await userRepository.fetch();
+      test('必須フィールド(id)が欠損している場合はFailureResultを返すこと', () async {
+        const incompleteDto = dto.UserDto(email: 'no-id@example.com');
+        when(
+          mockUserApiService.fetchById(),
+        ).thenAnswer((_) async => const SuccessResult(incompleteDto));
 
-      expect(result, isA<FailureResult<User>>());
-      expect((result as FailureResult).error, isA<AppError>());
-    });
+        final result = await userRepository.fetch();
 
-    test('例外発生時にFailureResultを返すこと', () async {
-      when(
-        mockUserApiService.fetchById(),
-      ).thenThrow(Exception('Network Error'));
-
-      final result = await userRepository.fetch();
-
-      expect(result, isA<FailureResult<User>>());
-      expect((result as FailureResult).error, isA<AppError>());
-    });
-  });
-
-  group('Entity変換のバリデーション', () {
-    test('必須フィールド(id)が欠損している場合はFailureResultを返すこと', () async {
-      const incompleteDto = dto.UserDto(firstName: 'No ID');
-      when(
-        mockUserApiService.fetchById(),
-      ).thenAnswer((_) async => const SuccessResult(incompleteDto));
-
-      final result = await userRepository.fetch();
-
-      expect(result, isA<FailureResult<User>>());
-      expect((result as FailureResult).error, isA<UnknownError>());
-    });
-
-    test('null可能なフィールドにはデフォルト値が入ること', () async {
-      const minimalDto = dto.UserDto(id: 1);
-      when(
-        mockUserApiService.fetchById(),
-      ).thenAnswer((_) async => const SuccessResult(minimalDto));
-
-      final result = await userRepository.fetch();
-
-      expect(result, isA<SuccessResult<User>>());
-      final user = (result as SuccessResult<User>).value;
-      expect(user.id, 1);
-      expect(user.firstName, isEmpty);
-      expect(user.age, 0);
-      expect(user.height, 0.0);
+        expect(result, isA<FailureResult<User>>());
+        expect((result as FailureResult).error, isA<UnknownError>());
+      });
     });
   });
 }

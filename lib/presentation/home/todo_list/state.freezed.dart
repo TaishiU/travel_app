@@ -17,7 +17,8 @@ mixin _$TodoListScreenState {
 
 /// SSOTから提供されるTodoリスト
  List<Todo> get todos;/// 検索クエリ
- String get searchQuery;
+ String get searchQuery;/// ログイン済みかどうか
+ bool get isLoggedIn;
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,20 +30,20 @@ $TodoListScreenStateCopyWith<TodoListScreenState> get copyWith => _$TodoListScre
 @override
 bool operator ==(Object other) {
   final _this = this as TodoListScreenState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, _this.todos)&&(identical(other.searchQuery, _this.searchQuery) || other.searchQuery == _this.searchQuery));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, _this.todos)&&(identical(other.searchQuery, _this.searchQuery) || other.searchQuery == _this.searchQuery)&&(identical(other.isLoggedIn, _this.isLoggedIn) || other.isLoggedIn == _this.isLoggedIn));
 }
 
 
 @override
 int get hashCode {
   final _this = this as TodoListScreenState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.todos),_this.searchQuery);
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.todos),_this.searchQuery,_this.isLoggedIn);
 }
 
 @override
 String toString() {
   final _this = this as TodoListScreenState;
-  return 'TodoListScreenState(todos: ${_this.todos}, searchQuery: ${_this.searchQuery})';
+  return 'TodoListScreenState(todos: ${_this.todos}, searchQuery: ${_this.searchQuery}, isLoggedIn: ${_this.isLoggedIn})';
 }
 
 
@@ -53,7 +54,7 @@ abstract mixin class $TodoListScreenStateCopyWith<$Res>  {
   factory $TodoListScreenStateCopyWith(TodoListScreenState value, $Res Function(TodoListScreenState) _then) = _$TodoListScreenStateCopyWithImpl;
 @useResult
 $Res call({
- List<Todo> todos, String searchQuery
+ List<Todo> todos, String searchQuery, bool isLoggedIn
 });
 
 
@@ -70,11 +71,12 @@ class _$TodoListScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? todos = null,Object? searchQuery = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? todos = null,Object? searchQuery = null,Object? isLoggedIn = null,}) {
   return _then(TodoListScreenState(
 todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
 as List<Todo>,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
-as String,
+as String,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Todo> todos,  String searchQuery)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Todo> todos,  String searchQuery,  bool isLoggedIn)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TodoListScreenState() when $default != null:
-return $default(_that.todos,_that.searchQuery);case _:
+return $default(_that.todos,_that.searchQuery,_that.isLoggedIn);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.todos,_that.searchQuery);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Todo> todos,  String searchQuery)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Todo> todos,  String searchQuery,  bool isLoggedIn)  $default,) {final _that = this;
 switch (_that) {
 case _TodoListScreenState():
-return $default(_that.todos,_that.searchQuery);case _:
+return $default(_that.todos,_that.searchQuery,_that.isLoggedIn);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.todos,_that.searchQuery);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Todo> todos,  String searchQuery)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Todo> todos,  String searchQuery,  bool isLoggedIn)?  $default,) {final _that = this;
 switch (_that) {
 case _TodoListScreenState() when $default != null:
-return $default(_that.todos,_that.searchQuery);case _:
+return $default(_that.todos,_that.searchQuery,_that.isLoggedIn);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.todos,_that.searchQuery);case _:
 
 
 class _TodoListScreenState implements TodoListScreenState {
-  const _TodoListScreenState({required  List<Todo> todos, required this.searchQuery}): _todos = todos;
+  const _TodoListScreenState({required  List<Todo> todos, required this.searchQuery, this.isLoggedIn = false}): _todos = todos;
   
 
 /// SSOTから提供されるTodoリスト
@@ -229,6 +231,8 @@ class _TodoListScreenState implements TodoListScreenState {
 
 /// 検索クエリ
 @override final  String searchQuery;
+/// ログイン済みかどうか
+@override@JsonKey() final  bool isLoggedIn;
 
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -240,18 +244,18 @@ _$TodoListScreenStateCopyWith<_TodoListScreenState> get copyWith => __$TodoListS
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, _todos)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, _todos)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_todos),searchQuery);
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_todos),searchQuery,isLoggedIn);
 }
 
 @override
 String toString() {
-    return 'TodoListScreenState(todos: $todos, searchQuery: $searchQuery)';
+    return 'TodoListScreenState(todos: $todos, searchQuery: $searchQuery, isLoggedIn: $isLoggedIn)';
 }
 
 
@@ -262,7 +266,7 @@ abstract mixin class _$TodoListScreenStateCopyWith<$Res> implements $TodoListScr
   factory _$TodoListScreenStateCopyWith(_TodoListScreenState value, $Res Function(_TodoListScreenState) _then) = __$TodoListScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Todo> todos, String searchQuery
+ List<Todo> todos, String searchQuery, bool isLoggedIn
 });
 
 
@@ -279,11 +283,12 @@ class __$TodoListScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? todos = null,Object? searchQuery = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? todos = null,Object? searchQuery = null,Object? isLoggedIn = null,}) {
   return _then(_TodoListScreenState(
 todos: null == todos ? _self._todos : todos // ignore: cast_nullable_to_non_nullable
 as List<Todo>,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
-as String,
+as String,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

@@ -12,7 +12,12 @@ import 'package:travel_app/utils/logger.dart';
 /// APIクライアントのインスタンスを提供するプロバイダー。
 ///
 /// このプロバイダーを使用すると、アプリケーションのどこからでもAPIクライアントにアクセスできます。
-final baseUrlProvider = Provider<String>((ref) => 'https://dummyjson.com');
+// final baseUrlProvider = Provider<String>((ref) => 'https://dummyjson.com');
+final baseUrlProvider = Provider<String>((ref) {
+  // Androidエミュレータではlocalhostがエミュレータ自身を指すため10.0.2.2でホストマシンにアクセスする
+  final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+  return 'http://$host:3000/v1/';
+});
 
 /// HTTPリクエストメソッドを定義する列挙型。
 ///
@@ -338,6 +343,9 @@ class ApiClientImpl implements ApiClient {
     required int statusCode,
     required String responseBody,
   }) {
+    if (statusCode == 204) {
+      return {};
+    }
     final decodedBody = json.decode(responseBody);
     if (decodedBody is! Map<String, dynamic>) {
       throw FormatException(
@@ -412,18 +420,23 @@ class ApiClientImpl implements ApiClient {
       final response = await _client.post(
         refreshUri,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'refreshToken': refreshToken, 'expiresInMins': 30}),
+        body: jsonEncode({'refreshToken': refreshToken}),
+      );
+      logger.w(
+        message:
+            '[ApiClient] トークンの更新処理 response.statusCode: ${response.statusCode}',
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body) as Map<String, dynamic>;
+        final responseBody = json.decode(response.body) as Map<String, dynamic>;
+        final data = responseBody['data'] as Map<String, dynamic>;
         final newAccessToken = data['accessToken'] as String;
         final newRefreshToken = data['refreshToken'] as String;
 
         await authSecureStorageService.setAccessToken(token: newAccessToken);
         await authSecureStorageService.setRefreshToken(token: newRefreshToken);
 
-        logger.i(message: 'トークンの更新に成功しました。');
+        logger.w(message: 'トークンの更新に成功しました。');
         return true;
       } else {
         logger.e(message: 'トークンの更新に失敗しました。ステータスコード: ${response.statusCode}');

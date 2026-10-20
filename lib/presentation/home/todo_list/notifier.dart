@@ -18,6 +18,7 @@ class TodoListScreenNotifier extends AsyncNotifier<TodoListScreenState> {
   @override
   Future<TodoListScreenState> build() async {
     final todosAsync = ref.watch(todosStreamProvider);
+    final isLoggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
     final fetchResult = await ref.read(todoRepositoryProvider).fetch();
 
     return switch (fetchResult) {
@@ -25,7 +26,11 @@ class TodoListScreenNotifier extends AsyncNotifier<TodoListScreenState> {
         final todos =
             todosAsync.value ?? ref.read(todoRepositoryProvider).latestTodos;
         final searchQuery = state.value?.searchQuery ?? '';
-        return TodoListScreenState(todos: todos, searchQuery: searchQuery);
+        return TodoListScreenState(
+          todos: todos,
+          searchQuery: searchQuery,
+          isLoggedIn: isLoggedIn,
+        );
       }(),
       FailureResult(:final error) => () {
         logger.e(message: '[TodoListScreenNotifier] Error caught: $error');

@@ -10,5 +10,8 @@ abstract class TaskScreenState with _$TaskScreenState {
   const factory TaskScreenState({
     /// タスク一覧
     required List<Task> tasks,
+
+    /// ログイン済みかどうか
+    @Default(false) bool isLoggedIn,
   }) = _TaskScreenState;
 }

@@ -2,14 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:travel_app/data/repositories/auth/auth_repository.dart';
+import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
 import 'package:travel_app/domain/use_cases/auth/auth_use_case.dart';
 import 'package:travel_app/presentation/debug/screen.dart';
-import 'package:travel_app/presentation/home/todo_detail/screen.dart';
-import 'package:travel_app/presentation/home/todo_list/screen.dart';
 import 'package:travel_app/presentation/login/screen.dart';
 import 'package:travel_app/presentation/profile/screen.dart';
 import 'package:travel_app/presentation/task/screen.dart';
+import 'package:travel_app/utils/logger.dart';
 
 /// 共通UIシェルのウィジェット (Bottom Navigation Barを持つScaffold)
 class ScaffoldWithNavBar extends StatefulWidget {
@@ -38,16 +37,22 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
           });
           // GoRouterを使ってナビゲーション
           switch (index) {
+            // case 0:
+            //   context.go(TodoListScreen.path);
+            // case 1:
+            //   context.go(TaskScreen.path);
+            // case 2:
+            //   context.go(ProfileScreen.path);
             case 0:
-              context.go(TodoListScreen.path);
-            case 1:
               context.go(TaskScreen.path);
-            case 2:
+            case 1:
               context.go(ProfileScreen.path);
+            // case 2:
+            //   context.go(ProfileScreen.path);
           }
         },
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          // BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Task'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
@@ -67,7 +72,8 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 /// プロバイダ
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: TodoListScreen.path,
+    // initialLocation: TodoListScreen.path,
+    initialLocation: TaskScreen.path,
     navigatorKey: _rootNavigatorKey,
     routes: [
       // ログイン画面 (共通のShellRouteとは独立したルート)
@@ -90,19 +96,19 @@ final routerProvider = Provider<GoRouter>((ref) {
           return ScaffoldWithNavBar(child: child);
         },
         routes: [
-          GoRoute(
-            path: TodoListScreen.path,
-            builder: (context, state) => const TodoListScreen(),
-            routes: [
-              GoRoute(
-                path: ':todoId', // /todo_list/:todoId
-                builder: (context, state) {
-                  final todoId = int.parse(state.pathParameters['todoId']!);
-                  return TodoDetailScreen(todoId: todoId);
-                },
-              ),
-            ],
-          ),
+          // GoRoute(
+          //   path: TodoListScreen.path,
+          //   builder: (context, state) => const TodoListScreen(),
+          //   routes: [
+          //     GoRoute(
+          //       path: ':todoId', // /todo_list/:todoId
+          //       builder: (context, state) {
+          //         final todoId = int.parse(state.pathParameters['todoId']!);
+          //         return TodoDetailScreen(todoId: todoId);
+          //       },
+          //     ),
+          //   ],
+          // ),
           GoRoute(
             path: TaskScreen.path,
             builder: (context, state) => const TaskScreen(),
@@ -117,13 +123,18 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: ref.read(authRepositoryProvider),
     redirect: (context, state) async {
       final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
+      logger.d(message: 'state.matchedLocation: ${state.matchedLocation}');
       final loggingIn = state.matchedLocation == LoginScreen.path;
-      if (!loggedIn) {
-        return LoginScreen.path;
+      // ログイン済みでログイン画面にいる場合はTaskScreenへ
+      if (loggedIn && loggingIn) {
+        // return TodoListScreen.path;
+        return TaskScreen.path;
       }
-      if (loggingIn) {
-        return TodoListScreen.path;
-      }
+      // null = リダイレクトなしでナビゲーションをそのまま続行。
+      // 未ログインユーザーが要ログイン画面にアクセスした際の LoginScreen リダイレクト
+      // （docs/adr/login/design_doc.md パターンC）は対象画面（予約詳細等）が未実装のため未対応。
+      // 実装時は authRepository.pendingDeepLink に遷移先を保存して LoginScreen へ
+      // redirect し、ログイン後に getAndClearPendingDeepLink() で元の画面へ戻す。
       return null;
     },
     errorBuilder: (context, state) => Scaffold(

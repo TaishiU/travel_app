@@ -8,7 +8,10 @@ part 'state.freezed.dart';
 abstract class ProfileScreenState with _$ProfileScreenState {
   /// コンストラクタ
   const factory ProfileScreenState({
-    /// ユーザー
-    required User user,
+    /// ユーザー（未ログイン時は null）
+    User? user,
+
+    /// ログイン済みかどうか
+    @Default(false) bool isLoggedIn,
   }) = _ProfileScreenState;
 }

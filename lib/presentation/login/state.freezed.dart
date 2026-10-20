@@ -15,8 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LoginScreenState {
 
-/// 表示するTodoアイテムのリスト
- bool get isLoggedIn;
+ bool get isLoading;
 /// Create a copy of LoginScreenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,20 +27,20 @@ $LoginScreenStateCopyWith<LoginScreenState> get copyWith => _$LoginScreenStateCo
 @override
 bool operator ==(Object other) {
   final _this = this as LoginScreenState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginScreenState&&(identical(other.isLoggedIn, _this.isLoggedIn) || other.isLoggedIn == _this.isLoggedIn));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginScreenState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading));
 }
 
 
 @override
 int get hashCode {
   final _this = this as LoginScreenState;
-  return Object.hash(runtimeType,_this.isLoggedIn);
+  return Object.hash(runtimeType,_this.isLoading);
 }
 
 @override
 String toString() {
   final _this = this as LoginScreenState;
-  return 'LoginScreenState(isLoggedIn: ${_this.isLoggedIn})';
+  return 'LoginScreenState(isLoading: ${_this.isLoading})';
 }
 
 
@@ -52,7 +51,7 @@ abstract mixin class $LoginScreenStateCopyWith<$Res>  {
   factory $LoginScreenStateCopyWith(LoginScreenState value, $Res Function(LoginScreenState) _then) = _$LoginScreenStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoggedIn
+ bool isLoading
 });
 
 
@@ -69,9 +68,9 @@ class _$LoginScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of LoginScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoggedIn = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,}) {
   return _then(LoginScreenState(
-isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -157,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoggedIn)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginScreenState() when $default != null:
-return $default(_that.isLoggedIn);case _:
+return $default(_that.isLoading);case _:
   return orElse();
 
 }
@@ -178,10 +177,10 @@ return $default(_that.isLoggedIn);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoggedIn)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading)  $default,) {final _that = this;
 switch (_that) {
 case _LoginScreenState():
-return $default(_that.isLoggedIn);case _:
+return $default(_that.isLoading);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +197,10 @@ return $default(_that.isLoggedIn);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoggedIn)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginScreenState() when $default != null:
-return $default(_that.isLoggedIn);case _:
+return $default(_that.isLoading);case _:
   return null;
 
 }
@@ -213,11 +212,10 @@ return $default(_that.isLoggedIn);case _:
 
 
 class _LoginScreenState implements LoginScreenState {
-  const _LoginScreenState({required this.isLoggedIn});
+  const _LoginScreenState({this.isLoading = false});
   
 
-/// 表示するTodoアイテムのリスト
-@override final  bool isLoggedIn;
+@override@JsonKey() final  bool isLoading;
 
 /// Create a copy of LoginScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -229,18 +227,18 @@ _$LoginScreenStateCopyWith<_LoginScreenState> get copyWith => __$LoginScreenStat
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginScreenState&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginScreenState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isLoggedIn);
+    return Object.hash(runtimeType,isLoading);
 }
 
 @override
 String toString() {
-    return 'LoginScreenState(isLoggedIn: $isLoggedIn)';
+    return 'LoginScreenState(isLoading: $isLoading)';
 }
 
 
@@ -251,7 +249,7 @@ abstract mixin class _$LoginScreenStateCopyWith<$Res> implements $LoginScreenSta
   factory _$LoginScreenStateCopyWith(_LoginScreenState value, $Res Function(_LoginScreenState) _then) = __$LoginScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoggedIn
+ bool isLoading
 });
 
 
@@ -268,9 +266,9 @@ class __$LoginScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of LoginScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoggedIn = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,}) {
   return _then(_LoginScreenState(
-isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

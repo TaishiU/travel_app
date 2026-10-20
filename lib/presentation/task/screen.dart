@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/design_system/components/core_app_bar.dart';
 import 'package:travel_app/design_system/components/core_error.dart';
 import 'package:travel_app/domain/entities/task/task.dart';
+import 'package:travel_app/presentation/login/screen.dart';
 import 'package:travel_app/presentation/task/notifier.dart';
 import 'package:travel_app/presentation/task/state.dart';
+import 'package:travel_app/router/navigation_extension.dart';
 
 /// タスク画面
 class TaskScreen extends HookConsumerWidget {
@@ -17,9 +21,34 @@ class TaskScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(taskScreenProvider);
+    final isLoggedIn = switch (viewModel) {
+      AsyncData(:final value) => value.isLoggedIn,
+      _ => false,
+    };
 
     return Scaffold(
-      appBar: const CoreAppBar(title: 'TaskScreen'),
+      appBar: CoreAppBar(
+        title: 'TaskScreen',
+        actions: [
+          if (kDebugMode)
+            IconButton(
+              onPressed: () => context.toDebugMenuScreen(),
+              icon: const Icon(Icons.bug_report_outlined),
+            ),
+          if (isLoggedIn)
+            IconButton(
+              onPressed: () async {
+                await ref.read(taskScreenProvider.notifier).logout();
+              },
+              icon: const Icon(Icons.logout, color: Colors.red),
+            )
+          else
+            IconButton(
+              onPressed: () => context.go(LoginScreen.path),
+              icon: const Icon(Icons.login),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddTaskDialog(context: context, ref: ref),
         child: const Icon(Icons.add),

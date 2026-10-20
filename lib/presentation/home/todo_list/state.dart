@@ -13,5 +13,8 @@ abstract class TodoListScreenState with _$TodoListScreenState {
 
     /// 検索クエリ
     required String searchQuery,
+
+    /// ログイン済みかどうか
+    @Default(false) bool isLoggedIn,
   }) = _TodoListScreenState;
 }

@@ -15,31 +15,57 @@ loginScreenProvider =
 class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
   @override
   Future<LoginScreenState> build() async {
-    return const LoginScreenState(isLoggedIn: false);
+    return const LoginScreenState();
   }
 
   /// ログイン
-  Future<void> login({
-    required String username,
-    required String password,
-  }) async {
-    final authUseCase = ref.read(authUseCaseProvider);
-    final result = await authUseCase.login(
-      username: username,
-      password: password,
-    );
-
+  Future<void> login({required String email, required String password}) async {
+    final isLoading = switch (state) {
+      AsyncData(:final value) => value.isLoading,
+      _ => false,
+    };
+    if (isLoading) return;
+    state = const AsyncData(LoginScreenState(isLoading: true));
+    final result = await ref
+        .read(authUseCaseProvider)
+        // .login(email: email, password: password);
+        .login(email: 'test3@example.com', password: 'password123');
     switch (result) {
-      case SuccessResult<void>():
-        // ログイン状態は AuthRepository の通知によって GoRouter が検知し、
-        // 自動的にホーム画面へリダイレクトされるため、ここで state を変更する必要はないが、
-        // 必要に応じて UI のフィードバック処理を行う。
-        return;
-      case FailureResult<void>():
-        logger.e(
-          message: '[LoginScreenNotifier] login failed: ${result.error}',
+      case SuccessResult<String?>():
+        state = const AsyncData(LoginScreenState());
+      case FailureResult<String?>(:final error):
+        logger.e(message: '[LoginScreenNotifier] login failed: $error');
+        state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  /// 新規登録
+  Future<void> register({
+    required String email,
+    required String password,
+    String? displayName,
+  }) async {
+    final isLoading = switch (state) {
+      AsyncData(:final value) => value.isLoading,
+      _ => false,
+    };
+    if (isLoading) return;
+    state = const AsyncData(LoginScreenState(isLoading: true));
+    final result = await ref
+        .read(authUseCaseProvider)
+        // .register(email: email, password: password,
+        // displayName: displayName);
+        .register(
+          email: 'test3@example.com',
+          password: 'password123',
+          displayName: displayName,
         );
-        throw Exception();
+    switch (result) {
+      case SuccessResult<String?>():
+        state = const AsyncData(LoginScreenState());
+      case FailureResult<String?>(:final error):
+        logger.e(message: '[LoginScreenNotifier] register failed: $error');
+        state = AsyncError(error, StackTrace.current);
     }
   }
 }

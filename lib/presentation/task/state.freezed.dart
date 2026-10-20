@@ -16,7 +16,8 @@ T _$identity<T>(T value) => value;
 mixin _$TaskScreenState {
 
 /// タスク一覧
- List<Task> get tasks;
+ List<Task> get tasks;/// ログイン済みかどうか
+ bool get isLoggedIn;
 /// Create a copy of TaskScreenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,20 +29,20 @@ $TaskScreenStateCopyWith<TaskScreenState> get copyWith => _$TaskScreenStateCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as TaskScreenState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskScreenState&&const DeepCollectionEquality().equals(other.tasks, _this.tasks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskScreenState&&const DeepCollectionEquality().equals(other.tasks, _this.tasks)&&(identical(other.isLoggedIn, _this.isLoggedIn) || other.isLoggedIn == _this.isLoggedIn));
 }
 
 
 @override
 int get hashCode {
   final _this = this as TaskScreenState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.tasks));
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.tasks),_this.isLoggedIn);
 }
 
 @override
 String toString() {
   final _this = this as TaskScreenState;
-  return 'TaskScreenState(tasks: ${_this.tasks})';
+  return 'TaskScreenState(tasks: ${_this.tasks}, isLoggedIn: ${_this.isLoggedIn})';
 }
 
 
@@ -52,7 +53,7 @@ abstract mixin class $TaskScreenStateCopyWith<$Res>  {
   factory $TaskScreenStateCopyWith(TaskScreenState value, $Res Function(TaskScreenState) _then) = _$TaskScreenStateCopyWithImpl;
 @useResult
 $Res call({
- List<Task> tasks
+ List<Task> tasks, bool isLoggedIn
 });
 
 
@@ -69,10 +70,11 @@ class _$TaskScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of TaskScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? tasks = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? tasks = null,Object? isLoggedIn = null,}) {
   return _then(TaskScreenState(
 tasks: null == tasks ? _self.tasks : tasks // ignore: cast_nullable_to_non_nullable
-as List<Task>,
+as List<Task>,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -157,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Task> tasks)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Task> tasks,  bool isLoggedIn)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskScreenState() when $default != null:
-return $default(_that.tasks);case _:
+return $default(_that.tasks,_that.isLoggedIn);case _:
   return orElse();
 
 }
@@ -178,10 +180,10 @@ return $default(_that.tasks);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Task> tasks)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Task> tasks,  bool isLoggedIn)  $default,) {final _that = this;
 switch (_that) {
 case _TaskScreenState():
-return $default(_that.tasks);case _:
+return $default(_that.tasks,_that.isLoggedIn);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +200,10 @@ return $default(_that.tasks);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Task> tasks)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Task> tasks,  bool isLoggedIn)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskScreenState() when $default != null:
-return $default(_that.tasks);case _:
+return $default(_that.tasks,_that.isLoggedIn);case _:
   return null;
 
 }
@@ -213,7 +215,7 @@ return $default(_that.tasks);case _:
 
 
 class _TaskScreenState implements TaskScreenState {
-  const _TaskScreenState({required  List<Task> tasks}): _tasks = tasks;
+  const _TaskScreenState({required  List<Task> tasks, this.isLoggedIn = false}): _tasks = tasks;
   
 
 /// タスク一覧
@@ -225,6 +227,8 @@ class _TaskScreenState implements TaskScreenState {
   return EqualUnmodifiableListView(_tasks);
 }
 
+/// ログイン済みかどうか
+@override@JsonKey() final  bool isLoggedIn;
 
 /// Create a copy of TaskScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -236,18 +240,18 @@ _$TaskScreenStateCopyWith<_TaskScreenState> get copyWith => __$TaskScreenStateCo
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskScreenState&&const DeepCollectionEquality().equals(other.tasks, _tasks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskScreenState&&const DeepCollectionEquality().equals(other.tasks, _tasks)&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_tasks));
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_tasks),isLoggedIn);
 }
 
 @override
 String toString() {
-    return 'TaskScreenState(tasks: $tasks)';
+    return 'TaskScreenState(tasks: $tasks, isLoggedIn: $isLoggedIn)';
 }
 
 
@@ -258,7 +262,7 @@ abstract mixin class _$TaskScreenStateCopyWith<$Res> implements $TaskScreenState
   factory _$TaskScreenStateCopyWith(_TaskScreenState value, $Res Function(_TaskScreenState) _then) = __$TaskScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Task> tasks
+ List<Task> tasks, bool isLoggedIn
 });
 
 
@@ -275,10 +279,11 @@ class __$TaskScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of TaskScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? tasks = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? tasks = null,Object? isLoggedIn = null,}) {
   return _then(_TaskScreenState(
 tasks: null == tasks ? _self._tasks : tasks // ignore: cast_nullable_to_non_nullable
-as List<Task>,
+as List<Task>,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

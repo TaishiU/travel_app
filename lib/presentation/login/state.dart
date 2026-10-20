@@ -6,8 +6,6 @@ part 'state.freezed.dart';
 @freezed
 abstract class LoginScreenState with _$LoginScreenState {
   /// コンストラクタ
-  const factory LoginScreenState({
-    /// 表示するTodoアイテムのリスト
-    required bool isLoggedIn,
-  }) = _LoginScreenState;
+  const factory LoginScreenState({@Default(false) bool isLoading}) =
+      _LoginScreenState;
 }

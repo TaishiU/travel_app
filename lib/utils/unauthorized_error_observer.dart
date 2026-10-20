@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_app/data/repositories/auth/auth_repository.dart';
+import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
 import 'package:travel_app/domain/errors/app_error.dart';
 
 /// UnauthorizedError 発生時に自動ログアウトする ProviderObserver。

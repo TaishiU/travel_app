@@ -2,21 +2,27 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_app/data/repositories/auth/auth_repository.dart';
+import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
-import 'package:travel_app/data/services/web_api/auth/login/dto.dart';
-import 'package:travel_app/data/services/web_api/auth/login/service.dart';
-import 'package:travel_app/data/services/web_api/auth/login/service_impl.dart';
+import 'package:travel_app/data/services/web_api/auth/dto.dart';
+import 'package:travel_app/data/services/web_api/auth/service.dart';
+import 'package:travel_app/data/services/web_api/auth/service_impl.dart';
 import 'package:travel_app/domain/errors/app_error.dart';
+import 'package:travel_app/domain/interfaces/auth/auth_repository.dart';
 import 'package:travel_app/utils/result.dart';
 
 import 'auth_repository_test.mocks.dart';
 
-// MissingDummyValueErrorを解決するためにダミー値を提供するヘルパー関数
 void _setupDummyValues() {
-  provideDummyBuilder<Result<LoginDto>>(
-    (_, _) => const SuccessResult(LoginDto()),
+  provideDummyBuilder<Result<TokenResponseDto>>(
+    (_, _) => const SuccessResult(TokenResponseDto()),
+  );
+  provideDummyBuilder<Result<RefreshTokenDto>>(
+    (_, _) => const SuccessResult(RefreshTokenDto()),
+  );
+  provideDummyBuilder<Result<UserDto>>(
+    (_, _) => const SuccessResult(UserDto()),
   );
   provideDummyBuilder<Result<void>>((_, _) => const SuccessResult(null));
 }
@@ -32,17 +38,16 @@ void main() {
 
   late MockAuthApiService mockAuthApiService;
   late MockAuthSecureStorageService mockAuthSecureStorageService;
-  late AuthRepository authRepository;
+  late AuthRepositoryImpl authRepository;
 
   setUp(() {
     mockAuthApiService = MockAuthApiService();
     mockAuthSecureStorageService = MockAuthSecureStorageService();
-    authRepository = AuthRepository(
+    authRepository = AuthRepositoryImpl(
       authApiService: mockAuthApiService,
       authSecureStorageService: mockAuthSecureStorageService,
     );
 
-    // デフォルトのスタブ設定
     when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
     when(mockAuthSecureStorageService.getAccessToken()).thenReturn('');
   });
@@ -105,9 +110,7 @@ void main() {
       when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
       when(mockAuthSecureStorageService.getAccessToken()).thenReturn('token');
 
-      // 1回目
       await authRepository.isLoggedIn;
-      // 2回目
       final result = await authRepository.isLoggedIn;
 
       expect(result, isTrue);
@@ -117,7 +120,7 @@ void main() {
   });
 
   group('login', () {
-    const username = 'test_user';
+    const email = 'test@example.com';
     const password = 'password123';
     const accessToken = 'access_token';
     const refreshToken = 'refresh_token';
@@ -127,10 +130,13 @@ void main() {
       authRepository.addListener(() => notifyCount++);
 
       when(
-        mockAuthApiService.login(username: username, password: password),
+        mockAuthApiService.login(email: email, password: password),
       ).thenAnswer(
         (_) async => const SuccessResult(
-          LoginDto(accessToken: accessToken, refreshToken: refreshToken),
+          TokenResponseDto(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          ),
         ),
       );
       when(
@@ -141,7 +147,7 @@ void main() {
       ).thenAnswer((_) async => {});
 
       final result = await authRepository.login(
-        username: username,
+        email: email,
         password: password,
       );
 
@@ -160,11 +166,11 @@ void main() {
     test('APIがFailureResultを返した場合、FailureResultを返し、トークンを保存しないこと', () async {
       final exception = Exception('Login Failed');
       when(
-        mockAuthApiService.login(username: username, password: password),
+        mockAuthApiService.login(email: email, password: password),
       ).thenAnswer((_) async => FailureResult(exception));
 
       final result = await authRepository.login(
-        username: username,
+        email: email,
         password: password,
       );
 
@@ -177,15 +183,86 @@ void main() {
 
     test('例外発生時にFailureResultを返すこと', () async {
       when(
-        mockAuthApiService.login(username: username, password: password),
+        mockAuthApiService.login(email: email, password: password),
       ).thenThrow(Exception('Network Error'));
 
       final result = await authRepository.login(
-        username: username,
+        email: email,
         password: password,
       );
 
       expect(result, isA<FailureResult<void>>());
+    });
+  });
+
+  group('register', () {
+    const email = 'new@example.com';
+    const password = 'password123';
+    const accessToken = 'access_token';
+    const refreshToken = 'refresh_token';
+
+    test('成功時にトークンを保存し、SuccessResultを返し、リスナーに通知すること', () async {
+      var notifyCount = 0;
+      authRepository.addListener(() => notifyCount++);
+
+      when(
+        mockAuthApiService.register(email: email, password: password),
+      ).thenAnswer(
+        (_) async => const SuccessResult(
+          TokenResponseDto(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          ),
+        ),
+      );
+      when(
+        mockAuthSecureStorageService.setAccessToken(token: accessToken),
+      ).thenAnswer((_) async => {});
+      when(
+        mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
+      ).thenAnswer((_) async => {});
+
+      final result = await authRepository.register(
+        email: email,
+        password: password,
+      );
+
+      expect(result, isA<SuccessResult<void>>());
+      expect(await authRepository.isLoggedIn, isTrue);
+      expect(notifyCount, 1);
+    });
+
+    test('APIがFailureResultを返した場合、FailureResultを返すこと', () async {
+      final exception = Exception('Register Failed');
+      when(
+        mockAuthApiService.register(email: email, password: password),
+      ).thenAnswer((_) async => FailureResult(exception));
+
+      final result = await authRepository.register(
+        email: email,
+        password: password,
+      );
+
+      expect(result, isA<FailureResult<void>>());
+      expect((result as FailureResult<void>).error, isA<AppError>());
+    });
+  });
+
+  group('pendingDeepLink / getAndClearPendingDeepLink', () {
+    test('保存したパスを取得できること', () {
+      authRepository.pendingDeepLink = '/some/path';
+      expect(authRepository.getAndClearPendingDeepLink(), '/some/path');
+    });
+
+    test('取得後はnullになること', () {
+      authRepository
+        ..pendingDeepLink = '/some/path'
+        ..getAndClearPendingDeepLink();
+      expect(authRepository.getAndClearPendingDeepLink(), isNull);
+    });
+
+    test('保存前はnullを返すこと', () {
+      expect(authRepository.getAndClearPendingDeepLink(), isNull);
     });
   });
 

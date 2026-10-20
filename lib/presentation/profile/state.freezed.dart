@@ -15,8 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileScreenState {
 
-/// ユーザー
- User get user;
+/// ユーザー（未ログイン時は null）
+ User? get user;/// ログイン済みかどうか
+ bool get isLoggedIn;
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,20 +29,20 @@ $ProfileScreenStateCopyWith<ProfileScreenState> get copyWith => _$ProfileScreenS
 @override
 bool operator ==(Object other) {
   final _this = this as ProfileScreenState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileScreenState&&(identical(other.user, _this.user) || other.user == _this.user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileScreenState&&(identical(other.user, _this.user) || other.user == _this.user)&&(identical(other.isLoggedIn, _this.isLoggedIn) || other.isLoggedIn == _this.isLoggedIn));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ProfileScreenState;
-  return Object.hash(runtimeType,_this.user);
+  return Object.hash(runtimeType,_this.user,_this.isLoggedIn);
 }
 
 @override
 String toString() {
   final _this = this as ProfileScreenState;
-  return 'ProfileScreenState(user: ${_this.user})';
+  return 'ProfileScreenState(user: ${_this.user}, isLoggedIn: ${_this.isLoggedIn})';
 }
 
 
@@ -52,11 +53,11 @@ abstract mixin class $ProfileScreenStateCopyWith<$Res>  {
   factory $ProfileScreenStateCopyWith(ProfileScreenState value, $Res Function(ProfileScreenState) _then) = _$ProfileScreenStateCopyWithImpl;
 @useResult
 $Res call({
- User user
+ User? user, bool isLoggedIn
 });
 
 
-$UserCopyWith<$Res> get user;
+$UserCopyWith<$Res>? get user;
 
 }
 /// @nodoc
@@ -69,19 +70,23 @@ class _$ProfileScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? user = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? user = freezed,Object? isLoggedIn = null,}) {
   return _then(ProfileScreenState(
-user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as User,
+user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as User?,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$UserCopyWith<$Res> get user {
-  
-  return $UserCopyWith<$Res>(_self.user, (value) {
+$UserCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
+
+  return $UserCopyWith<$Res>(_self.user!, (value) {
     return _then(_self.copyWith(user: value));
   });
 }
@@ -166,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User? user,  bool isLoggedIn)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileScreenState() when $default != null:
-return $default(_that.user);case _:
+return $default(_that.user,_that.isLoggedIn);case _:
   return orElse();
 
 }
@@ -187,10 +192,10 @@ return $default(_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User? user,  bool isLoggedIn)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileScreenState():
-return $default(_that.user);case _:
+return $default(_that.user,_that.isLoggedIn);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +212,10 @@ return $default(_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User? user,  bool isLoggedIn)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileScreenState() when $default != null:
-return $default(_that.user);case _:
+return $default(_that.user,_that.isLoggedIn);case _:
   return null;
 
 }
@@ -222,11 +227,13 @@ return $default(_that.user);case _:
 
 
 class _ProfileScreenState implements ProfileScreenState {
-  const _ProfileScreenState({required this.user});
+  const _ProfileScreenState({this.user, this.isLoggedIn = false});
   
 
-/// ユーザー
-@override final  User user;
+/// ユーザー（未ログイン時は null）
+@override final  User? user;
+/// ログイン済みかどうか
+@override@JsonKey() final  bool isLoggedIn;
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -238,18 +245,18 @@ _$ProfileScreenStateCopyWith<_ProfileScreenState> get copyWith => __$ProfileScre
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileScreenState&&(identical(other.user, user) || other.user == user));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileScreenState&&(identical(other.user, user) || other.user == user)&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,user);
+    return Object.hash(runtimeType,user,isLoggedIn);
 }
 
 @override
 String toString() {
-    return 'ProfileScreenState(user: $user)';
+    return 'ProfileScreenState(user: $user, isLoggedIn: $isLoggedIn)';
 }
 
 
@@ -260,11 +267,11 @@ abstract mixin class _$ProfileScreenStateCopyWith<$Res> implements $ProfileScree
   factory _$ProfileScreenStateCopyWith(_ProfileScreenState value, $Res Function(_ProfileScreenState) _then) = __$ProfileScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- User user
+ User? user, bool isLoggedIn
 });
 
 
-@override $UserCopyWith<$Res> get user;
+@override $UserCopyWith<$Res>? get user;
 
 }
 /// @nodoc
@@ -277,10 +284,11 @@ class __$ProfileScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? user = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? user = freezed,Object? isLoggedIn = null,}) {
   return _then(_ProfileScreenState(
-user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as User,
+user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as User?,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -288,9 +296,12 @@ as User,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$UserCopyWith<$Res> get user {
-  
-  return $UserCopyWith<$Res>(_self.user, (value) {
+$UserCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
+
+  return $UserCopyWith<$Res>(_self.user!, (value) {
     return _then(_self.copyWith(user: value));
   });
 }
