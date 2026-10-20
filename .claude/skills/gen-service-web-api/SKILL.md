@@ -8,7 +8,7 @@ argument-hint: "<feature-path> [--file=<yaml-path>]"
 
 `docs/api/openapi.yaml` を読み込み、指定した feature の Service 層ファイルを生成するスキル。
 
-生成対象: `dto.dart` → build_runner → `service.dart` → `stub_service_impl.dart`（リソース型のみ）→ `service_impl.dart`
+生成対象: `dto.dart` → build_runner → `service.dart` → `stub_service_impl.dart` → `service_impl.dart`
 
 
 ---
@@ -98,6 +98,17 @@ openapi path が `/{feature-path}` または `/{feature-path}/...` で始まる�
 | `me/products` | `/me/products` |
 | `me/favorites` | `/me/favorites` |
 
+### 生成モード
+
+引数の形式によって動作が変わる。
+
+| モード | 引数の形式 | 例 | 既存ファイルの扱い |
+|---|---|---|---|
+| **全体再生成** | feature の最上位セグメントのみ | `auth` | 全ファイルを上書き（確認なし） |
+| **差分追加** | 具体的なパスを1つ以上指定 | `auth/login auth/register` | 既存ファイルを Read して追記・マージ |
+
+差分追加モードでは既存ファイルを Read して現在の定義（DTO・メソッド）を把握し、不足分のみ追記する。「**重要: 既存ファイルは参照しない**」ルールは ApiClient シグネチャのテンプレート参照を禁じるものであり、差分追加時のファイル内容読み取りには適用しない。
+
 ---
 
 ## Step 3: アクション型 / リソース型 判定
@@ -108,6 +119,8 @@ openapi path が `/{feature-path}` または `/{feature-path}/...` で始まる�
 |---|---|---|
 | リソース型 | パスパラメータを含むパスが1つ以上ある | `/products/{productId}` を含む |
 | アクション型 | すべてのパスが固定文字列のみ | `/auth/login` のみ |
+
+この判定は **Step 8 のエンドポイント値決定にのみ使用する**。stub_service_impl.dart の生成可否には影響しない（→ Step 7）。
 
 **出力先ディレクトリ:**
 
@@ -133,9 +146,12 @@ lib/data/services/web_api/{feature-path}/
 
 | ケース | 命名規則 | 例 |
 |---|---|---|
-| リソース名から派生 | `{PascalCase}Dto` | `ProductSummaryDto`, `ProductDetailDto` |
-| アクション名から派生 | `{PascalCase}Dto` | `LoginDto`, `RegisterDto` |
+| `$ref` 参照（`$ref: '#/components/schemas/XxxYyy'`） | スキーマ名を優先: `XxxYyyDto` | `TokenResponseDto`, `UserDto` |
+| リソース名から派生（inline object） | `{PascalCase}Dto` | `ProductSummaryDto`, `ProductDetailDto` |
+| アクション名から派生（inline object） | `{PascalCase}Dto` | `RefreshTokenDto` |
 | ネストされたオブジェクト | 親クラスの意味を継承した PascalCase | `ProductImageDto` |
+
+複数エンドポイントが同じ `$ref` を参照する場合（例: `/auth/register` と `/auth/login` がともに `TokenResponse` を返す）、DTO クラスは1つだけ定義する（重複定義しない）。
 
 レスポンスが複数スキーマに分かれる場合（一覧用と詳細用など）、同一 `dto.dart` に全クラスを定義する。
 
@@ -295,9 +311,7 @@ abstract class XxxApiService {
 
 ---
 
-## Step 7: stub_service_impl.dart 生成（リソース型のみ）
-
-**アクション型には生成しない。**
+## Step 7: stub_service_impl.dart 生成
 
 ダミーデータはフィールド名・型から推測して生成する。
 openapi.yaml に `example` 値があればそれを使用する。
@@ -312,17 +326,51 @@ openapi.yaml に `example` 値があればそれを使用する。
 | `bool?` | `false` |
 | `double?` | `0.0` |
 | `List<XxxDto>?` | `List.generate` で 2〜3件生成 |
+| `Future<Result<void>>` | `SuccessResult(null)` を返す（ダミーデータ不要） |
 
 > `https://example.com/image.jpg` は実際にアクセスするとエラーになるため使用しない。
 > `https://placehold.jp/400x400.png?text=xxx` はプレースホルダ画像として実際に表示される。`text` にリソース名＋インデックスを入れることで一意に区別できる。
 
+### ダミー値の共通化
+
+同じダミー値が複数のメソッドに登場する場合は、クラス内の `static const` フィールドに抽出して使い回す。
+
+**抽出基準**: 同一の文字列・数値リテラルが2箇所以上に現れる場合は必ず抽出する。
+
+**命名規則**: `_` prefix の lowerCamelCase（例: `_accessToken`, `_userId`, `_displayName`）。
+
+```dart
+class StubXxxApiServiceImpl implements XxxApiService {
+  StubXxxApiServiceImpl();
+
+  // 複数メソッドで共通するダミー値を static const に集約
+  static const _userId = '1';
+  static const _displayName = 'test user';
+  static const _accessToken = 'test-access-token';
+  static const _refreshToken = 'test-refresh-token';
+
+  @override
+  Future<Result<TokenResponseDto>> login({...}) async {
+    return SuccessResult(
+      TokenResponseDto(
+        accessToken: _accessToken,   // ← ハードコーディング禁止
+        refreshToken: _refreshToken,
+        user: UserDto(id: _userId, displayName: _displayName),
+      ),
+    );
+  }
+}
+```
+
+`static const` フィールドはコンパイル時定数のため、全フィールドがそれで構成される DTO は `const` コンストラクタ呼び出しが可能（`const SuccessResult(XxxDto(...))`）。ランタイム値（メソッド引数など）が混在する場合は `const` 不可。
+
 ### ファイルテンプレート
 
 ```dart
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/web_api/{feature}/dto.dart';
 import 'package:travel_app/data/services/web_api/{feature}/service.dart';
 import 'package:travel_app/utils/result.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final stubXxxApiServiceImplProvider = Provider<StubXxxApiServiceImpl>(
@@ -334,12 +382,16 @@ class StubXxxApiServiceImpl implements XxxApiService {
   /// コンストラクタ
   StubXxxApiServiceImpl();
 
+  // 複数メソッドで使い回すダミー値を static const に集約
+  static const _userId = 1;
+  static const _name = 'test name';
+
   @override
   Future<Result<XxxDto>> fetch() async {
     final items = List.generate(2, (index) {
       return XxxDto(
         id: index + 1,
-        name: 'test name ${index + 1}',
+        name: '$_name ${index + 1}',
       );
     });
     return SuccessResult(XxxDto(data: items));
@@ -353,10 +405,13 @@ class StubXxxApiServiceImpl implements XxxApiService {
 
 ### endpoint の値
 
-| 型 | endpoint の値 | 例 |
+| 型 | `static const` の定義方法 | 例 |
 |---|---|---|
-| リソース型 | リソース名（feature-path の先頭セグメント） | `'products'`, `'cart'` |
-| アクション型 | フルパス（先頭 `/` を除く） | `'auth/login'`, `'auth/register'` |
+| リソース型 | 1つ: `static const endpoint = 'products'` | `endpoint`, `'$endpoint/$id'` |
+| アクション型（メソッド1つ） | 1つ: `static const endpoint = 'auth/login'` | `endpoint` |
+| アクション型（メソッド複数） | メソッドごとに private 定数を定義 | `static const _loginEndpoint = 'auth/login'` |
+
+アクション型（複数）の命名規則: `_${メソッド名}Endpoint`（例: `_loginEndpoint`, `_registerEndpoint`）。
 
 ### パスパラメータの埋め込み
 
@@ -500,7 +555,9 @@ flutter analyze
 
 ### 既存ファイルの扱い
 
-生成先に既存ファイルがある場合は**上書き前に確認する**。
+**全体再生成モード**（引数が最上位セグメントのみ）: 既存ファイルは確認なしで上書きする。
+
+**差分追加モード**（具体的なパスを指定）: 既存ファイルを Read して現在の定義を把握し、不足する DTO・メソッドのみ追記する。既存の定義は変更しない。
 
 ### import 順序（docs/rule/coding_rule.md 準拠）
 
