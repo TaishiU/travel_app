@@ -14,6 +14,8 @@ import 'package:travel_app/utils/result.dart';
 
 import 'auth_repository_test.mocks.dart';
 
+const _testAnonymousId = 'test-anonymous-id';
+
 void _setupDummyValues() {
   provideDummyBuilder<Result<TokenResponseDto>>(
     (_, _) => const SuccessResult(TokenResponseDto()),
@@ -46,10 +48,25 @@ void main() {
     authRepository = AuthRepositoryImpl(
       authApiService: mockAuthApiService,
       authSecureStorageService: mockAuthSecureStorageService,
+      idGenerator: () => _testAnonymousId,
     );
 
-    when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
+    when(mockAuthSecureStorageService.init()).thenAnswer((_) async {});
     when(mockAuthSecureStorageService.getAccessToken()).thenReturn('');
+    when(mockAuthSecureStorageService.getRefreshToken()).thenReturn('');
+    when(
+      mockAuthSecureStorageService.getAnonymousId(),
+    ).thenReturn('existing-id');
+    when(mockAuthSecureStorageService.getUserId()).thenReturn('');
+    when(
+      mockAuthSecureStorageService.setAnonymousId(id: anyNamed('id')),
+    ).thenAnswer((_) async {});
+    when(
+      mockAuthSecureStorageService.setUserId(id: anyNamed('id')),
+    ).thenAnswer((_) async {});
+    when(
+      mockAuthApiService.logout(refreshToken: anyNamed('refreshToken')),
+    ).thenAnswer((_) async => const SuccessResult(null));
   });
 
   group('authRepositoryProvider', () {
@@ -84,7 +101,6 @@ void main() {
 
   group('isLoggedIn', () {
     test('初回呼び出し時にストレージから初期化され、トークンがあればtrueを返すこと', () async {
-      when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
       when(
         mockAuthSecureStorageService.getAccessToken(),
       ).thenReturn('valid_token');
@@ -97,9 +113,6 @@ void main() {
     });
 
     test('初回呼び出し時にトークンがなければfalseを返すこと', () async {
-      when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
-      when(mockAuthSecureStorageService.getAccessToken()).thenReturn('');
-
       final result = await authRepository.isLoggedIn;
 
       expect(result, isFalse);
@@ -107,7 +120,6 @@ void main() {
     });
 
     test('2回目以降の呼び出しではストレージにアクセスせずキャッシュを返すこと', () async {
-      when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
       when(mockAuthSecureStorageService.getAccessToken()).thenReturn('token');
 
       await authRepository.isLoggedIn;
@@ -116,6 +128,26 @@ void main() {
       expect(result, isTrue);
       verify(mockAuthSecureStorageService.init()).called(1);
       verify(mockAuthSecureStorageService.getAccessToken()).called(1);
+    });
+  });
+
+  group('_ensureAnonymousId', () {
+    test('anonymous_idが未設定の場合、新しいIDを生成して保存すること', () async {
+      when(mockAuthSecureStorageService.getAnonymousId()).thenReturn('');
+
+      await authRepository.isLoggedIn;
+
+      verify(
+        mockAuthSecureStorageService.setAnonymousId(id: _testAnonymousId),
+      ).called(1);
+    });
+
+    test('anonymous_idが設定済みの場合、新規生成しないこと', () async {
+      await authRepository.isLoggedIn;
+
+      verifyNever(
+        mockAuthSecureStorageService.setAnonymousId(id: anyNamed('id')),
+      );
     });
   });
 
@@ -141,10 +173,10 @@ void main() {
       );
       when(
         mockAuthSecureStorageService.setAccessToken(token: accessToken),
-      ).thenAnswer((_) async => {});
+      ).thenAnswer((_) async {});
       when(
         mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
-      ).thenAnswer((_) async => {});
+      ).thenAnswer((_) async {});
 
       final result = await authRepository.login(
         email: email,
@@ -161,6 +193,54 @@ void main() {
       verify(
         mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
       ).called(1);
+    });
+
+    test('成功時にDTOにuser_idが含まれる場合、user_idを保存すること', () async {
+      const userId = 'user-123';
+      when(
+        mockAuthApiService.login(email: email, password: password),
+      ).thenAnswer(
+        (_) async => const SuccessResult(
+          TokenResponseDto(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            user: UserDto(id: userId, email: email),
+          ),
+        ),
+      );
+      when(
+        mockAuthSecureStorageService.setAccessToken(token: accessToken),
+      ).thenAnswer((_) async {});
+      when(
+        mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
+      ).thenAnswer((_) async {});
+
+      await authRepository.login(email: email, password: password);
+
+      verify(mockAuthSecureStorageService.setUserId(id: userId)).called(1);
+    });
+
+    test('成功時にDTOにuser_idがない場合、user_idを保存しないこと', () async {
+      when(
+        mockAuthApiService.login(email: email, password: password),
+      ).thenAnswer(
+        (_) async => const SuccessResult(
+          TokenResponseDto(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          ),
+        ),
+      );
+      when(
+        mockAuthSecureStorageService.setAccessToken(token: accessToken),
+      ).thenAnswer((_) async {});
+      when(
+        mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
+      ).thenAnswer((_) async {});
+
+      await authRepository.login(email: email, password: password);
+
+      verifyNever(mockAuthSecureStorageService.setUserId(id: anyNamed('id')));
     });
 
     test('APIがFailureResultを返した場合、FailureResultを返し、トークンを保存しないこと', () async {
@@ -217,10 +297,10 @@ void main() {
       );
       when(
         mockAuthSecureStorageService.setAccessToken(token: accessToken),
-      ).thenAnswer((_) async => {});
+      ).thenAnswer((_) async {});
       when(
         mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
-      ).thenAnswer((_) async => {});
+      ).thenAnswer((_) async {});
 
       final result = await authRepository.register(
         email: email,
@@ -279,6 +359,30 @@ void main() {
 
       expect(await authRepository.isLoggedIn, isFalse);
       expect(notifyCount, 1);
+      verify(mockAuthSecureStorageService.clearAuthData()).called(1);
+    });
+
+    test('新しいanonymous_idを生成して保存すること', () async {
+      when(
+        mockAuthSecureStorageService.clearAuthData(),
+      ).thenAnswer((_) async => true);
+
+      await authRepository.logout();
+
+      verify(
+        mockAuthSecureStorageService.setAnonymousId(id: _testAnonymousId),
+      ).called(1);
+    });
+
+    test('logout API が失敗しても後続処理を続行すること', () async {
+      when(
+        mockAuthApiService.logout(refreshToken: anyNamed('refreshToken')),
+      ).thenThrow(Exception('Network Error'));
+      when(
+        mockAuthSecureStorageService.clearAuthData(),
+      ).thenAnswer((_) async => true);
+
+      await expectLater(authRepository.logout(), completes);
       verify(mockAuthSecureStorageService.clearAuthData()).called(1);
     });
   });

@@ -303,6 +303,46 @@ class MockAuthSecureStorageService extends _i1.Mock
           as _i5.Future<void>);
 
   @override
+  String getAnonymousId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAnonymousId, []),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.method(#getAnonymousId, []),
+            ),
+          )
+          as String);
+
+  @override
+  _i5.Future<void> setAnonymousId({required String? id}) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAnonymousId, [], {#id: id}),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  String getUserId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getUserId, []),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.method(#getUserId, []),
+            ),
+          )
+          as String);
+
+  @override
+  _i5.Future<void> setUserId({required String? id}) =>
+      (super.noSuchMethod(
+            Invocation.method(#setUserId, [], {#id: id}),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
   _i5.Future<bool> clearAuthData() =>
       (super.noSuchMethod(
             Invocation.method(#clearAuthData, []),
@@ -375,6 +415,46 @@ class MockAuthSecureStorageServiceImpl extends _i1.Mock
   _i5.Future<void> setRefreshToken({required String? token}) =>
       (super.noSuchMethod(
             Invocation.method(#setRefreshToken, [], {#token: token}),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  String getAnonymousId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAnonymousId, []),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.method(#getAnonymousId, []),
+            ),
+          )
+          as String);
+
+  @override
+  _i5.Future<void> setAnonymousId({required String? id}) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAnonymousId, [], {#id: id}),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  String getUserId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getUserId, []),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.method(#getUserId, []),
+            ),
+          )
+          as String);
+
+  @override
+  _i5.Future<void> setUserId({required String? id}) =>
+      (super.noSuchMethod(
+            Invocation.method(#setUserId, [], {#id: id}),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )

@@ -10,12 +10,17 @@ import 'package:travel_app/domain/errors/app_error.dart';
 import 'package:travel_app/domain/interfaces/auth/auth_repository.dart';
 import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/result.dart';
+import 'package:uuid/uuid.dart';
+
+/// UUID 生成関数の型。テスト時に固定値を注入できるようにするための抽象化。
+typedef IdGenerator = String Function();
 
 /// プロバイダ
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(
     authApiService: ref.read(authApiServiceImplProvider),
     authSecureStorageService: ref.read(authSecureStorageServiceImplProvider),
+    idGenerator: () => const Uuid().v4(),
   ),
 );
 
@@ -25,6 +30,7 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   AuthRepositoryImpl({
     required this.authApiService,
     required this.authSecureStorageService,
+    required this.idGenerator,
   });
 
   /// Authに関連するAPI通信を抽象化したサービスインターフェース
@@ -32,6 +38,9 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
 
   /// Authに関連するデータをセキュアに永続化するサービスインターフェース
   final AuthSecureStorageService authSecureStorageService;
+
+  /// UUID 生成関数（本番: Uuid().v4()、テスト: 固定値）
+  final IdGenerator idGenerator;
 
   bool? _isLoggedIn;
   bool _isLoaded = false;
@@ -164,40 +173,98 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    final storedRefreshToken = authSecureStorageService.getRefreshToken();
-    try {
-      await authApiService.logout(refreshToken: storedRefreshToken);
-    } on Exception catch (error) {
-      logger.e(message: '[AuthRepositoryImpl] logout API error: $error');
-    }
+    await _callLogoutApi();
     await authSecureStorageService.clearAuthData();
+    await _issueNewAnonymousId();
     _isLoggedIn = false;
     _isLoaded = true;
     notifyListeners();
   }
 
   // ---------------------------------------------------------------------------
-  // Private
+  // Private: _ensureLoaded の子メソッド
   // ---------------------------------------------------------------------------
 
   Future<void> _ensureLoaded() async {
     if (_isLoaded) return;
     await authSecureStorageService.init();
-    final accessToken = authSecureStorageService.getAccessToken();
-    _isLoggedIn = accessToken.isNotEmpty;
+    _loadLoginState();
+    await _ensureAnonymousId();
     _isLoaded = true;
   }
 
+  /// accessToken の有無から _isLoggedIn を設定する。
+  void _loadLoginState() {
+    _isLoggedIn = authSecureStorageService.getAccessToken().isNotEmpty;
+  }
+
+  /// anonymousId が未設定のときだけ新規 UUID を発行・保存する。
+  Future<void> _ensureAnonymousId() async {
+    if (authSecureStorageService.getAnonymousId().isNotEmpty) return;
+    final id = idGenerator();
+    await authSecureStorageService.setAnonymousId(id: id);
+    // TODO(BRAZE-013): Braze.changeUser(id)
+    // TODO(BRAZE-013): Braze.logCustomAttribute('anonymous_id', id)
+  }
+
+  // ---------------------------------------------------------------------------
+  // Private: _saveTokens の子メソッド
+  // ---------------------------------------------------------------------------
+
   Future<void> _saveTokens({required TokenResponseDto dto}) async {
-    logger.i(message: '_saveTokens(): start');
-    final accessToken = dto.accessToken ?? '';
-    final refreshToken = dto.refreshToken ?? '';
+    await _persistTokenPair(
+      accessToken: dto.accessToken ?? '',
+      refreshToken: dto.refreshToken ?? '',
+    );
+    await _persistUserId(userId: dto.user?.id ?? '');
+    _isLoggedIn = (dto.accessToken ?? '').isNotEmpty;
+    _isLoaded = true;
+  }
+
+  /// accessToken / refreshToken を永続化する。
+  Future<void> _persistTokenPair({
+    required String accessToken,
+    required String refreshToken,
+  }) async {
     await authSecureStorageService.setAccessToken(token: accessToken);
     await authSecureStorageService.setRefreshToken(token: refreshToken);
-    _isLoggedIn = accessToken.isNotEmpty;
-    _isLoaded = true;
-    logger.i(message: '_saveTokens(): end');
   }
+
+  /// user_id を永続化する。空なら no-op。
+  /// anonymous_id → user_id への切り替えはここ。
+  Future<void> _persistUserId({required String userId}) async {
+    if (userId.isEmpty) return;
+    await authSecureStorageService.setUserId(id: userId);
+    // TODO(BRAZE-013): Braze.changeUser(userId)
+    // TODO(BRAZE-013): Braze.logCustomAttribute(
+    //   'anonymous_id', getAnonymousId(),
+    // )
+  }
+
+  // ---------------------------------------------------------------------------
+  // Private: logout の子メソッド
+  // ---------------------------------------------------------------------------
+
+  /// ログアウト API を呼び出す。失敗しても後続処理を続行する。
+  Future<void> _callLogoutApi() async {
+    final refreshToken = authSecureStorageService.getRefreshToken();
+    try {
+      await authApiService.logout(refreshToken: refreshToken);
+    } on Exception catch (error) {
+      logger.e(message: '[AuthRepositoryImpl] logout API error: $error');
+    }
+  }
+
+  /// ログアウト後の匿名セッション用に新しい UUID を発行・保存する。
+  Future<void> _issueNewAnonymousId() async {
+    final id = idGenerator();
+    await authSecureStorageService.setAnonymousId(id: id);
+    // TODO(BRAZE-013): Braze.changeUser(id)
+  }
+
+  // ---------------------------------------------------------------------------
+  // Private: DTO → Entity 変換
+  // ---------------------------------------------------------------------------
 
   User? _toUser({required UserDto dto}) {
     final id = dto.id;

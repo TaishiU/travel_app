@@ -50,13 +50,28 @@ def sort_dependencies(file_path: str) -> None:
         print(f"予期せぬエラーが発生しました: {e}", file=sys.stderr)
         sys.exit(1)
 
+
+def run_flutter_pub_get(pubspec_path: str) -> None:
+    import subprocess
+    project_dir = os.path.dirname(os.path.abspath(pubspec_path))
+    print("flutter pub get を実行中...")
+    result = subprocess.run(
+        ["flutter", "pub", "get"],
+        cwd=project_dir,
+        capture_output=False,
+    )
+    if result.returncode != 0:
+        print("エラー: flutter pub get が失敗しました。", file=sys.stderr)
+        sys.exit(result.returncode)
+
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("使用法: python sort_pubspec_dependencies.py <pubspec_file_path>", file=sys.stderr)
         sys.exit(1)
 
     pubspec_path = sys.argv[1]
-    
+
     # PyYAMLがインストールされているかチェック
     try:
         import yaml # この行は既に上で実行済みだが、念のため
@@ -66,3 +81,4 @@ if __name__ == '__main__':
         sys.exit(1)
 
     sort_dependencies(pubspec_path)
+    run_flutter_pub_get(pubspec_path)

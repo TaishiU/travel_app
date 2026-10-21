@@ -282,6 +282,46 @@ class MockAuthSecureStorageService extends _i1.Mock
           as _i3.Future<void>);
 
   @override
+  String getAnonymousId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAnonymousId, []),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.method(#getAnonymousId, []),
+            ),
+          )
+          as String);
+
+  @override
+  _i3.Future<void> setAnonymousId({required String? id}) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAnonymousId, [], {#id: id}),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  String getUserId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getUserId, []),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.method(#getUserId, []),
+            ),
+          )
+          as String);
+
+  @override
+  _i3.Future<void> setUserId({required String? id}) =>
+      (super.noSuchMethod(
+            Invocation.method(#setUserId, [], {#id: id}),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
   _i3.Future<bool> clearAuthData() =>
       (super.noSuchMethod(
             Invocation.method(#clearAuthData, []),
