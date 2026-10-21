@@ -33,15 +33,3 @@ Map<String, dynamic> _$UserDtoToJson(_UserDto instance) => <String, dynamic>{
   'email': instance.email,
   'displayName': instance.displayName,
 };
-
-_RefreshTokenDto _$RefreshTokenDtoFromJson(Map<String, dynamic> json) =>
-    _RefreshTokenDto(
-      accessToken: json['accessToken'] as String?,
-      refreshToken: json['refreshToken'] as String?,
-    );
-
-Map<String, dynamic> _$RefreshTokenDtoToJson(_RefreshTokenDto instance) =>
-    <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
-    };

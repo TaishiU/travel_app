@@ -3,12 +3,62 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/stub_secure_storage_service.dart';
+import 'package:travel_app/data/services/web_api/auth/dto.dart';
+import 'package:travel_app/data/services/web_api/auth/service.dart';
 import 'package:travel_app/data/services/web_api/auth/service_impl.dart';
 import 'package:travel_app/data/services/web_api/auth/stub_service_impl.dart';
 import 'package:travel_app/domain/entities/user/user.dart';
 import 'package:travel_app/domain/errors/app_error.dart';
 import 'package:travel_app/domain/interfaces/auth/auth_repository.dart';
 import 'package:travel_app/utils/result.dart';
+
+// accessToken: null を返すスタブ（_saveTokens 検証用）
+class _NullAccessTokenAuthApiService implements AuthApiService {
+  @override
+  Future<Result<TokenResponseDto>> login({
+    required String email,
+    required String password,
+  }) async => const SuccessResult(TokenResponseDto(refreshToken: 'refresh'));
+
+  @override
+  Future<Result<TokenResponseDto>> register({
+    required String email,
+    required String password,
+    String? displayName,
+  }) async => const SuccessResult(TokenResponseDto(refreshToken: 'refresh'));
+
+  @override
+  Future<Result<void>> logout({required String refreshToken}) async =>
+      const SuccessResult(null);
+
+  @override
+  Future<Result<UserDto>> me() async =>
+      const SuccessResult(UserDto(id: '1', email: 'test@example.com'));
+}
+
+// refreshToken: null を返すスタブ（_saveTokens 検証用）
+class _NullRefreshTokenAuthApiService implements AuthApiService {
+  @override
+  Future<Result<TokenResponseDto>> login({
+    required String email,
+    required String password,
+  }) async => const SuccessResult(TokenResponseDto(accessToken: 'access'));
+
+  @override
+  Future<Result<TokenResponseDto>> register({
+    required String email,
+    required String password,
+    String? displayName,
+  }) async => const SuccessResult(TokenResponseDto(accessToken: 'access'));
+
+  @override
+  Future<Result<void>> logout({required String refreshToken}) async =>
+      const SuccessResult(null);
+
+  @override
+  Future<Result<UserDto>> me() async =>
+      const SuccessResult(UserDto(id: '1', email: 'test@example.com'));
+}
 
 /// ## 概要
 /// [AuthRepositoryImpl] → [StubAuthApiServiceImpl] /
@@ -124,6 +174,38 @@ void main() {
 
           expect(result, isA<FailureResult<void>>());
         });
+
+        test(
+          'APIがaccessToken: nullを返した場合、ServerError(500)のFailureResultを返すこと',
+          () async {
+            final repo = AuthRepositoryImpl(
+              authApiService: _NullAccessTokenAuthApiService(),
+              authSecureStorageService: authStorage,
+              idGenerator: () => _testAnonymousId,
+            );
+
+            final result = await repo.login(email: _email, password: _password);
+
+            expect(result, isA<FailureResult<void>>());
+            expect((result as FailureResult<void>).error, isA<ServerError>());
+          },
+        );
+
+        test(
+          'APIがrefreshToken: nullを返した場合、ServerError(500)のFailureResultを返すこと',
+          () async {
+            final repo = AuthRepositoryImpl(
+              authApiService: _NullRefreshTokenAuthApiService(),
+              authSecureStorageService: authStorage,
+              idGenerator: () => _testAnonymousId,
+            );
+
+            final result = await repo.login(email: _email, password: _password);
+
+            expect(result, isA<FailureResult<void>>());
+            expect((result as FailureResult<void>).error, isA<ServerError>());
+          },
+        );
       });
     });
 
@@ -174,46 +256,44 @@ void main() {
 
           expect(result, isA<FailureResult<void>>());
         });
-      });
-    });
 
-    group('refreshToken', () {
-      group('正常系', () {
-        test('SuccessResultを返すこと', () async {
-          final result = await repository.refreshToken();
-
-          expect(result, isA<SuccessResult<void>>());
-        });
-      });
-
-      group('異常系', () {
         test(
-          'APIがFailureResultを返した場合、FailureResult<AppError>に変換されること',
+          'APIがaccessToken: nullを返した場合、ServerError(500)のFailureResultを返すこと',
           () async {
             final repo = AuthRepositoryImpl(
-              authApiService: StubAuthApiServiceImpl(shouldFail: true),
+              authApiService: _NullAccessTokenAuthApiService(),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
             );
 
-            final result = await repo.refreshToken();
+            final result = await repo.register(
+              email: _email,
+              password: _password,
+            );
 
             expect(result, isA<FailureResult<void>>());
-            expect((result as FailureResult<void>).error, isA<AppError>());
+            expect((result as FailureResult<void>).error, isA<ServerError>());
           },
         );
 
-        test('例外発生時にFailureResultを返すこと', () async {
-          final repo = AuthRepositoryImpl(
-            authApiService: StubAuthApiServiceImpl(shouldThrow: true),
-            authSecureStorageService: authStorage,
-            idGenerator: () => _testAnonymousId,
-          );
+        test(
+          'APIがrefreshToken: nullを返した場合、ServerError(500)のFailureResultを返すこと',
+          () async {
+            final repo = AuthRepositoryImpl(
+              authApiService: _NullRefreshTokenAuthApiService(),
+              authSecureStorageService: authStorage,
+              idGenerator: () => _testAnonymousId,
+            );
 
-          final result = await repo.refreshToken();
+            final result = await repo.register(
+              email: _email,
+              password: _password,
+            );
 
-          expect(result, isA<FailureResult<void>>());
-        });
+            expect(result, isA<FailureResult<void>>());
+            expect((result as FailureResult<void>).error, isA<ServerError>());
+          },
+        );
       });
     });
 

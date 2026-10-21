@@ -21,7 +21,6 @@ class AuthApiServiceImpl implements AuthApiService {
 
   static const _registerEndpoint = 'auth/register';
   static const _loginEndpoint = 'auth/login';
-  static const _refreshEndpoint = 'auth/refresh';
   static const _logoutEndpoint = 'auth/logout';
   static const _meEndpoint = 'auth/me';
 
@@ -66,29 +65,6 @@ class AuthApiServiceImpl implements AuthApiService {
         body: body,
       );
       final dto = TokenResponseDto.fromJson(
-        response['data'] as Map<String, dynamic>,
-      );
-      return SuccessResult(dto);
-    } on ApiClientException catch (error) {
-      logger.e(message: '[AuthApiServiceImpl] ApiClientException: $error');
-      return FailureResult(error);
-    } on Exception catch (error) {
-      logger.e(message: '[AuthApiServiceImpl] Unexpected Error: $error');
-      return FailureResult(error);
-    }
-  }
-
-  @override
-  Future<Result<RefreshTokenDto>> refresh({
-    required String refreshToken,
-  }) async {
-    try {
-      final body = <String, dynamic>{'refreshToken': refreshToken};
-      final response = await apiClient.post(
-        endpoint: _refreshEndpoint,
-        body: body,
-      );
-      final dto = RefreshTokenDto.fromJson(
         response['data'] as Map<String, dynamic>,
       );
       return SuccessResult(dto);

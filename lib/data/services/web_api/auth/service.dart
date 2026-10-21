@@ -16,9 +16,6 @@ abstract class AuthApiService {
     required String password,
   });
 
-  /// アクセストークン再発行
-  Future<Result<RefreshTokenDto>> refresh({required String refreshToken});
-
   /// ログアウト
   Future<Result<void>> logout({required String refreshToken});
 

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
+import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/data/services/web_api/auth/dto.dart';
 import 'package:travel_app/data/services/web_api/auth/service.dart';
 import 'package:travel_app/data/services/web_api/auth/service_impl.dart';
@@ -51,10 +52,10 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
 
   @override
   Future<bool> get isLoggedIn async {
-    if (_isLoggedIn != null && _isLoaded) {
-      return _isLoggedIn!;
+    if (!_isLoaded) {
+      await _ensureLoaded();
     }
-    await _ensureLoaded();
+    _loadLoginState();
     return _isLoggedIn ?? false;
   }
 
@@ -101,32 +102,6 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
           notifyListeners();
           return const SuccessResult(null);
         case FailureResult<TokenResponseDto>():
-          logger.e(message: '[AuthRepositoryImpl] ${result.error}');
-          return FailureResult(AppError.from(result.error));
-      }
-    } on Exception catch (error) {
-      return FailureResult(AppError.from(error));
-    }
-  }
-
-  @override
-  Future<Result<void>> refreshToken() async {
-    final storedRefreshToken = authSecureStorageService.getRefreshToken();
-    try {
-      final result = await authApiService.refresh(
-        refreshToken: storedRefreshToken,
-      );
-      switch (result) {
-        case SuccessResult<RefreshTokenDto>():
-          final accessToken = result.value.accessToken ?? '';
-          final newRefreshToken = result.value.refreshToken ?? '';
-          await authSecureStorageService.setAccessToken(token: accessToken);
-          await authSecureStorageService.setRefreshToken(
-            token: newRefreshToken,
-          );
-          _isLoggedIn = accessToken.isNotEmpty;
-          return const SuccessResult(null);
-        case FailureResult<RefreshTokenDto>():
           logger.e(message: '[AuthRepositoryImpl] ${result.error}');
           return FailureResult(AppError.from(result.error));
       }
@@ -202,8 +177,8 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
     if (authSecureStorageService.getAnonymousId().isNotEmpty) return;
     final id = idGenerator();
     await authSecureStorageService.setAnonymousId(id: id);
-    // TODO(BRAZE-013): Braze.changeUser(id)
-    // TODO(BRAZE-013): Braze.logCustomAttribute('anonymous_id', id)
+    // TODO(BRAZE-014): Braze.changeUser(id)
+    // TODO(BRAZE-014): Braze.logCustomAttribute('anonymous_id', id)
   }
 
   // ---------------------------------------------------------------------------
@@ -211,12 +186,19 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   // ---------------------------------------------------------------------------
 
   Future<void> _saveTokens({required TokenResponseDto dto}) async {
+    final accessToken = dto.accessToken ?? '';
+    final refreshToken = dto.refreshToken ?? '';
+    if (accessToken.isEmpty || refreshToken.isEmpty) {
+      throw InternalServerErrorException(
+        message: 'accessToken or refreshToken is empty',
+      );
+    }
     await _persistTokenPair(
-      accessToken: dto.accessToken ?? '',
-      refreshToken: dto.refreshToken ?? '',
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     );
     await _persistUserId(userId: dto.user?.id ?? '');
-    _isLoggedIn = (dto.accessToken ?? '').isNotEmpty;
+    _isLoggedIn = true;
     _isLoaded = true;
   }
 
@@ -234,8 +216,8 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   Future<void> _persistUserId({required String userId}) async {
     if (userId.isEmpty) return;
     await authSecureStorageService.setUserId(id: userId);
-    // TODO(BRAZE-013): Braze.changeUser(userId)
-    // TODO(BRAZE-013): Braze.logCustomAttribute(
+    // TODO(BRAZE-014): Braze.changeUser(userId)
+    // TODO(BRAZE-014): Braze.logCustomAttribute(
     //   'anonymous_id', getAnonymousId(),
     // )
   }
@@ -258,7 +240,7 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   Future<void> _issueNewAnonymousId() async {
     final id = idGenerator();
     await authSecureStorageService.setAnonymousId(id: id);
-    // TODO(BRAZE-013): Braze.changeUser(id)
+    // TODO(BRAZE-014): Braze.changeUser(id)
   }
 
   // ---------------------------------------------------------------------------

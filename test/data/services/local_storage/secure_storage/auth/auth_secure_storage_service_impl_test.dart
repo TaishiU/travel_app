@@ -17,6 +17,8 @@ void main() {
 
   const accessTokenKey = 'access_token';
   const refreshTokenKey = 'refresh_token';
+  const anonymousIdKey = 'anonymous_id';
+  const userIdKey = 'user_id';
 
   setUp(() {
     mockSecureStorage = MockSecureStorageService();
@@ -78,6 +80,12 @@ void main() {
       when(
         mockSecureStorage.read(key: refreshTokenKey),
       ).thenAnswer((_) async => 'saved_refresh_token');
+      when(
+        mockSecureStorage.read(key: anonymousIdKey),
+      ).thenAnswer((_) async => 'saved_anonymous_id');
+      when(
+        mockSecureStorage.read(key: userIdKey),
+      ).thenAnswer((_) async => 'saved_user_id');
 
       await authSecureStorageService.init();
 
@@ -85,6 +93,8 @@ void main() {
       expect(authSecureStorageService.getRefreshToken(), 'saved_refresh_token');
       verify(mockSecureStorage.read(key: accessTokenKey)).called(1);
       verify(mockSecureStorage.read(key: refreshTokenKey)).called(1);
+      verify(mockSecureStorage.read(key: anonymousIdKey)).called(1);
+      verify(mockSecureStorage.read(key: userIdKey)).called(1);
     });
 
     test('getAccessTokenは初期化されていない場合、空文字を返すこと', () {

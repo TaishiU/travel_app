@@ -83,19 +83,6 @@ class StubAuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Result<RefreshTokenDto>> refresh({
-    required String refreshToken,
-  }) async {
-    if (shouldThrow) throw Exception('refresh error');
-    if (shouldFail) {
-      return FailureResult(BadRequestException(message: 'refresh failed'));
-    }
-    return const SuccessResult(
-      RefreshTokenDto(accessToken: _accessToken, refreshToken: _refreshToken),
-    );
-  }
-
-  @override
   Future<Result<void>> logout({required String refreshToken}) async {
     if (shouldThrow) throw Exception('logout error');
     if (shouldFail) {

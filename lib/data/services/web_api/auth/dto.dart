@@ -42,20 +42,3 @@ abstract class UserDto with _$UserDto {
   factory UserDto.fromJson(Map<String, dynamic> json) =>
       _$UserDtoFromJson(json);
 }
-
-/// RefreshTokenDto（トークン再発行レスポンス）
-@freezed
-abstract class RefreshTokenDto with _$RefreshTokenDto {
-  /// コンストラクタ
-  const factory RefreshTokenDto({
-    /// アクセストークン
-    String? accessToken,
-
-    /// リフレッシュトークン
-    String? refreshToken,
-  }) = _RefreshTokenDto;
-
-  /// JSONから生成
-  factory RefreshTokenDto.fromJson(Map<String, dynamic> json) =>
-      _$RefreshTokenDtoFromJson(json);
-}

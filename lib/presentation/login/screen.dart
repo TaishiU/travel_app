@@ -90,8 +90,8 @@ class _LoginForm extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final emailController = useTextEditingController();
-    final passwordController = useTextEditingController();
+    final emailController = useTextEditingController(text: 'test3@example.com');
+    final passwordController = useTextEditingController(text: 'password123');
     final notifier = ref.watch(loginScreenProvider.notifier);
 
     return SingleChildScrollView(
@@ -138,8 +138,8 @@ class _RegisterForm extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final emailController = useTextEditingController();
-    final passwordController = useTextEditingController();
+    final emailController = useTextEditingController(text: 'test3@example.com');
+    final passwordController = useTextEditingController(text: 'password123');
     final displayNameController = useTextEditingController();
     final notifier = ref.watch(loginScreenProvider.notifier);
 

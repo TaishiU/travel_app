@@ -17,9 +17,6 @@ abstract class AuthRepository implements Listenable {
     String? displayName,
   });
 
-  /// アクセストークンを再発行する。
-  Future<Result<void>> refreshToken();
-
   /// ログインユーザーの基本情報を取得する。
   Future<Result<User>> me();
 

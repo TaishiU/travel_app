@@ -29,7 +29,7 @@ class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
     final result = await ref
         .read(authUseCaseProvider)
         .login(email: email, password: password);
-    // .auth(email: 'test3@example.com', password: 'password123');
+    // .login(email: 'test3@example.com', password: 'password123');
     switch (result) {
       case SuccessResult<String?>():
         state = const AsyncData(LoginScreenState());
