@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/utils/logger.dart';
@@ -140,7 +139,7 @@ class ApiClientImpl implements ApiClient {
   final String baseUrl;
 
   /// 認証情報のセキュアな永続化サービス
-  final AuthSecureStorageService authSecureStorageService;
+  final AuthSecureStorageServiceImpl authSecureStorageService;
 
   /// リクエストが失敗した場合の再試行の間隔。
   final Duration retryDelay;

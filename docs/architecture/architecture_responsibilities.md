@@ -151,11 +151,56 @@ URL とドメインが一致しないケースはこの分割で吸収する。�
 - ビジネスロジックの保持
 - `AppError` への変換（変換は Repository が担う）
 
+**ファイル命名規則**:
+- `*.dart` = interface / abstract class、`*_impl.dart` = concrete class（IF有無に関わらず）
+
 **重要なポイント**:
 - Interface + Impl で依存逆転を実現（テスト時にスタブ実装と差し替え可能）
 - DTO はこの層が所有（`lib/data/services/web_api/{feature}/dto.dart`）
 - DTO の全フィールドは nullable（サーバー仕様の変動に対応）
 - `ApiClient` は認証トークン付与・リトライ・401 リフレッシュを自動処理
+
+**Service 層で IF を設ける基準**
+
+IF を設ける目的は1つ：**実I/O をスタブに差し替えてテストを可能にするため**。
+
+```
+Repository（呼び出し元） → Service Interface ← StubImpl（テスト時: インメモリ）
+                                              ← ServiceImpl（本番時: http / flutter_secure_storage 等）
+```
+
+| 判断 | 基準 |
+|---|---|
+| **IF を設ける** | 実I/O（ネットワーク・ストレージ・デバイスAPI等）をクラス内で直接実行している |
+| **IF 不要** | 別の Service に委譲しているだけで、自身は実I/O を持たない（下位 Service の IF があれば十分） |
+
+**外部パッケージの依存はコンストラクタ注入で対応**
+
+Firebase や Braze など外部SDKをServiceImpl内で使う場合、SDKインスタンスをコンストラクタ注入し、Provider 単位で差し替え可能にする。追加の IF は不要。
+
+```dart
+// ✅ Good: 外部SDKのインスタンスをコンストラクタ注入 → テスト時にProviderごと差し替え可能
+final firebaseMessagingProvider = Provider<FirebaseMessaging>(
+  (_) => FirebaseMessaging.instance,
+);
+
+final pushTokenServiceImplProvider = Provider<PushTokenService>(
+  (ref) => PushTokenServiceImpl(
+    brazePlugin: ref.read(brazePluginProvider),
+    firebaseMessaging: ref.read(firebaseMessagingProvider), // ← テスト時にオーバーライド
+    isAndroid: Platform.isAndroid,
+  ),
+);
+```
+
+**domain 層の IF との違い**
+
+| IF の種類 | 目的 | 設ける層 |
+|---|---|---|
+| Repository Interface | DIP（依存性逆転）: UseCase がデータ層に依存しないようにする | domain 層 |
+| Service Interface | スタブ注入: 実I/O をテストで差し替える | data 層（Service 層） |
+
+domain 層の Repository Interface は UseCase → Repository の依存を逆転させるために**常に設ける**（パススルーでも省略しない）。Service 層の IF とは目的が異なるため混同しないこと。
 
 参照: `lib/data/services/`
 

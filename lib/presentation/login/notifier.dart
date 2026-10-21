@@ -28,13 +28,13 @@ class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
     state = const AsyncData(LoginScreenState(isLoading: true));
     final result = await ref
         .read(authUseCaseProvider)
-        // .login(email: email, password: password);
-        .login(email: 'test3@example.com', password: 'password123');
+        .login(email: email, password: password);
+    // .auth(email: 'test3@example.com', password: 'password123');
     switch (result) {
       case SuccessResult<String?>():
         state = const AsyncData(LoginScreenState());
       case FailureResult<String?>(:final error):
-        logger.e(message: '[LoginScreenNotifier] login failed: $error');
+        logger.e(message: '[LoginScreenNotifier] auth failed: $error');
         state = AsyncError(error, StackTrace.current);
     }
   }
@@ -53,13 +53,12 @@ class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
     state = const AsyncData(LoginScreenState(isLoading: true));
     final result = await ref
         .read(authUseCaseProvider)
-        // .register(email: email, password: password,
-        // displayName: displayName);
-        .register(
-          email: 'test3@example.com',
-          password: 'password123',
-          displayName: displayName,
-        );
+        .register(email: email, password: password, displayName: displayName);
+    // .register(
+    //   email: 'test3@example.com',
+    //   password: 'password123',
+    //   displayName: displayName,
+    // );
     switch (result) {
       case SuccessResult<String?>():
         state = const AsyncData(LoginScreenState());

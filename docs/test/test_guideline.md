@@ -140,26 +140,30 @@ verify(mockAnalyticsService.logEvent('todo_completed')).called(1);
 本プロジェクトは既に `StubServiceImpl` を持つ → **スタブ注入でSmallに保てる**
 
 ```
-View → Notifier → UseCase → Interface ← [Repository] → [StubService]
-                                                ↑
-                                         ここでスタブ注入 → 1プロセスで完結（Small）
+View → Notifier → UseCase → Interface ← [Repository] → [Service実装] → [末端I/Oスタブ]
+                                                                               ↑
+                                                                  ここでスタブ注入 → 1プロセスで完結（Small）
 ```
+
+末端I/Oとは `flutter_secure_storage` や HTTP クライアントのように、プロセス外と通信する箇所を指す。
+`AuthSecureStorageServiceImpl` のようにその上に乗るService実装は実物を使う。
 
 ### 各レイヤーのテスト方針
 
 | レイヤー | テストサイズ | テスト種別 | 何をテストするか | スタブ境界 |
 |---|---|---|---|---|
 | **Entity** | Small | Unit | ビジネスロジック（変換・バリデーション） | なし（純粋関数） |
-| **Service（スタブ）** | - | テスト対象外 | テストダブル自体 | - |
-| **Repository** | Small | Unit | DTO→Entity変換・SSOT・エラー変換 | StubService注入 |
-| **UseCase（Domain）** | Small | Unit | 業務ロジック・複数Repository協調 | StubRepository注入 |
-| **UseCase（Screen）** | Small | Unit | 画面固有ロジック・バリデーション | StubRepository注入 |
-| **Notifier** | Small | Integration | state遷移・UseCase呼び出し結果の反映 | StubService注入 ※1 |
+| **Service（実装）** | Small | Unit | 末端I/O以外のロジック（キー管理・メモリキャッシュ等） | 末端I/Oスタブ注入 |
+| **Service（スタブ）** | - | テスト対象外 | テストダブル自体はテストしない | - |
+| **Repository** | Small | Unit | DTO→Entity変換・SSOT・エラー変換 | 末端I/Oスタブ注入 |
+| **UseCase（Domain）** | Small | Unit | 業務ロジック・複数Repository協調 | 末端I/Oスタブ注入 |
+| **UseCase（Screen）** | Small | Unit | 画面固有ロジック・バリデーション | 末端I/Oスタブ注入 |
+| **Notifier** | Small | Integration | state遷移・UseCase呼び出し結果の反映 | 末端I/Oスタブ注入 ※1 |
 | **Widget** | Small | Widget | 状態→UI描画・ユーザーアクション→Notifier委譲 | スタブNotifier（Provider override） |
 | **Happy path** | Large | E2E | クリティカルな一連の操作フロー | なし（実環境） |
 
 **※1 Notifier統合テストの重要点**
-Notifier + UseCase + Repository を**まとめてテスト**し、スタブServiceのみ注入する。これが「**Integration × Small で最もコスパが良い**」領域。
+Notifier + UseCase + Repository + Service実装 を**まとめてテスト**し、末端I/O（`flutter_secure_storage`・APIクライアント等）のスタブのみ注入する。これが「**Integration × Small で最もコスパが良い**」領域。
 
 ---
 

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:travel_app/data/services/web_api/auth/dto.dart';
 import 'package:travel_app/data/services/web_api/auth/service.dart';
@@ -36,8 +35,8 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   /// Authに関連するAPI通信を抽象化したサービスインターフェース
   final AuthApiService authApiService;
 
-  /// Authに関連するデータをセキュアに永続化するサービスインターフェース
-  final AuthSecureStorageService authSecureStorageService;
+  /// Authに関連するデータをセキュアに永続化するサービス
+  final AuthSecureStorageServiceImpl authSecureStorageService;
 
   /// UUID 生成関数（本番: Uuid().v4()、テスト: 固定値）
   final IdGenerator idGenerator;

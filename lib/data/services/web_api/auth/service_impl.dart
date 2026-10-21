@@ -7,7 +7,7 @@ import 'package:travel_app/utils/logger.dart';
 import 'package:travel_app/utils/result.dart';
 
 /// プロバイダ
-final authApiServiceImplProvider = Provider<AuthApiServiceImpl>(
+final authApiServiceImplProvider = Provider<AuthApiService>(
   (ref) => AuthApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
 

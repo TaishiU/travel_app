@@ -7,44 +7,43 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
+import 'package:travel_app/data/services/local_storage/secure_storage/stub_secure_storage_service.dart';
 import 'package:travel_app/data/services/web_api/api_client.dart';
 import 'package:travel_app/data/services/web_api/api_exception.dart';
 
-@GenerateMocks([http.Client, AuthSecureStorageService])
+@GenerateMocks([http.Client])
 import 'api_client_test.mocks.dart';
 
 const String testBaseUrl = 'https://test.com';
 
 void main() {
   late MockClient mockHttpClient;
-  late MockAuthSecureStorageService mockAuthService;
+  late StubSecureStorageServiceImpl stubSecureStorage;
+  late AuthSecureStorageServiceImpl authService;
   late ApiClientImpl apiClient;
   late ProviderContainer container;
 
-  setUp(() {
+  setUp(() async {
     mockHttpClient = MockClient();
-    mockAuthService = MockAuthSecureStorageService();
-
-    // AuthSecureStorageService の初期化関連のデフォルト動作
-    when(mockAuthService.init()).thenAnswer((_) async {});
-    when(mockAuthService.getAccessToken()).thenReturn('');
-    when(mockAuthService.getRefreshToken()).thenReturn('');
-    when(mockAuthService.clearAuthData()).thenAnswer((_) async => true);
+    stubSecureStorage = StubSecureStorageServiceImpl();
+    authService = AuthSecureStorageServiceImpl(
+      secureStorage: stubSecureStorage,
+    );
+    await authService.init();
 
     container = ProviderContainer(
       overrides: [
         baseUrlProvider.overrideWithValue(testBaseUrl),
-        authSecureStorageServiceImplProvider.overrideWithValue(mockAuthService),
+        authSecureStorageServiceImplProvider.overrideWithValue(authService),
       ],
     );
 
     apiClient = ApiClientImpl(
       client: mockHttpClient,
       baseUrl: testBaseUrl,
-      authSecureStorageService: mockAuthService,
-      retryDelay: Duration.zero, // テストを高速化するために遅延をゼロにする
+      authSecureStorageService: authService,
+      retryDelay: Duration.zero,
     );
   });
 
@@ -55,7 +54,7 @@ void main() {
   group('ApiClientImpl', () {
     test('初期化時に各フィールドが正しく設定されること', () {
       expect(apiClient.baseUrl, testBaseUrl);
-      expect(apiClient.authSecureStorageService, mockAuthService);
+      expect(apiClient.authSecureStorageService, authService);
     });
 
     group('GET', () {
@@ -123,7 +122,7 @@ void main() {
 
     group('認証ヘッダー', () {
       test('アクセストークンが存在する場合、Authorizationヘッダーが付与されること', () async {
-        when(mockAuthService.getAccessToken()).thenReturn('valid_token');
+        await authService.setAccessToken(token: 'valid_token');
         when(
           mockHttpClient.get(any, headers: anyNamed('headers')),
         ).thenAnswer((_) async => http.Response('{}', 200));
@@ -139,7 +138,7 @@ void main() {
       });
 
       test('カスタムヘッダーを指定した場合、アクセストークンと共に出力されること', () async {
-        when(mockAuthService.getAccessToken()).thenReturn('token123');
+        await authService.setAccessToken(token: 'token123');
         when(
           mockHttpClient.get(any, headers: anyNamed('headers')),
         ).thenAnswer((_) async => http.Response('{}', 200));
@@ -229,6 +228,18 @@ void main() {
       });
     });
 
+    group('204 No Content', () {
+      test('空のMapを返すこと', () async {
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('', 204));
+
+        final result = await apiClient.get(endpoint: 'test');
+
+        expect(result, isEmpty);
+      });
+    });
+
     group('ステータスコード別エラーハンドリング', () {
       final errorCodes = {
         400: isA<BadRequestException>(),
@@ -257,7 +268,7 @@ void main() {
 
     group('エラーハンドリング & トークンリフレッシュ', () {
       test('401エラー時にトークンリフレッシュが走り、成功すれば再試行すること', () async {
-        when(mockAuthService.getRefreshToken()).thenReturn('old_refresh_token');
+        await authService.setRefreshToken(token: 'old_refresh_token');
 
         var callCount = 0;
         when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer((
@@ -279,8 +290,10 @@ void main() {
         ).thenAnswer(
           (_) async => http.Response(
             jsonEncode({
-              'accessToken': 'new_access_token',
-              'refreshToken': 'new_refresh_token',
+              'data': {
+                'accessToken': 'new_access_token',
+                'refreshToken': 'new_refresh_token',
+              },
             }),
             200,
           ),
@@ -289,12 +302,8 @@ void main() {
         final result = await apiClient.get(endpoint: 'data');
 
         expect(result, {'id': 1});
-        verify(
-          mockAuthService.setAccessToken(token: 'new_access_token'),
-        ).called(1);
-        verify(
-          mockAuthService.setRefreshToken(token: 'new_refresh_token'),
-        ).called(1);
+        expect(authService.getAccessToken(), 'new_access_token');
+        expect(authService.getRefreshToken(), 'new_refresh_token');
         verify(
           mockHttpClient.get(
             Uri.parse('$testBaseUrl/data'),
@@ -306,8 +315,6 @@ void main() {
       test(
         '401エラー時にリフレッシュトークンが空の場合、リフレッシュせずUnauthorizedExceptionを投げること',
         () async {
-          when(mockAuthService.getRefreshToken()).thenReturn('');
-
           when(
             mockHttpClient.get(any, headers: anyNamed('headers')),
           ).thenAnswer(
@@ -329,7 +336,7 @@ void main() {
       );
 
       test('同時に複数の401が発生した場合、リフレッシュは1回のみ行われ、他は待機すること', () async {
-        when(mockAuthService.getRefreshToken()).thenReturn('refresh_token');
+        await authService.setRefreshToken(token: 'refresh_token');
 
         var refreshCallCount = 0;
         when(
@@ -342,7 +349,9 @@ void main() {
           refreshCallCount++;
           await Future<void>.delayed(const Duration(milliseconds: 100));
           return http.Response(
-            jsonEncode({'accessToken': 'new_at', 'refreshToken': 'new_rt'}),
+            jsonEncode({
+              'data': {'accessToken': 'new_at', 'refreshToken': 'new_rt'},
+            }),
             200,
           );
         });
@@ -352,14 +361,12 @@ void main() {
           _,
         ) async {
           getCallCount++;
-          // 最初の2回（req1, req2）は401を返し、リトライ時は200を返す
           if (getCallCount <= 2) {
             return http.Response('{}', 401);
           }
           return http.Response('{}', 200);
         });
 
-        // 同時に2つのリクエスト
         final results = await Future.wait([
           apiClient.get(endpoint: 'req1'),
           apiClient.get(endpoint: 'req2'),
@@ -367,11 +374,11 @@ void main() {
 
         expect(results, [<String, dynamic>{}, <String, dynamic>{}]);
         expect(refreshCallCount, 1);
-        expect(getCallCount, 4); // 初回2回 + リトライ2回
+        expect(getCallCount, 4);
       });
 
       test('リフレッシュ中に例外が発生した場合、falseを返しUnauthorizedExceptionを投げること', () async {
-        when(mockAuthService.getRefreshToken()).thenReturn('refresh_token');
+        await authService.setRefreshToken(token: 'refresh_token');
 
         when(
           mockHttpClient.get(any, headers: anyNamed('headers')),
@@ -392,9 +399,7 @@ void main() {
       });
 
       test('401エラー時にリフレッシュが失敗した場合、UnauthorizedExceptionを投げること', () async {
-        when(
-          mockAuthService.getRefreshToken(),
-        ).thenReturn('invalid_refresh_token');
+        await authService.setRefreshToken(token: 'invalid_refresh_token');
 
         when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
           (_) async => http.Response('{"message": "unauthorized"}', 401),
@@ -412,7 +417,8 @@ void main() {
           apiClient.get(endpoint: 'data'),
           throwsA(isA<UnauthorizedException>()),
         );
-        verify(mockAuthService.clearAuthData()).called(1);
+        expect(authService.getAccessToken(), '');
+        expect(authService.getRefreshToken(), '');
       });
 
       test('loginエンドポイントで401が発生した場合、リフレッシュを試みずに例外を投げること', () async {
@@ -427,7 +433,6 @@ void main() {
           apiClient.post(endpoint: 'auth/login', body: {}),
           throwsA(isA<UnauthorizedException>()),
         );
-        verifyNever(mockAuthService.getRefreshToken());
       });
 
       test('http.ClientExceptionが発生した場合、ApiClientExceptionを投げること', () async {

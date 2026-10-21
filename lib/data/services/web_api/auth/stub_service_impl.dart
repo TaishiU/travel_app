@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/data/services/web_api/auth/dto.dart';
 import 'package:travel_app/data/services/web_api/auth/service.dart';
 import 'package:travel_app/utils/result.dart';
@@ -11,7 +12,24 @@ final stubAuthApiServiceImplProvider = Provider<StubAuthApiServiceImpl>(
 /// スタブ実装クラス
 class StubAuthApiServiceImpl implements AuthApiService {
   /// コンストラクタ
-  StubAuthApiServiceImpl();
+  StubAuthApiServiceImpl({
+    this.shouldFail = false,
+    this.shouldThrow = false,
+    this.shouldOmitUserInTokenResponse = false,
+    this.meReturnsInvalidUser = false,
+  });
+
+  /// trueのとき全メソッドが [BadRequestException] の [FailureResult] を返す
+  final bool shouldFail;
+
+  /// trueのとき全メソッドが [Exception] をスローする（on Exception catch 分岐用）
+  final bool shouldThrow;
+
+  /// trueのとき login/register の [TokenResponseDto] に user を含めない（_persistUserId empty 分岐用）
+  final bool shouldOmitUserInTokenResponse;
+
+  /// trueのとき [me] が id=null の [UserDto] を返す（_toUser 変換失敗分岐用）
+  final bool meReturnsInvalidUser;
 
   static const _accessToken = 'test-access-token';
   static const _refreshToken = 'test-refresh-token';
@@ -25,15 +43,21 @@ class StubAuthApiServiceImpl implements AuthApiService {
     required String password,
     String? displayName,
   }) async {
+    if (shouldThrow) throw Exception('register error');
+    if (shouldFail) {
+      return FailureResult(BadRequestException(message: 'register failed'));
+    }
     return SuccessResult(
       TokenResponseDto(
         accessToken: _accessToken,
         refreshToken: _refreshToken,
-        user: UserDto(
-          id: _userId,
-          email: email,
-          displayName: displayName ?? _displayName,
-        ),
+        user: shouldOmitUserInTokenResponse
+            ? null
+            : UserDto(
+                id: _userId,
+                email: email,
+                displayName: displayName ?? _displayName,
+              ),
       ),
     );
   }
@@ -43,11 +67,17 @@ class StubAuthApiServiceImpl implements AuthApiService {
     required String email,
     required String password,
   }) async {
+    if (shouldThrow) throw Exception('login error');
+    if (shouldFail) {
+      return FailureResult(BadRequestException(message: 'login failed'));
+    }
     return SuccessResult(
       TokenResponseDto(
         accessToken: _accessToken,
         refreshToken: _refreshToken,
-        user: UserDto(id: _userId, email: email, displayName: _displayName),
+        user: shouldOmitUserInTokenResponse
+            ? null
+            : UserDto(id: _userId, email: email, displayName: _displayName),
       ),
     );
   }
@@ -56,6 +86,10 @@ class StubAuthApiServiceImpl implements AuthApiService {
   Future<Result<RefreshTokenDto>> refresh({
     required String refreshToken,
   }) async {
+    if (shouldThrow) throw Exception('refresh error');
+    if (shouldFail) {
+      return FailureResult(BadRequestException(message: 'refresh failed'));
+    }
     return const SuccessResult(
       RefreshTokenDto(accessToken: _accessToken, refreshToken: _refreshToken),
     );
@@ -63,11 +97,22 @@ class StubAuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<Result<void>> logout({required String refreshToken}) async {
+    if (shouldThrow) throw Exception('logout error');
+    if (shouldFail) {
+      return FailureResult(BadRequestException(message: 'logout failed'));
+    }
     return const SuccessResult(null);
   }
 
   @override
   Future<Result<UserDto>> me() async {
+    if (shouldThrow) throw Exception('me error');
+    if (shouldFail) {
+      return FailureResult(BadRequestException(message: 'me failed'));
+    }
+    if (meReturnsInvalidUser) {
+      return const SuccessResult(UserDto());
+    }
     return const SuccessResult(
       UserDto(id: _userId, email: _email, displayName: _displayName),
     );

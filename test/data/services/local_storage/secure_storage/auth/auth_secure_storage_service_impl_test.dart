@@ -58,8 +58,7 @@ void main() {
 
     test('authSecureStorageServiceImplProviderは'
         '指定されたMockFlutterSecureStorageで初期化されること', () async {
-      final service = container.read(authSecureStorageServiceImplProvider);
-      final impl = service as AuthSecureStorageServiceImpl;
+      final impl = container.read(authSecureStorageServiceImplProvider);
 
       when(
         mockFlutterSecureStorage.read(key: 'test_key'),

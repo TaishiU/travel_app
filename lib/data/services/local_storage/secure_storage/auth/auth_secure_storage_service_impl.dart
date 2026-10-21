@@ -1,18 +1,17 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/secure_storage_service.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/secure_storage_service_impl.dart';
 
 /// AuthSecureStorageServiceImplのプロバイダ
-final authSecureStorageServiceImplProvider = Provider<AuthSecureStorageService>(
-  (ref) => AuthSecureStorageServiceImpl(
-    secureStorage: ref.read(secureStorageServiceImplProvider),
-  ),
-);
+final authSecureStorageServiceImplProvider =
+    Provider<AuthSecureStorageServiceImpl>(
+      (ref) => AuthSecureStorageServiceImpl(
+        secureStorage: ref.read(secureStorageServiceImplProvider),
+      ),
+    );
 
-/// [AuthSecureStorageService] の実装クラス。
-/// [SecureStorageService] を利用して、認証情報をセキュアに永続化します。
-class AuthSecureStorageServiceImpl implements AuthSecureStorageService {
+/// [SecureStorageService] を利用して、認証情報をセキュアに永続化するサービス。
+class AuthSecureStorageServiceImpl {
   /// コンストラクタ
   AuthSecureStorageServiceImpl({required this.secureStorage});
 
@@ -29,8 +28,7 @@ class AuthSecureStorageServiceImpl implements AuthSecureStorageService {
   String _anonymousId = '';
   String _userId = '';
 
-  /// 初期化（ストレージからメモリへロード）
-  @override
+  /// ストレージからデータをロードして初期化します。
   Future<void> init() async {
     _accessToken = await secureStorage.read(key: _accessTokenKey) ?? '';
     _refreshToken = await secureStorage.read(key: _refreshTokenKey) ?? '';
@@ -38,37 +36,37 @@ class AuthSecureStorageServiceImpl implements AuthSecureStorageService {
     _userId = await secureStorage.read(key: _userIdKey) ?? '';
   }
 
-  @override
+  /// アクセストークンを取得します。
   String getAccessToken() => _accessToken;
 
-  @override
+  /// アクセストークンを保存します。
   Future<void> setAccessToken({required String token}) async {
     _accessToken = token;
     await secureStorage.write(key: _accessTokenKey, value: token);
   }
 
-  @override
+  /// リフレッシュトークンを取得します。
   String getRefreshToken() => _refreshToken;
 
-  @override
+  /// リフレッシュトークンを保存します。
   Future<void> setRefreshToken({required String token}) async {
     _refreshToken = token;
     await secureStorage.write(key: _refreshTokenKey, value: token);
   }
 
-  @override
+  /// 匿名IDを取得します。
   String getAnonymousId() => _anonymousId;
 
-  @override
+  /// 匿名IDを保存します。
   Future<void> setAnonymousId({required String id}) async {
     _anonymousId = id;
     await secureStorage.write(key: _anonymousIdKey, value: id);
   }
 
-  @override
+  /// ユーザーIDを取得します。
   String getUserId() => _userId;
 
-  @override
+  /// ユーザーIDを保存します。
   Future<void> setUserId({required String id}) async {
     _userId = id;
     await secureStorage.write(key: _userIdKey, value: id);
@@ -76,7 +74,6 @@ class AuthSecureStorageServiceImpl implements AuthSecureStorageService {
 
   /// accessToken / refreshToken / userId を削除する。
   /// anonymousId は削除しない（ログアウト後も即時使用するため）。
-  @override
   Future<bool> clearAuthData() async {
     _accessToken = '';
     _refreshToken = '';
