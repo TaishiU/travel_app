@@ -216,7 +216,7 @@ MethodChannel('deepLinkChannel').setMethodCallHandler((call) async {
 | BRAZE-011 環境別設定 | `braze_011.md` | ✅ 完了（2026-10-14） |
 | BRAZE-012 Push権限管理 | `braze_012.md` | ✅ 完了（2026-10-14） |
 | BRAZE-013 Pushトークン登録 | `braze_013.md` | ✅ 完了（2026-10-18） |
-| BRAZE-014 ユーザー識別 | `braze_014.md` | 未着手 |
+| BRAZE-014 ユーザー識別 | `braze_014.md` | 着手中 |
 | BRAZE-015 属性送信Repository | `braze_015.md` | 未着手 |
 | BRAZE-016 カスタムイベント送信（縮小版） | `braze_016.md` | 未着手 |
 | BRAZE-017 通知タップ遷移（縮小版） | `braze_017.md` | 未着手 |

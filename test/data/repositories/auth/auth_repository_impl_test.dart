@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
+import 'package:travel_app/data/services/braze/user_identity/stub_user_identity_service_impl.dart';
+import 'package:travel_app/data/services/braze/user_identity/user_identity_service_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/stub_secure_storage_service.dart';
 import 'package:travel_app/data/services/web_api/auth/dto.dart';
@@ -89,6 +91,7 @@ void main() {
       authApiService: StubAuthApiServiceImpl(),
       authSecureStorageService: authStorage,
       idGenerator: () => _testAnonymousId,
+      userIdentityService: StubUserIdentityServiceImpl(),
     );
   });
 
@@ -106,6 +109,9 @@ void main() {
               AuthSecureStorageServiceImpl(
                 secureStorage: StubSecureStorageServiceImpl(),
               ),
+            ),
+            userIdentityServiceImplProvider.overrideWithValue(
+              StubUserIdentityServiceImpl(),
             ),
           ],
         );
@@ -137,6 +143,7 @@ void main() {
             ),
             authSecureStorageService: authStorage,
             idGenerator: () => _testAnonymousId,
+            userIdentityService: StubUserIdentityServiceImpl(),
           );
 
           final result = await repo.login(email: _email, password: _password);
@@ -154,6 +161,7 @@ void main() {
               authApiService: StubAuthApiServiceImpl(shouldFail: true),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
+              userIdentityService: StubUserIdentityServiceImpl(),
             );
 
             final result = await repo.login(email: _email, password: _password);
@@ -168,6 +176,7 @@ void main() {
             authApiService: StubAuthApiServiceImpl(shouldThrow: true),
             authSecureStorageService: authStorage,
             idGenerator: () => _testAnonymousId,
+            userIdentityService: StubUserIdentityServiceImpl(),
           );
 
           final result = await repo.login(email: _email, password: _password);
@@ -182,6 +191,7 @@ void main() {
               authApiService: _NullAccessTokenAuthApiService(),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
+              userIdentityService: StubUserIdentityServiceImpl(),
             );
 
             final result = await repo.login(email: _email, password: _password);
@@ -198,6 +208,7 @@ void main() {
               authApiService: _NullRefreshTokenAuthApiService(),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
+              userIdentityService: StubUserIdentityServiceImpl(),
             );
 
             final result = await repo.login(email: _email, password: _password);
@@ -230,6 +241,7 @@ void main() {
               authApiService: StubAuthApiServiceImpl(shouldFail: true),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
+              userIdentityService: StubUserIdentityServiceImpl(),
             );
 
             final result = await repo.register(
@@ -247,6 +259,7 @@ void main() {
             authApiService: StubAuthApiServiceImpl(shouldThrow: true),
             authSecureStorageService: authStorage,
             idGenerator: () => _testAnonymousId,
+            userIdentityService: StubUserIdentityServiceImpl(),
           );
 
           final result = await repo.register(
@@ -264,6 +277,7 @@ void main() {
               authApiService: _NullAccessTokenAuthApiService(),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
+              userIdentityService: StubUserIdentityServiceImpl(),
             );
 
             final result = await repo.register(
@@ -283,6 +297,7 @@ void main() {
               authApiService: _NullRefreshTokenAuthApiService(),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
+              userIdentityService: StubUserIdentityServiceImpl(),
             );
 
             final result = await repo.register(
@@ -314,6 +329,7 @@ void main() {
               authApiService: StubAuthApiServiceImpl(shouldFail: true),
               authSecureStorageService: authStorage,
               idGenerator: () => _testAnonymousId,
+              userIdentityService: StubUserIdentityServiceImpl(),
             );
 
             final result = await repo.me();
@@ -328,6 +344,7 @@ void main() {
             authApiService: StubAuthApiServiceImpl(meReturnsInvalidUser: true),
             authSecureStorageService: authStorage,
             idGenerator: () => _testAnonymousId,
+            userIdentityService: StubUserIdentityServiceImpl(),
           );
 
           final result = await repo.me();
@@ -341,6 +358,7 @@ void main() {
             authApiService: StubAuthApiServiceImpl(shouldThrow: true),
             authSecureStorageService: authStorage,
             idGenerator: () => _testAnonymousId,
+            userIdentityService: StubUserIdentityServiceImpl(),
           );
 
           final result = await repo.me();
@@ -371,6 +389,7 @@ void main() {
             authApiService: StubAuthApiServiceImpl(shouldThrow: true),
             authSecureStorageService: authStorage,
             idGenerator: () => _testAnonymousId,
+            userIdentityService: StubUserIdentityServiceImpl(),
           );
 
           await expectLater(repo.logout(), completes);

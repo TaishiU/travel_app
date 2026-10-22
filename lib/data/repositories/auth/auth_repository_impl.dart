@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_app/data/services/braze/braze_attribute_key.dart';
+import 'package:travel_app/data/services/braze/user_identity/user_identity_service.dart';
+import 'package:travel_app/data/services/braze/user_identity/user_identity_service_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:travel_app/data/services/web_api/api_exception.dart';
 import 'package:travel_app/data/services/web_api/auth/dto.dart';
@@ -21,6 +24,7 @@ final authRepositoryProvider = Provider<AuthRepository>(
     authApiService: ref.read(authApiServiceImplProvider),
     authSecureStorageService: ref.read(authSecureStorageServiceImplProvider),
     idGenerator: () => const Uuid().v4(),
+    userIdentityService: ref.read(userIdentityServiceImplProvider),
   ),
 );
 
@@ -31,6 +35,7 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
     required this.authApiService,
     required this.authSecureStorageService,
     required this.idGenerator,
+    required this.userIdentityService,
   });
 
   /// Authに関連するAPI通信を抽象化したサービスインターフェース
@@ -41,6 +46,9 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
 
   /// UUID 生成関数（本番: Uuid().v4()、テスト: 固定値）
   final IdGenerator idGenerator;
+
+  /// Braze ユーザー識別サービス
+  final UserIdentityService userIdentityService;
 
   bool? _isLoggedIn;
   bool _isLoaded = false;
@@ -172,13 +180,22 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
     _isLoggedIn = authSecureStorageService.getAccessToken().isNotEmpty;
   }
 
-  /// anonymousId が未設定のときだけ新規 UUID を発行・保存する。
+  /// anonymousId を確保し、未ログイン時に Braze 匿名セッションを確立する。
+  /// ログイン済みの場合は changeUser を呼ばない（_persistUserId で設定済みのため上書きしない）。
   Future<void> _ensureAnonymousId() async {
-    if (authSecureStorageService.getAnonymousId().isNotEmpty) return;
-    final id = idGenerator();
-    await authSecureStorageService.setAnonymousId(id: id);
-    // TODO(BRAZE-014): Braze.changeUser(id)
-    // TODO(BRAZE-014): Braze.logCustomAttribute('anonymous_id', id)
+    var anonymousId = authSecureStorageService.getAnonymousId();
+    if (anonymousId.isEmpty) {
+      anonymousId = idGenerator();
+      await authSecureStorageService.setAnonymousId(id: anonymousId);
+    }
+    if (!(_isLoggedIn ?? false)) {
+      userIdentityService
+        ..changeUser(userId: anonymousId)
+        ..setStringCustomAttribute(
+          key: BrazeAttributeKey.anonymousId,
+          value: anonymousId,
+        );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -212,14 +229,15 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   }
 
   /// user_id を永続化する。空なら no-op。
-  /// anonymous_id → user_id への切り替えはここ。
+  /// anonymous_id → user_id への Braze ユーザー切り替えもここで行う。
   Future<void> _persistUserId({required String userId}) async {
     if (userId.isEmpty) return;
     await authSecureStorageService.setUserId(id: userId);
-    // TODO(BRAZE-014): Braze.changeUser(userId)
-    // TODO(BRAZE-014): Braze.logCustomAttribute(
-    //   'anonymous_id', getAnonymousId(),
-    // )
+    userIdentityService.changeUser(userId: userId);
+    userIdentityService.setStringCustomAttribute(
+      key: BrazeAttributeKey.anonymousId,
+      value: authSecureStorageService.getAnonymousId(),
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -237,10 +255,12 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   }
 
   /// ログアウト後の匿名セッション用に新しい UUID を発行・保存する。
+  /// Braze のユーザーセッションを終了してから新しい匿名ユーザーとして開始する。
   Future<void> _issueNewAnonymousId() async {
     final id = idGenerator();
     await authSecureStorageService.setAnonymousId(id: id);
-    // TODO(BRAZE-014): Braze.changeUser(id)
+    await userIdentityService.logoutSession();
+    userIdentityService.changeUser(userId: id);
   }
 
   // ---------------------------------------------------------------------------
