@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
 import 'package:travel_app/data/services/braze/user_identity/stub_user_identity_service_impl.dart';
+import 'package:travel_app/data/services/braze/user_identity/user_identity_service.dart';
 import 'package:travel_app/data/services/braze/user_identity/user_identity_service_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/stub_secure_storage_service.dart';
@@ -13,6 +14,18 @@ import 'package:travel_app/domain/entities/user/user.dart';
 import 'package:travel_app/domain/errors/app_error.dart';
 import 'package:travel_app/domain/interfaces/auth/auth_repository.dart';
 import 'package:travel_app/utils/result.dart';
+
+class _ThrowingLogoutUserIdentityService implements UserIdentityService {
+  @override
+  void changeUser({required String userId}) {}
+
+  @override
+  void setStringCustomAttribute({required String key, required String value}) {}
+
+  @override
+  Future<void> logoutSession() async =>
+      throw Exception('Braze PlatformException simulation');
+}
 
 // accessToken: null を返すスタブ（_saveTokens 検証用）
 class _NullAccessTokenAuthApiService implements AuthApiService {
@@ -394,6 +407,34 @@ void main() {
 
           await expectLater(repo.logout(), completes);
           expect(await repo.isLoggedIn, isFalse);
+        });
+
+        test('logoutSession()が例外を投げた場合でも、notifyListenersが呼ばれること', () async {
+          final repo = AuthRepositoryImpl(
+            authApiService: StubAuthApiServiceImpl(),
+            authSecureStorageService: authStorage,
+            idGenerator: () => _testAnonymousId,
+            userIdentityService: _ThrowingLogoutUserIdentityService(),
+          );
+          await repo.login(email: _email, password: _password);
+
+          var notified = false;
+          repo.addListener(() => notified = true);
+
+          try {
+            await repo.logout();
+          } on Exception catch (_) {}
+
+          expect(
+            authStorage.getAccessToken(),
+            equals(''),
+            reason: 'clearAuthData()は実行済みのためトークンは消去されている',
+          );
+          expect(
+            notified,
+            isTrue,
+            reason: 'トークン消去後は必ずnotifyListeners()でUI更新が必要',
+          );
         });
       });
     });
