@@ -157,11 +157,7 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   Future<void> logout() async {
     await _callLogoutApi();
     await authSecureStorageService.clearAuthData();
-    try {
-      await _issueNewAnonymousId();
-    } on Exception catch (error) {
-      logger.e(message: '[AuthRepositoryImpl] logoutSession error: $error');
-    }
+    await _issueNewAnonymousId();
     _isLoggedIn = false;
     _isLoaded = true;
     notifyListeners();
@@ -263,7 +259,11 @@ class AuthRepositoryImpl extends ChangeNotifier implements AuthRepository {
   Future<void> _issueNewAnonymousId() async {
     final id = idGenerator();
     await authSecureStorageService.setAnonymousId(id: id);
-    await userIdentityService.logoutSession();
+    try {
+      await userIdentityService.logoutSession();
+    } on Exception catch (error) {
+      logger.e(message: '[AuthRepositoryImpl] logoutSession error: $error');
+    }
     userIdentityService.changeUser(userId: id);
   }
 
