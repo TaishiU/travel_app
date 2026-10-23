@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
+import 'package:travel_app/data/services/braze/analytics/braze_analytics_service_impl.dart';
+import 'package:travel_app/data/services/braze/analytics/stub_braze_analytics_service_impl.dart';
 import 'package:travel_app/data/services/braze/user_identity/stub_user_identity_service_impl.dart';
 import 'package:travel_app/data/services/braze/user_identity/user_identity_service_impl.dart';
 import 'package:travel_app/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
@@ -41,6 +43,9 @@ ProviderContainer buildContainer({bool shouldFail = false}) {
       ),
       userIdentityServiceImplProvider.overrideWithValue(
         StubUserIdentityServiceImpl(),
+      ),
+      brazeAnalyticsServiceImplProvider.overrideWithValue(
+        StubBrazeAnalyticsServiceImpl(),
       ),
     ],
   );
