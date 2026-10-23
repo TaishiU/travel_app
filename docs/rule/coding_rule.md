@@ -3,7 +3,7 @@
 ## アーキテクチャ責務
 
 このプロジェクトは **Feature-First Clean Architecture** を採用している。
-各レイヤーの詳細な責務・実装例は [architecture_responsibilities.md](../architecture/architecture_responsibilities.md) を参照。
+各レイヤーの詳細な責務・実装例は [architecture.md](../architecture/architecture.md) を参照。
 
 ---
 

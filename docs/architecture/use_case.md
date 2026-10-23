@@ -9,7 +9,7 @@ UseCase は配置層によって2種類に分類される。
 | **画面ユースケース** | `lib/presentation/{feature}/use_case.dart` | 特定の画面の関心事に属すロジックの集約 |
 | **ドメインユースケース** | `lib/domain/use_cases/` | 特定の画面に属さないドメイン概念の集約 |
 
-本ドキュメントは**画面ユースケース**を対象とする。ドメインユースケースは `architecture_responsibilities.md` を参照。
+本ドキュメントは**画面ユースケース**を対象とする。ドメインユースケースは `architecture.md` を参照。
 
 ---
 

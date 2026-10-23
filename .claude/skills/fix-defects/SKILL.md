@@ -88,7 +88,7 @@ flutter test <再現テストファイルパス>
 
 妥当性で「修正対象」と判断した欠陥のみ対象とし、レポートの末尾に `## 修正方針` セクションを追記する。
 
-方針立案の前に `docs/adr/`・`architecture_responsibilities.md`・`coding_rule.md` を参照し、修正がアーキテクチャ規約に整合することを確認する。
+方針立案の前に `docs/adr/`・`architecture.md`・`coding_rule.md` を参照し、修正がアーキテクチャ規約に整合することを確認する。
 
 **品質目標:**
 - **保守性**: 変更理由が一箇所に集約

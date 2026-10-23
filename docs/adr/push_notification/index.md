@@ -26,3 +26,4 @@
 | BRAZE-011 環境別設定（`--dart-define` 注入） | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_011.md` |
 | BRAZE-012 Push権限管理                       | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_012.md` |
 | BRAZE-013 Pushトークン登録                   | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_013.md` |
+| BRAZE-014 ユーザー識別                       | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_014.md` |
