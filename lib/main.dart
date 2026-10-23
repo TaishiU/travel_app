@@ -4,6 +4,7 @@ import 'package:braze_plugin/braze_plugin.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:talker_riverpod_logger/talker_riverpod_logger.dart';
@@ -77,12 +78,28 @@ Future<void> main() async {
 }
 
 ///
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   /// コンストラクタ
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    const MethodChannel('deepLinkChannel').setMethodCallHandler((call) async {
+      final url = call.arguments as String?;
+      if (url == null) return;
+      final path = _toRouterPath(url: url);
+      if (path != null) ref.read(routerProvider).go(path);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       title: 'Flutter Demo',
@@ -93,4 +110,12 @@ class MyApp extends ConsumerWidget {
       routerConfig: router,
     );
   }
+}
+
+// travelapp://task → /task, travelapp://booking/BK-123 → /booking/BK-123
+String? _toRouterPath({required String url}) {
+  final uri = Uri.tryParse(url);
+  if (uri == null || uri.scheme != 'travelapp') return null;
+  final path = '/${uri.host}${uri.path}';
+  return path == '/' ? null : path;
 }

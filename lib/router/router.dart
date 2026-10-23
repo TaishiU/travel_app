@@ -68,6 +68,14 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 // ボトムナビゲーション用のShellRouteのNavigator Key
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+bool _isProtectedPath({required String path}) {
+  const protectedPrefixes = [
+    '/booking', // ハードガード: booking系（Phase 3で使用）
+    '/my-trips/', // ハードガード: 旅程詳細のみ（末尾スラッシュで一覧を除外）
+  ];
+  return protectedPrefixes.any((prefix) => path.startsWith(prefix));
+}
+
 // --- GoRouterの定義 ---
 /// プロバイダ
 final routerProvider = Provider<GoRouter>((ref) {
@@ -124,17 +132,17 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) async {
       final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
       logger.d(message: 'state.matchedLocation: ${state.matchedLocation}');
-      final loggingIn = state.matchedLocation == LoginScreen.path;
-      // ログイン済みでログイン画面にいる場合はTaskScreenへ
-      if (loggedIn && loggingIn) {
-        // return TodoListScreen.path;
+      final path = state.matchedLocation;
+
+      if (!loggedIn && _isProtectedPath(path: path)) {
+        ref.read(authUseCaseProvider).savePendingDeepLink(path: path);
+        return LoginScreen.path;
+      }
+
+      if (loggedIn && path == LoginScreen.path) {
         return TaskScreen.path;
       }
-      // null = リダイレクトなしでナビゲーションをそのまま続行。
-      // 未ログインユーザーが要ログイン画面にアクセスした際の LoginScreen リダイレクト
-      // （docs/adr/login/design_doc.md パターンC）は対象画面（予約詳細等）が未実装のため未対応。
-      // 実装時は authRepository.pendingDeepLink に遷移先を保存して LoginScreen へ
-      // redirect し、ログイン後に getAndClearPendingDeepLink() で元の画面へ戻す。
+
       return null;
     },
     errorBuilder: (context, state) => Scaffold(

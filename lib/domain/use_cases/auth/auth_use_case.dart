@@ -57,6 +57,12 @@ class AuthUseCase {
     }
   }
 
+  /// ハードガード画面へのアクセス時に遷移先を保存する（redirect から呼ばれる）
+  // ignore: use_setters_to_change_properties
+  void savePendingDeepLink({required String path}) {
+    ref.read(authRepositoryProvider).pendingDeepLink = path;
+  }
+
   /// ログアウトを実行する
   Future<void> logout() async {
     await ref.read(authRepositoryProvider).logout();

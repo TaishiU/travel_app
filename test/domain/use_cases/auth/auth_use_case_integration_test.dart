@@ -177,6 +177,24 @@ void main() {
       });
     });
 
+    group('savePendingDeepLink', () {
+      group('正常系', () {
+        test('指定したpathがpendingDeepLinkに保存されること', () {
+          // Given
+          final container = buildContainer();
+
+          // When
+          container.read(authUseCaseProvider).savePendingDeepLink(path: '/bar');
+
+          // Then
+          expect(
+            container.read(authRepositoryProvider).pendingDeepLink,
+            equals('/bar'),
+          );
+        });
+      });
+    });
+
     group('logout', () {
       group('正常系', () {
         test('正常に完了すること', () async {

@@ -18,29 +18,33 @@ class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
     return const LoginScreenState();
   }
 
-  /// ログイン
-  Future<void> login({required String email, required String password}) async {
+  /// ログイン。戻り値は pending_deep_link（なければ null）
+  Future<String?> login({
+    required String email,
+    required String password,
+  }) async {
     final isLoading = switch (state) {
       AsyncData(:final value) => value.isLoading,
       _ => false,
     };
-    if (isLoading) return;
+    if (isLoading) return null;
     state = const AsyncData(LoginScreenState(isLoading: true));
     final result = await ref
         .read(authUseCaseProvider)
         .login(email: email, password: password);
-    // .login(email: 'test3@example.com', password: 'password123');
     switch (result) {
       case SuccessResult<String?>():
         state = const AsyncData(LoginScreenState());
+        return result.value;
       case FailureResult<String?>(:final error):
         logger.e(message: '[LoginScreenNotifier] auth failed: $error');
         state = AsyncError(error, StackTrace.current);
+        return null;
     }
   }
 
-  /// 新規登録
-  Future<void> register({
+  /// 新規登録。戻り値は pending_deep_link（なければ null）
+  Future<String?> register({
     required String email,
     required String password,
     String? displayName,
@@ -49,22 +53,19 @@ class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
       AsyncData(:final value) => value.isLoading,
       _ => false,
     };
-    if (isLoading) return;
+    if (isLoading) return null;
     state = const AsyncData(LoginScreenState(isLoading: true));
     final result = await ref
         .read(authUseCaseProvider)
         .register(email: email, password: password, displayName: displayName);
-    // .register(
-    //   email: 'test3@example.com',
-    //   password: 'password123',
-    //   displayName: displayName,
-    // );
     switch (result) {
       case SuccessResult<String?>():
         state = const AsyncData(LoginScreenState());
+        return result.value;
       case FailureResult<String?>(:final error):
         logger.e(message: '[LoginScreenNotifier] register failed: $error');
         state = AsyncError(error, StackTrace.current);
+        return null;
     }
   }
 }

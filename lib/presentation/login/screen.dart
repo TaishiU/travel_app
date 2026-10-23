@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/design_system/styles/app_color.dart';
 import 'package:travel_app/domain/errors/app_error.dart';
 import 'package:travel_app/presentation/login/notifier.dart';
+import 'package:travel_app/presentation/task/screen.dart';
 
 /// ログイン画面
 class LoginScreen extends StatelessWidget {
@@ -83,6 +85,19 @@ class _Body extends ConsumerWidget {
   };
 }
 
+void _navigateAfterAuth({
+  required BuildContext context,
+  required String? pendingPath,
+}) {
+  if (pendingPath != null && pendingPath.isNotEmpty) {
+    context.go(pendingPath);
+  } else if (context.canPop()) {
+    context.pop();
+  } else {
+    context.go(TaskScreen.path);
+  }
+}
+
 class _LoginForm extends HookConsumerWidget {
   const _LoginForm({required this.errorMessage});
 
@@ -118,10 +133,12 @@ class _LoginForm extends HookConsumerWidget {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () async {
-              await notifier.login(
+              final pendingPath = await notifier.login(
                 email: emailController.text,
                 password: passwordController.text,
               );
+              if (!context.mounted) return;
+              _navigateAfterAuth(context: context, pendingPath: pendingPath);
             },
             child: const Text('ログイン'),
           ),
@@ -175,11 +192,13 @@ class _RegisterForm extends HookConsumerWidget {
               final displayName = displayNameController.text.isEmpty
                   ? null
                   : displayNameController.text;
-              await notifier.register(
+              final pendingPath = await notifier.register(
                 email: emailController.text,
                 password: passwordController.text,
                 displayName: displayName,
               );
+              if (!context.mounted) return;
+              _navigateAfterAuth(context: context, pendingPath: pendingPath);
             },
             child: const Text('登録する'),
           ),

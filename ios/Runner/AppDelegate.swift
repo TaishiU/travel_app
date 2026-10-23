@@ -21,3 +21,29 @@ import braze_plugin
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
   }
 }
+
+// MARK: - Deep Link Forwarding
+
+extension AppDelegate {
+
+  private func forwardURL(_ url: URL) {
+    guard
+      let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+      let controller = scene.windows.first?.rootViewController as? FlutterViewController
+    else { return }
+    let deepLinkChannel = FlutterMethodChannel(
+      name: "deepLinkChannel", binaryMessenger: controller.binaryMessenger)
+    DispatchQueue.main.async {
+      deepLinkChannel.invokeMethod("receiveDeepLink", arguments: url.absoluteString)
+    }
+  }
+
+  override func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    forwardURL(url)
+    return true
+  }
+}
