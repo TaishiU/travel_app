@@ -27,3 +27,5 @@
 | BRAZE-012 Push権限管理                       | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_012.md` |
 | BRAZE-013 Pushトークン登録                   | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_013.md` |
 | BRAZE-014 ユーザー識別                       | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_014.md` |
+| BRAZE-015 属性送信Repository                 | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_015.md` |
+| BRAZE-016 カスタムイベント送信（縮小版）      | `docs/adr/push_notification/phase2_infrastructure_implementation/braze_016.md` |

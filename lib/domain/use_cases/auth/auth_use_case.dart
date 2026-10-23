@@ -1,5 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/data/repositories/auth/auth_repository_impl.dart';
+import 'package:travel_app/data/repositories/notification/notification_analytics_repository_impl.dart';
 import 'package:travel_app/utils/result.dart';
 
 /// AuthUseCaseのプロバイダ
@@ -29,6 +30,7 @@ class AuthUseCase {
     final result = await repo.login(email: email, password: password);
     switch (result) {
       case SuccessResult<void>():
+        ref.read(notificationAnalyticsRepositoryProvider).trackLoginCompleted();
         return SuccessResult(repo.getAndClearPendingDeepLink());
       case FailureResult<void>():
         return FailureResult(result.error);
@@ -58,5 +60,6 @@ class AuthUseCase {
   /// ログアウトを実行する
   Future<void> logout() async {
     await ref.read(authRepositoryProvider).logout();
+    ref.read(notificationAnalyticsRepositoryProvider).trackLogoutCompleted();
   }
 }

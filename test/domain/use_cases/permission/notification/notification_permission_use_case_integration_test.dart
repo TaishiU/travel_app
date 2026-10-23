@@ -1,11 +1,36 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_app/data/repositories/notification/notification_analytics_repository_impl.dart';
 import 'package:travel_app/data/repositories/permission/notification/notification_permission_repository_impl.dart';
 import 'package:travel_app/data/services/permission/notification/notification_permission_service.dart';
 import 'package:travel_app/data/services/permission/notification/notification_permission_service_impl.dart';
 import 'package:travel_app/data/services/permission/notification/stub_notification_permission_service_impl.dart';
 import 'package:travel_app/domain/entities/permission/notification/notification_permission_status.dart';
+import 'package:travel_app/domain/interfaces/notification/notification_analytics_repository.dart';
 import 'package:travel_app/domain/use_cases/permission/notification/notification_permission_use_case.dart';
+
+class SpyNotificationAnalyticsRepositoryImpl
+    implements NotificationAnalyticsRepository {
+  int trackPushPermissionRequestedCount = 0;
+  int trackPushPermissionGrantedCount = 0;
+  String? lastPushPermissionStatus;
+
+  @override
+  void trackLoginCompleted() {}
+
+  @override
+  void trackLogoutCompleted() {}
+
+  @override
+  void trackPushPermissionRequested() => trackPushPermissionRequestedCount++;
+
+  @override
+  void trackPushPermissionGranted() => trackPushPermissionGrantedCount++;
+
+  @override
+  void updatePushPermissionStatus({required String status}) =>
+      lastPushPermissionStatus = status;
+}
 
 /// ## 概要
 /// [NotificationPermissionUseCase] → [NotificationPermissionRepositoryImpl]
@@ -28,13 +53,12 @@ import 'package:travel_app/domain/use_cases/permission/notification/notification
 /// ```
 void main() {
   group('NotificationPermissionUseCase', () {
-    /// テスト用の ProviderContainer を生成し、
-    /// テスト終了後に自動で dispose されるようにする。
     ProviderContainer buildContainer({
       NotificationPermissionStatus statusResult =
           NotificationPermissionStatus.notDetermined,
       NotificationPermissionStatus requestResult =
           NotificationPermissionStatus.notDetermined,
+      SpyNotificationAnalyticsRepositoryImpl? spy,
     }) {
       final container = ProviderContainer(
         overrides: [
@@ -44,14 +68,16 @@ void main() {
               requestResult: requestResult,
             ),
           ),
+          notificationAnalyticsRepositoryProvider.overrideWithValue(
+            spy ?? SpyNotificationAnalyticsRepositoryImpl(),
+          ),
         ],
       );
-
       addTearDown(container.dispose);
       return container;
     }
 
-    /// checkStatus / requestPermission 共通のテスト。
+    /// checkStatus / requestPermission 共通の戻り値テスト。
     Future<void> expectPermissionResult({
       required Future<NotificationPermissionStatus> Function(
         NotificationPermissionUseCase useCase,
@@ -72,62 +98,150 @@ void main() {
     }
 
     group('checkStatus', () {
-      test('granted → granted', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.checkStatus(),
-          stubResult: NotificationPermissionStatus.granted,
-        );
-      });
+      group('正常系', () {
+        test('granted → granted', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.checkStatus(),
+            stubResult: NotificationPermissionStatus.granted,
+          );
+        });
 
-      test('notDetermined → notDetermined', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.checkStatus(),
-          stubResult: NotificationPermissionStatus.notDetermined,
-        );
-      });
+        test('notDetermined → notDetermined', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.checkStatus(),
+            stubResult: NotificationPermissionStatus.notDetermined,
+          );
+        });
 
-      test('denied → denied', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.checkStatus(),
-          stubResult: NotificationPermissionStatus.denied,
-        );
-      });
+        test('denied → denied', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.checkStatus(),
+            stubResult: NotificationPermissionStatus.denied,
+          );
+        });
 
-      test('permanentlyDenied → permanentlyDenied', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.checkStatus(),
-          stubResult: NotificationPermissionStatus.permanentlyDenied,
-        );
+        test('permanentlyDenied → permanentlyDenied', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.checkStatus(),
+            stubResult: NotificationPermissionStatus.permanentlyDenied,
+          );
+        });
+
+        test('granted → updatePushPermissionStatus("granted") が呼ばれる', () async {
+          final spy = SpyNotificationAnalyticsRepositoryImpl();
+          final container = buildContainer(
+            statusResult: NotificationPermissionStatus.granted,
+            spy: spy,
+          );
+          await container
+              .read(notificationPermissionUseCaseProvider)
+              .checkStatus();
+          expect(spy.lastPushPermissionStatus, equals('granted'));
+        });
+
+        test('denied → updatePushPermissionStatus("denied") が呼ばれる', () async {
+          final spy = SpyNotificationAnalyticsRepositoryImpl();
+          final container = buildContainer(
+            statusResult: NotificationPermissionStatus.denied,
+            spy: spy,
+          );
+          await container
+              .read(notificationPermissionUseCaseProvider)
+              .checkStatus();
+          expect(spy.lastPushPermissionStatus, equals('denied'));
+        });
       });
     });
 
     group('requestPermission', () {
-      test('granted → granted', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.requestPermission(),
-          stubResult: NotificationPermissionStatus.granted,
-        );
-      });
+      group('正常系', () {
+        test('granted → granted', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.requestPermission(),
+            stubResult: NotificationPermissionStatus.granted,
+          );
+        });
 
-      test('notDetermined → notDetermined', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.requestPermission(),
-          stubResult: NotificationPermissionStatus.notDetermined,
-        );
-      });
+        test('notDetermined → notDetermined', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.requestPermission(),
+            stubResult: NotificationPermissionStatus.notDetermined,
+          );
+        });
 
-      test('denied → denied', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.requestPermission(),
-          stubResult: NotificationPermissionStatus.denied,
-        );
-      });
+        test('denied → denied', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.requestPermission(),
+            stubResult: NotificationPermissionStatus.denied,
+          );
+        });
 
-      test('permanentlyDenied → permanentlyDenied', () async {
-        await expectPermissionResult(
-          act: (useCase) => useCase.requestPermission(),
-          stubResult: NotificationPermissionStatus.permanentlyDenied,
-        );
+        test('permanentlyDenied → permanentlyDenied', () async {
+          await expectPermissionResult(
+            act: (useCase) => useCase.requestPermission(),
+            stubResult: NotificationPermissionStatus.permanentlyDenied,
+          );
+        });
+
+        test('trackPushPermissionRequested が必ず1回呼ばれる', () async {
+          final spy = SpyNotificationAnalyticsRepositoryImpl();
+          final container = buildContainer(
+            requestResult: NotificationPermissionStatus.denied,
+            spy: spy,
+          );
+          await container
+              .read(notificationPermissionUseCaseProvider)
+              .requestPermission();
+          expect(spy.trackPushPermissionRequestedCount, equals(1));
+        });
+
+        test('granted → trackPushPermissionGranted が1回呼ばれる', () async {
+          final spy = SpyNotificationAnalyticsRepositoryImpl();
+          final container = buildContainer(
+            requestResult: NotificationPermissionStatus.granted,
+            spy: spy,
+          );
+          await container
+              .read(notificationPermissionUseCaseProvider)
+              .requestPermission();
+          expect(spy.trackPushPermissionGrantedCount, equals(1));
+        });
+
+        test('denied → trackPushPermissionGranted は呼ばれない', () async {
+          final spy = SpyNotificationAnalyticsRepositoryImpl();
+          final container = buildContainer(
+            requestResult: NotificationPermissionStatus.denied,
+            spy: spy,
+          );
+          await container
+              .read(notificationPermissionUseCaseProvider)
+              .requestPermission();
+          expect(spy.trackPushPermissionGrantedCount, equals(0));
+        });
+
+        test('permanentlyDenied → trackPushPermissionGranted は呼ばれない', () async {
+          final spy = SpyNotificationAnalyticsRepositoryImpl();
+          final container = buildContainer(
+            requestResult: NotificationPermissionStatus.permanentlyDenied,
+            spy: spy,
+          );
+          await container
+              .read(notificationPermissionUseCaseProvider)
+              .requestPermission();
+          expect(spy.trackPushPermissionGrantedCount, equals(0));
+        });
+
+        test('granted → updatePushPermissionStatus("granted") が呼ばれる', () async {
+          final spy = SpyNotificationAnalyticsRepositoryImpl();
+          final container = buildContainer(
+            requestResult: NotificationPermissionStatus.granted,
+            spy: spy,
+          );
+          await container
+              .read(notificationPermissionUseCaseProvider)
+              .requestPermission();
+          expect(spy.lastPushPermissionStatus, equals('granted'));
+        });
       });
     });
   });
