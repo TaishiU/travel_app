@@ -1,6 +1,6 @@
 ---
 name: find-defects
-description: 業務ロジック層の実装を5つの攻撃視点でレビューし、Critical欠陥のみをレポートに出力する
+description: 業務ロジック層の実装を5つの攻撃視点（非原子性・部分失敗・サイレント失敗・TOCTOU・機密露出）でレビューし、Critical欠陥のみをレポートに出力する
 argument-hint: "<adr-path> [<commit-hash>] | <commit-hash>"
 ---
 
@@ -69,12 +69,13 @@ git show <commit-hash>
 - `if (canBook) { await payment(); book(); }` のように await 中に前提条件が変化する箇所はないか
 - 在庫・価格・セッション・クーポン有効期限を確認後 await が挟まり、実行時には状態が陳腐化していないか
 
-#### 視点5: SSOT楽観的更新のロールバック保証
+#### 視点5: 機密情報の平文露出（ストレージ・ログ・エラーメッセージ）
 
-Repository が Stream に楽観的先行更新した後 API が失敗するケース:
-- 失敗時に必ず元の値を Stream に再発行しているか
-- rollback 処理が例外ハンドラの外に書かれていないか（例外が飲まれると rollback も走らない）
-- 複数フィールドの SSOT（価格・在庫・予約状態）で一部だけロールバックされる中途半端な状態が生まれないか
+攻撃者が ADB アクセス・APK 逆コンパイル・通信傍受で機密情報を得られるケース:
+- 認証トークン・パスワード・PII を SharedPreferences / 平文ファイルに保存し、SecureStorage を使っていない箇所はないか
+- `print` / `debugPrint` / ロガーで認証トークン・レスポンスボディ全体・PII を出力している箇所はないか
+- `FailureResult` の error 内容・Exception メッセージにサーバー内部情報・スタックトレース・機密値が含まれ、View に素通りしていないか
+- DTO に token / password / secret フィールドが存在するにもかかわらず、toString() やログ出力でマスクされていないか
 
 ---
 
