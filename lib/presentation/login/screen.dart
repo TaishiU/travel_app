@@ -138,6 +138,7 @@ class _LoginForm extends HookConsumerWidget {
                 password: passwordController.text,
               );
               if (!context.mounted) return;
+              if (ref.read(loginScreenProvider) is AsyncError) return;
               _navigateAfterAuth(context: context, pendingPath: pendingPath);
             },
             child: const Text('ログイン'),
@@ -198,6 +199,7 @@ class _RegisterForm extends HookConsumerWidget {
                 displayName: displayName,
               );
               if (!context.mounted) return;
+              if (ref.read(loginScreenProvider) is AsyncError) return;
               _navigateAfterAuth(context: context, pendingPath: pendingPath);
             },
             child: const Text('登録する'),
