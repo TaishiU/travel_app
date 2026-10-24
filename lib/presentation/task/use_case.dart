@@ -1,5 +1,4 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:travel_app/data/repositories/task/task_repository.dart';
 import 'package:travel_app/domain/entities/task/task.dart';
 import 'package:travel_app/domain/use_cases/auth/auth_use_case.dart';
 import 'package:travel_app/presentation/task/state.dart';
@@ -10,6 +9,9 @@ final taskScreenUseCaseProvider = Provider<TaskScreenUseCase>(
 );
 
 /// タスク画面の関心事に属すロジックを担当するUseCase
+///
+/// タスクのドメイン操作（追加・完了更新）は TaskUseCase が担う。
+/// ここでは UI State の構築（initState）という画面固有の関心事のみを扱う。
 class TaskScreenUseCase {
   /// コンストラクタ
   TaskScreenUseCase({required this.ref});
@@ -31,14 +33,4 @@ class TaskScreenUseCase {
       isLoggedIn: isLoggedIn,
     );
   }
-
-  /// タスクを追加する
-  Future<void> addTask({required String title}) =>
-      ref.read(taskRepositoryProvider).addTask(title: title);
-
-  /// 完了状態を更新する
-  Future<void> updateCompletion({required int id, required bool completed}) =>
-      ref
-          .read(taskRepositoryProvider)
-          .updateCompletion(id: id, completed: completed);
 }

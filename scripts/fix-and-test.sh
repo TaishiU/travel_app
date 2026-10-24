@@ -39,7 +39,7 @@ if [ "$ISSUE_COUNT" -gt 0 ]; then
 fi
 printf "${GREEN} ✅ dart analyze 問題なし${RESET}\n"
 
-echo "🔍 flutter analyze 実行中..."
+echo " 🔍 flutter analyze 実行中..."
 FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
 FLUTTER_ISSUE_LINES=$(printf '%s\n' "$FLUTTER_ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
 FLUTTER_ISSUE_COUNT=$(printf '%s\n' "$FLUTTER_ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)

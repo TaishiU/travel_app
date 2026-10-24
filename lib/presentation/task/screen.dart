@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_app/design_system/components/core_app_bar.dart';
 import 'package:travel_app/design_system/components/core_error.dart';
+import 'package:travel_app/design_system/styles/app_color.dart';
 import 'package:travel_app/domain/entities/task/task.dart';
 import 'package:travel_app/presentation/login/screen.dart';
 import 'package:travel_app/presentation/task/notifier.dart';
@@ -35,18 +36,16 @@ class TaskScreen extends HookConsumerWidget {
               onPressed: () => context.toDebugMenuScreen(),
               icon: const Icon(Icons.bug_report_outlined),
             ),
-          if (isLoggedIn)
-            IconButton(
-              onPressed: () async {
-                await ref.read(taskScreenProvider.notifier).logout();
-              },
-              icon: const Icon(Icons.logout, color: Colors.red),
-            )
-          else
-            IconButton(
-              onPressed: () => context.go(LoginScreen.path),
-              icon: const Icon(Icons.login),
-            ),
+          IconButton(
+            onPressed: isLoggedIn
+                ? () async {
+                    await ref.read(taskScreenProvider.notifier).logout();
+                  }
+                : () => context.go(LoginScreen.path),
+            icon: isLoggedIn
+                ? const Icon(Icons.logout, color: AppColor.primary01)
+                : const Icon(Icons.login),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

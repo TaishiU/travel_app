@@ -42,13 +42,13 @@ fi
 # 4.5. 名前付き引数チェック
 CHECK_NAMED_ARGS="$REPO_ROOT/scripts/check_named_args.dart"
 if [ -f "$CHECK_NAMED_ARGS" ]; then
-  echo "🔍 名前付き引数チェック実行中..."
+  echo " 🔍 名前付き引数チェック実行中..."
   git diff --cached --name-only -- '*.dart' | dart "$CHECK_NAMED_ARGS"
   [ $? -ne 0 ] && exit 1
 fi
 
 # 5. 静的解析を実行
-echo "🔍 dart analyze 実行中..."
+echo " 🔍 dart analyze 実行中..."
 ANALYZE_OUTPUT=$(dart analyze 2>&1)
 ISSUE_LINES=$(printf '%s\n' "$ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
 ISSUE_COUNT=$(printf '%s\n' "$ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
@@ -64,7 +64,7 @@ fi
 
 printf "${GREEN} ✅ dart analyze 問題なし${RESET}\n"
 
-echo "🔍 flutter analyze 実行中..."
+echo " 🔍 flutter analyze 実行中..."
 FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
 FLUTTER_ISSUE_LINES=$(printf '%s\n' "$FLUTTER_ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
 FLUTTER_ISSUE_COUNT=$(printf '%s\n' "$FLUTTER_ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)

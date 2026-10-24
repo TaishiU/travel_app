@@ -208,5 +208,40 @@ void main() {
         });
       });
     });
+
+    group('listenToAuthChanges', () {
+      group('正常系', () {
+        test('認証状態変化時にコールバックが呼ばれること', () async {
+          // Given
+          final container = buildContainer();
+          final useCase = container.read(authUseCaseProvider);
+          var callCount = 0;
+          useCase.listenToAuthChanges(onChanged: () => callCount++);
+
+          // When: login → notifyListeners() が発火
+          await useCase.login(email: _email, password: _password);
+
+          // Then
+          expect(callCount, equals(1));
+        });
+
+        test('teardownを呼ぶとリスナーが解除されること', () async {
+          // Given
+          final container = buildContainer();
+          final useCase = container.read(authUseCaseProvider);
+          var callCount = 0;
+          final teardown = useCase.listenToAuthChanges(
+            onChanged: () => callCount++,
+          );
+
+          // When: teardown 後に login しても呼ばれない
+          teardown();
+          await useCase.login(email: _email, password: _password);
+
+          // Then
+          expect(callCount, equals(0));
+        });
+      });
+    });
   });
 }

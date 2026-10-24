@@ -3,11 +3,13 @@ import 'package:travel_app/data/services/local_storage/database/app_database.dar
 import 'package:travel_app/data/services/local_storage/database/task/task_local_service.dart';
 import 'package:travel_app/data/services/local_storage/database/task/task_local_service_impl.dart';
 import 'package:travel_app/domain/entities/task/task.dart';
+import 'package:travel_app/domain/interfaces/task/task_repository.dart';
 
 /// [TaskRepository] のプロバイダ。
 final taskRepositoryProvider = Provider<TaskRepository>(
-  (ref) =>
-      TaskRepository(taskLocalService: ref.read(taskLocalServiceImplProvider)),
+  (ref) => TaskRepositoryImpl(
+    taskLocalService: ref.read(taskLocalServiceImplProvider),
+  ),
 );
 
 /// タスク一覧のSSOTを提供するStreamProvider。
@@ -15,24 +17,24 @@ final tasksStreamProvider = StreamProvider<List<Task>>((ref) {
   return ref.watch(taskRepositoryProvider).tasksStream;
 });
 
-/// タスクのSSOTを管理するリポジトリ。
-class TaskRepository {
+/// [TaskRepository] の実装クラス。
+class TaskRepositoryImpl implements TaskRepository {
   /// コンストラクタ。
-  TaskRepository({required this.taskLocalService});
+  TaskRepositoryImpl({required this.taskLocalService});
 
   /// ローカルDBサービス。
   final TaskLocalService taskLocalService;
 
-  /// タスク一覧のストリーム。
+  @override
   Stream<List<Task>> get tasksStream => taskLocalService.watchAll().map(
     (items) => items.map((item) => _toEntity(item: item)).toList(),
   );
 
-  /// タスクを追加する。
+  @override
   Future<void> addTask({required String title}) =>
       taskLocalService.insert(title: title);
 
-  /// 完了状態を更新する。
+  @override
   Future<void> updateCompletion({required int id, required bool completed}) =>
       taskLocalService.updateCompletion(id: id, completed: completed);
 

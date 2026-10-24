@@ -2,11 +2,16 @@
 # check_import_layers.sh
 #
 # Dartファイルのimportがアーキテクチャ層ルールに違反していないかチェックする。
-# analysis_options.yaml の import_rules をシェルで再現したもの。
+#
+# アーキテクチャ:
+#   View → Notifier → UseCase（画面/ドメイン）→ Interface ← Repository → Service
 #
 # Usage:
+#   # 全体実行
+#   find lib -name "*.dart" | sh scripts/check_import_layers.sh
+#
 #   # ファイルを引数で渡す
-#   ./check_import_layers.sh lib/ui/home/view/home_screen.dart
+#   ./check_import_layers.sh lib/presentation/login/screen.dart
 #
 #   # ファイルパスをstdinでパイプする（pre-push hookからの呼び出し想定）
 #   git diff --name-only HEAD~1 -- '*.dart' | ./check_import_layers.sh
@@ -18,14 +23,13 @@ RESET='\033[0m'
 
 PACKAGE_NAME="travel_app"
 
-# 違反ログ用テンポラリファイル（サブシェル越しに書き込むため）
 VIOLATION_LOG=$(mktemp)
 trap 'rm -f "$VIOLATION_LOG"' EXIT INT TERM
 
 # ─────────────────────────────────────────────────────────────────────
 # glob_to_regex <glob_pattern>
-#   * → [^/]*  (パスセグメント内のみマッチ)
-#   ** → .*    (ネストされたディレクトリを含む任意のパスにマッチ)
+#   *  → [^/]*  (パスセグメント内のみマッチ)
+#   ** → .*     (ネストされたディレクトリを含む任意のパスにマッチ)
 # ─────────────────────────────────────────────────────────────────────
 glob_to_regex() {
   printf '%s' "$1" |
@@ -42,89 +46,172 @@ path_matches() {
   printf '%s' "$1" | grep -qE "^$(glob_to_regex "$2")"
 }
 
+log_violation() {
+  printf '%s\t%s\t%s\n' "$1" "$2" "$3" >>"$VIOLATION_LOG"
+}
+
+# ─────────────────────────────────────────────────────────────────────
+# check_impl_has_interface <impl_import_path>
+#
+# UseCase が *_repository_impl.dart をimportする場合、
+# 対応する Interface が lib/domain/interfaces/ に存在するか確認する。
+#
+# 変換例:
+#   lib/data/repositories/auth/auth_repository_impl.dart
+#   → lib/domain/interfaces/auth/auth_repository.dart
+#
+# Interface が存在する = Provider が Interface 型を返すことで DIP が実現されている
+# Interface が存在しない = DIP 未実現（違反）
+# ─────────────────────────────────────────────────────────────────────
+check_impl_has_interface() {
+  local impl_path="$1"
+  local interface_path
+  interface_path=$(printf '%s' "$impl_path" |
+    sed -e 's|lib/data/repositories/|lib/domain/interfaces/|' \
+      -e 's|_impl\.dart$|.dart|')
+  [ -f "$interface_path" ]
+}
+
 # ─────────────────────────────────────────────────────────────────────
 # check_file <dart_file_path>
-#   1ファイルを全ルールに対してチェックし、違反があれば VIOLATION_LOG に記録する
+#
+# レイヤールール一覧:
+#   Rule 1  View          lib/presentation/** (notifier/state/use_case を除く)
+#             NG: lib/data/**, lib/domain/use_cases/**, lib/domain/interfaces/**
+#   Rule 2  Notifier      lib/presentation/**/notifier.dart
+#             NG: lib/data/**
+#   Rule 3  UseCase画面   lib/presentation/**/use_case.dart
+#             NG: lib/data/services/**
+#             CONDITIONAL: lib/data/repositories/**/*_impl.dart → Interface 存在確認
+#   Rule 4  UseCase域     lib/domain/use_cases/**
+#             NG: lib/presentation/**, lib/data/services/**
+#             CONDITIONAL: lib/data/repositories/**/*_impl.dart → Interface 存在確認
+#   Rule 5  Interface     lib/domain/interfaces/**
+#             NG: lib/presentation/**, lib/data/**, lib/domain/use_cases/**
+#   Rule 6  Entity        lib/domain/entities/**
+#             NG: lib/presentation/**, lib/data/**, lib/domain/use_cases/**, lib/domain/interfaces/**
+#   Rule 7  Repository    lib/data/repositories/**
+#             NG: lib/presentation/**
+#   Rule 8  Service       lib/data/services/**
+#             NG: lib/presentation/**, lib/domain/use_cases/**, lib/domain/interfaces/**, lib/data/repositories/**
 # ─────────────────────────────────────────────────────────────────────
 check_file() {
   local file="$1"
 
-  # ファイルが存在しない場合はスキップ（削除されたファイル等）
   [ -f "$file" ] || return 0
 
-  # コード生成ファイルはスキップ
   case "$file" in
   *.g.dart | *.freezed.dart | *.gen.dart | *.gr.dart | *.mocks.dart) return 0 ;;
+  lib/presentation/debug/*) return 0 ;;
   esac
 
-  # package:PACKAGE_NAME/ を使ったimport行のみ抽出
   local imports
   imports=$(grep -E "^ *import ['\"]package:${PACKAGE_NAME}/" "$file" 2>/dev/null || true)
   [ -z "$imports" ] && return 0
 
   printf '%s\n' "$imports" | while IFS= read -r import_line; do
-    # import先のパスを lib/ 形式に変換
-    # 例) import 'package:travel_app/data/repositories/...'
-    #   → lib/data/repositories/...
     local import_path
     import_path=$(printf '%s' "$import_line" |
       sed -n "s|.*['\"]package:${PACKAGE_NAME}/\([^'\"]*\)['\"].*|lib/\1|p")
     [ -z "$import_path" ] && continue
 
-    # ── Rule 1 ────────────────────────────────────────────────────
-    # target : lib/ui/*/view/**
-    # disallow: lib/data/api/**, lib/data/repositories/**
-    if path_matches "$file" "lib/ui/*/view/**"; then
-      if path_matches "$import_path" "lib/data/api/**" ||
-        path_matches "$import_path" "lib/data/repositories/**"; then
-        printf '%s\t%s\t%s\n' \
-          "$file" \
-          "$import_line" \
-          "UI層（View）はRepository/Service層に依存不可。ViewModel層のみ依存可。" \
-          >>"$VIOLATION_LOG"
+    # ── Rule 1: View ──────────────────────────────────────────────────
+    if path_matches "$file" "lib/presentation/**"; then
+      case "$file" in
+      */notifier.dart | */state.dart | */use_case.dart) ;;
+      *)
+        if path_matches "$import_path" "lib/data/**" ||
+          path_matches "$import_path" "lib/domain/use_cases/**" ||
+          path_matches "$import_path" "lib/domain/interfaces/**"; then
+          log_violation "$file" "$import_line" \
+            "View はデータ層・UseCase・Interface に依存不可"
+        fi
+        ;;
+      esac
+    fi
+
+    # ── Rule 2: Notifier ──────────────────────────────────────────────
+    if path_matches "$file" "lib/presentation/**/notifier.dart"; then
+      if path_matches "$import_path" "lib/data/**"; then
+        log_violation "$file" "$import_line" \
+          "Notifier はデータ層に依存不可（UseCase 経由でアクセスすること）"
       fi
     fi
 
-    # ── Rule 2 ────────────────────────────────────────────────────
-    # target : lib/ui/*/view_model/**
-    # disallow: lib/ui/*/view/**, lib/data/api/**
-    if path_matches "$file" "lib/ui/*/view_model/**"; then
-      if path_matches "$import_path" "lib/ui/*/view/**" ||
-        path_matches "$import_path" "lib/data/api/**"; then
-        printf '%s\t%s\t%s\n' \
-          "$file" \
-          "$import_line" \
-          "UI層（ViewModel）はView層/Service層に依存不可。Repository層のみ依存可。" \
-          >>"$VIOLATION_LOG"
+    # ── Rule 3: UseCase（画面）────────────────────────────────────────
+    if path_matches "$file" "lib/presentation/**/use_case.dart"; then
+      if path_matches "$import_path" "lib/data/services/**"; then
+        log_violation "$file" "$import_line" \
+          "UseCase（画面）は Service に直接依存不可"
+      elif path_matches "$import_path" "lib/data/repositories/**"; then
+        if path_matches "$import_path" "lib/data/repositories/**/*_impl.dart"; then
+          if ! check_impl_has_interface "$import_path"; then
+            log_violation "$file" "$import_line" \
+              "UseCase が *_impl.dart をimportしているが、対応 Interface が lib/domain/interfaces/ に存在しない → DIP 未実現"
+          fi
+        else
+          log_violation "$file" "$import_line" \
+            "lib/data/repositories/ 配下の非 impl ファイルへの依存不可（Interface は lib/domain/interfaces/ に置くこと）"
+        fi
       fi
     fi
 
-    # ── Rule 3 ────────────────────────────────────────────────────
-    # target : lib/data/repositories/**
-    # disallow: lib/ui/*/view/**, lib/ui/*/view_model/**
+    # ── Rule 4: UseCase（ドメイン）────────────────────────────────────
+    if path_matches "$file" "lib/domain/use_cases/**"; then
+      if path_matches "$import_path" "lib/presentation/**" ||
+        path_matches "$import_path" "lib/data/services/**"; then
+        log_violation "$file" "$import_line" \
+          "UseCase（ドメイン）はプレゼンテーション層・Service に依存不可"
+      elif path_matches "$import_path" "lib/data/repositories/**"; then
+        if path_matches "$import_path" "lib/data/repositories/**/*_impl.dart"; then
+          if ! check_impl_has_interface "$import_path"; then
+            log_violation "$file" "$import_line" \
+              "UseCase が *_impl.dart をimportしているが、対応 Interface が lib/domain/interfaces/ に存在しない → DIP 未実現"
+          fi
+        else
+          log_violation "$file" "$import_line" \
+            "lib/data/repositories/ 配下の非 impl ファイルへの依存不可（Interface は lib/domain/interfaces/ に置くこと）"
+        fi
+      fi
+    fi
+
+    # ── Rule 5: Interface ─────────────────────────────────────────────
+    if path_matches "$file" "lib/domain/interfaces/**"; then
+      if path_matches "$import_path" "lib/presentation/**" ||
+        path_matches "$import_path" "lib/data/**" ||
+        path_matches "$import_path" "lib/domain/use_cases/**"; then
+        log_violation "$file" "$import_line" \
+          "Interface はプレゼンテーション層・データ層・UseCase に依存不可"
+      fi
+    fi
+
+    # ── Rule 6: Entity ────────────────────────────────────────────────
+    if path_matches "$file" "lib/domain/entities/**"; then
+      if path_matches "$import_path" "lib/presentation/**" ||
+        path_matches "$import_path" "lib/data/**" ||
+        path_matches "$import_path" "lib/domain/use_cases/**" ||
+        path_matches "$import_path" "lib/domain/interfaces/**"; then
+        log_violation "$file" "$import_line" \
+          "Entity は他のいかなる層にも依存不可"
+      fi
+    fi
+
+    # ── Rule 7: Repository ────────────────────────────────────────────
     if path_matches "$file" "lib/data/repositories/**"; then
-      if path_matches "$import_path" "lib/ui/*/view/**" ||
-        path_matches "$import_path" "lib/ui/*/view_model/**"; then
-        printf '%s\t%s\t%s\n' \
-          "$file" \
-          "$import_line" \
-          "Repository層はUI層（View/ViewModel）に依存不可。Service層のみ依存可。" \
-          >>"$VIOLATION_LOG"
+      if path_matches "$import_path" "lib/presentation/**"; then
+        log_violation "$file" "$import_line" \
+          "Repository はプレゼンテーション層に依存不可"
       fi
     fi
 
-    # ── Rule 4 ────────────────────────────────────────────────────
-    # target : lib/data/api/**
-    # disallow: lib/ui/*/view/**, lib/ui/*/view_model/**, lib/data/repositories/**
-    if path_matches "$file" "lib/data/api/**"; then
-      if path_matches "$import_path" "lib/ui/*/view/**" ||
-        path_matches "$import_path" "lib/ui/*/view_model/**" ||
+    # ── Rule 8: Service ──────────────────────────────────────────────
+    if path_matches "$file" "lib/data/services/**"; then
+      if path_matches "$import_path" "lib/presentation/**" ||
+        path_matches "$import_path" "lib/domain/use_cases/**" ||
+        path_matches "$import_path" "lib/domain/interfaces/**" ||
         path_matches "$import_path" "lib/data/repositories/**"; then
-        printf '%s\t%s\t%s\n' \
-          "$file" \
-          "$import_line" \
-          "Service（API）層はUI層/Repository層に依存不可。" \
-          >>"$VIOLATION_LOG"
+        log_violation "$file" "$import_line" \
+          "Service はプレゼンテーション層・UseCase・Interface・Repository に依存不可"
       fi
     fi
   done
@@ -133,6 +220,8 @@ check_file() {
 # ─────────────────────────────────────────────────────────────────────
 # 引数またはstdinからDartファイルリストを取得してチェック
 # ─────────────────────────────────────────────────────────────────────
+printf " 🔍 importチェック実行中...\n"
+
 if [ "$#" -gt 0 ]; then
   for file in "$@"; do
     check_file "$file"
@@ -147,12 +236,12 @@ fi
 # 結果出力
 # ─────────────────────────────────────────────────────────────────────
 if [ ! -s "$VIOLATION_LOG" ]; then
-  printf "${GREEN} ✅ import層違反なし${RESET}\n"
+  printf "${GREEN} ✅ import違反なし${RESET}\n"
   exit 0
 fi
 
 violation_count=$(wc -l <"$VIOLATION_LOG" | tr -d ' ')
-printf "\n${RED} ❌ import層違反 %d件を検出${RESET}\n\n" "$violation_count"
+printf "\n${RED} ❌ import違反 %d件を検出${RESET}\n\n" "$violation_count"
 
 while IFS='	' read -r vfile vimport vreason; do
   printf "${YELLOW}%s${RESET}\n" "$vfile"
