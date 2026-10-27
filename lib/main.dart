@@ -94,7 +94,11 @@ class _MyAppState extends ConsumerState<MyApp> {
       final url = call.arguments as String?;
       if (url == null) return;
       final path = _toRouterPath(url: url);
-      if (path != null) ref.read(routerProvider).go(path);
+      if (path == null) return;
+      final router = ref.read(routerProvider);
+      // onException が先着済みの場合はスキップ（二重遷移防止）
+      if (router.routeInformationProvider.value.uri.path == path) return;
+      router.go(path);
     });
   }
 

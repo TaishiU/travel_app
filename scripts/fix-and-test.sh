@@ -82,9 +82,9 @@ COVERAGE=$(grep -oE "headerCovTableEntry(Lo|Med|Hi)\">[0-9.]+&nbsp;%" coverage/h
 FAIL_COUNT=$(printf '%s\n' "$TEST_OUTPUT" | grep -oE ' -[0-9]+:' | tail -1 | grep -oE '[0-9]+' || echo "0")
 
 if [ "${FAIL_COUNT:-0}" -gt 0 ]; then
-  printf "${RED} 📊 [テスト完了] 失敗: ${FAIL_COUNT}件 | カバレッジ: $COVERAGE${RESET}\n"
+  printf "${RED} 📊 [テスト完了] 失敗: %s件 | カバレッジ: %s${RESET}\n" "$FAIL_COUNT" "$COVERAGE"
 else
-  printf "${GREEN} 📊 [テスト完了] カバレッジ: $COVERAGE${RESET}\n"
+  printf "${GREEN} 📊 [テスト完了] カバレッジ: %s${RESET}\n" "$COVERAGE"
 fi
 
 if [ "${FAIL_COUNT:-0}" -gt 0 ] && [ -s "$TEST_JSON" ]; then

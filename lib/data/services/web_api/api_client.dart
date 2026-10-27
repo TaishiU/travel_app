@@ -12,10 +12,17 @@ import 'package:travel_app/utils/logger.dart';
 ///
 /// このプロバイダーを使用すると、アプリケーションのどこからでもAPIクライアントにアクセスできます。
 // final baseUrlProvider = Provider<String>((ref) => 'https://dummyjson.com');
+// [開発環境セットアップ] Android Studio で毎回自動実行する方法:
+// 1. 画面上部ツールバーの再生ボタンの左横にあるドロップダウン → Edit Configurations...
+// 2. 対象の Flutter 設定を選択 → Before launch セクション
+// 3. 「+」→ Run External tool → ダイアログ内で再度「+」
+// 4. Name: "adb reverse" / Program: adb (フルパスは `which adb` で確認)
+//    Arguments: "reverse tcp:3000 tcp:3000" / Working directory: $ProjectFileDir$
+// → Apply → OK
+// → 再生ボタン押下時に自動でポート転送される
 final baseUrlProvider = Provider<String>((ref) {
-  // Androidエミュレータではlocalhostがエミュレータ自身を指すため10.0.2.2でホストマシンにアクセスする
-  final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
-  return 'http://$host:3000/v1/';
+  // エミュレータ・実機ともに `adb reverse tcp:3000 tcp:3000` でポート転送すれば localhost で到達可能
+  return 'http://localhost:3000/v1/';
 });
 
 /// HTTPリクエストメソッドを定義する列挙型。

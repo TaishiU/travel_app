@@ -19,8 +19,10 @@ class ProfileScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(profileScreenProvider);
+    // AsyncLoading 中は null → auth ボタン非表示
     final isLoggedIn = switch (viewModel) {
       AsyncData(:final value) => value.isLoggedIn,
+      AsyncLoading() => null,
       _ => false,
     };
 
@@ -28,14 +30,14 @@ class ProfileScreen extends HookConsumerWidget {
       appBar: CoreAppBar(
         title: 'ProfileScreen',
         actions: [
-          if (isLoggedIn)
+          if (isLoggedIn == true)
             IconButton(
               onPressed: () async {
                 await ref.read(profileScreenProvider.notifier).logout();
               },
               icon: const Icon(Icons.logout, color: Colors.red),
             )
-          else
+          else if (isLoggedIn == false)
             IconButton(
               onPressed: () => context.go(LoginScreen.path),
               icon: const Icon(Icons.login),

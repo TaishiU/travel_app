@@ -23,18 +23,15 @@ class ScaffoldWithNavBar extends StatefulWidget {
 }
 
 class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    final currentIndex = location.startsWith(ProfileScreen.path) ? 1 : 0;
     return Scaffold(
       body: widget.child, // ここに現在のGoRouteの画面が表示される
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
           // GoRouterを使ってナビゲーション
           switch (index) {
             // case 0:
@@ -130,24 +127,44 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
     refreshListenable: ref.read(authRepositoryProvider),
     redirect: (context, state) async {
-      final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
-      logger.d(message: 'state.matchedLocation: ${state.matchedLocation}');
-      final path = state.matchedLocation;
+      try {
+        final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
+        logger.d(message: 'state.matchedLocation: ${state.matchedLocation}');
+        final path = state.matchedLocation;
 
-      if (!loggedIn && _isProtectedPath(path: path)) {
-        ref.read(authUseCaseProvider).savePendingDeepLink(path: path);
-        return LoginScreen.path;
+        if (!loggedIn && _isProtectedPath(path: path)) {
+          ref.read(authUseCaseProvider).savePendingDeepLink(path: path);
+          return LoginScreen.path;
+        }
+
+        if (loggedIn && path == LoginScreen.path) {
+          return TaskScreen.path;
+        }
+
+        return null;
+      } on Exception catch (error) {
+        logger.e(message: '[Router] redirect error: $error');
+        return null;
       }
-
-      if (loggedIn && path == LoginScreen.path) {
-        return TaskScreen.path;
-      }
-
-      return null;
     },
-    errorBuilder: (context, state) => Scaffold(
-      appBar: AppBar(title: const Text('エラー')),
-      body: Center(child: Text('エラー: ${state.error}')),
-    ),
+    onException: (context, state, router) {
+      final uri = state.uri;
+      if (uri.scheme != 'travelapp') {
+        // deep link 以外のエラー（例: redirect 例外）は現在画面をキープ
+        logger.e(
+          message:
+              '[Router] onException: uri=${state.uri}, '
+              'error=${state.error}',
+        );
+        return;
+      }
+      final path = '/${uri.host}${uri.path}';
+      final targetPath = path == '/' ? TaskScreen.path : path;
+      // MethodChannel が先着済みの場合はスキップ（二重遷移防止）
+      if (router.routeInformationProvider.value.uri.path == targetPath) {
+        return;
+      }
+      router.go(targetPath);
+    },
   );
 });

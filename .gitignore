@@ -55,3 +55,6 @@ GoogleService-Info.plist
 firebase.json
 google-services.json
 firepit-log.txt
+
+# docs
+docs/security/
