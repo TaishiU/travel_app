@@ -1,3 +1,11 @@
+---
+type: アーキテクチャ概要
+title: アーキテクチャ
+description: プレゼンテーション・ドメイン・データの3層クリーンアーキテクチャ全体構成・依存関係・レイヤー構成テーブル
+tags: [アーキテクチャ, レイヤー構成, クリーンアーキテクチャ]
+related: [index.md, layers/index.md, error_handling.md, libraries.md]
+---
+
 # アーキテクチャ
 
 ## 全体構成
@@ -27,16 +35,18 @@ Web API / Device Storage
 
 ### レイヤー構成
 
-| 層 | レイヤー | パス |
-|---|---|---|
-| プレゼンテーション層 | View | `lib/presentation/{feature}/screen.dart` |
-| プレゼンテーション層 | Notifier | `lib/presentation/{feature}/notifier.dart` |
-| プレゼンテーション層 | UseCase（画面） | `lib/presentation/{feature}/use_case.dart` |
-| ドメイン層 | Interface | `lib/domain/interfaces/` |
-| ドメイン層 | Entity | `lib/domain/entities/` |
-| ドメイン層 | UseCase（ドメイン） | `lib/domain/use_cases/` |
-| データ層 | Repository | `lib/data/repositories/` |
-| データ層 | Service | `lib/data/services/` |
+| 層 | レイヤー | パス | 詳細 |
+|---|---|---|---|
+| プレゼンテーション層 | View | `lib/presentation/{feature}/screen.dart` | [view.md](layers/view.md) |
+| プレゼンテーション層 | Notifier | `lib/presentation/{feature}/notifier.dart` | [notifier.md](layers/notifier.md) |
+| プレゼンテーション層 | UseCase（画面） | `lib/presentation/{feature}/use_case.dart` | [usecase_presentation.md](layers/usecase_presentation.md) |
+| ドメイン層 | Interface | `lib/domain/interfaces/` | [interface.md](layers/interface.md) |
+| ドメイン層 | Entity | `lib/domain/entities/` | [entity.md](layers/entity.md) |
+| ドメイン層 | UseCase（ドメイン） | `lib/domain/use_cases/` | [usecase_domain.md](layers/usecase_domain.md) |
+| データ層 | Repository | `lib/data/repositories/` | [repository.md](layers/repository.md) |
+| データ層 | Service（Web API） | `lib/data/services/web_api/{feature}/` | [service_web_api.md](layers/service_web_api.md) |
+| データ層 | Service（LocalStorage） | `lib/data/services/local_storage/` | [service_local_storage.md](layers/service_local_storage.md) |
+| データ層 | Service（サードパーティー） | `lib/data/services/{sdk_name}/` | [service_third_party.md](layers/service_third_party.md) |
 
 ---
 

@@ -1,3 +1,11 @@
+---
+type: ディレクトリ構造
+title: Directory Structure
+description: lib/配下のディレクトリ構成（data/domain/presentation/utils等）
+tags: [ディレクトリ構造, プロジェクト構成]
+related: [architecture.md]
+---
+
 # Directory Structure
 
 ```

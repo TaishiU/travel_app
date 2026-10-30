@@ -1,3 +1,13 @@
+---
+type: レイヤー詳細
+title: 画面構成設計
+description: CustomScrollView・Screen/_Content・Section・Componentの画面構成設計と責務の境界
+layer: プレゼンテーション層
+path: lib/presentation/{feature}/screen.dart
+tags: [View, プレゼンテーション層, Screen, CustomScrollView, Section, Component]
+related: [architecture.md, layers/view.md]
+---
+
 # 画面構成設計
 
 ## 1. 目的

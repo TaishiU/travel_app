@@ -1,3 +1,11 @@
+---
+type: ライブラリ一覧
+title: Libraries
+description: プロジェクトで使用するFlutter/Dartライブラリ一覧（状態管理・ナビゲーション・コード生成・HTTP等）
+tags: [ライブラリ, Flutter, Riverpod, Freezed, GoRouter]
+related: [architecture.md]
+---
+
 # Libraries
 
 - Flutter >=3.41.2 / Dart ^3.11.0

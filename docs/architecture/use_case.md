@@ -1,3 +1,13 @@
+---
+type: レイヤー詳細
+title: UseCase 設計
+description: 画面ユースケースの設計・責務・メソッド命名規則・Provider宣言・テスト設計の詳細
+layer: プレゼンテーション層
+path: lib/presentation/{feature}/use_case.dart
+tags: [UseCase, プレゼンテーション層, 画面ユースケース, テスト]
+related: [architecture.md, layers/usecase_presentation.md]
+---
+
 # UseCase 設計
 
 ## 1. 種別

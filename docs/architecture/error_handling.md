@@ -1,3 +1,11 @@
+---
+type: ルール
+title: エラーハンドリング設計方針
+description: ApiClientException→AppError変換・Result型の扱い・AsyncNotifierパターン・ProviderObserverによるUnauthorizedError共通処理
+tags: [エラーハンドリング, AppError, Result, AsyncNotifier, ProviderObserver]
+related: [architecture.md, result.md]
+---
+
 # エラーハンドリング設計方針
 
 ## 基本方針

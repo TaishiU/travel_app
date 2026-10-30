@@ -1,3 +1,11 @@
+---
+type: 型定義
+title: Result Type
+description: SuccessResult/FailureResultの2値型。Repository層でのエラー表現に使用する
+tags: [Result, 型定義, エラーハンドリング, SuccessResult, FailureResult]
+related: [error_handling.md, architecture.md]
+---
+
 # Result Type
 
 `lib/utils/result.dart` の `Result<T>` を使用。
